@@ -1,4 +1,4 @@
-import { useStyles } from "./404.styles";
+import { useStyles } from "../styles/404.styles";
 import { Title, Divider, Stack, Text, Anchor } from "@mantine/core";
 import Link from "next/link";
 

@@ -1,11 +1,6 @@
 import { useStyles } from "./Header.styles";
 import Link from "next/link";
-import {
-	Header as MantineHeader,
-	Container,
-	Title,
-	Button,
-} from "@mantine/core";
+import { Header as MantineHeader, Title, Button } from "@mantine/core";
 
 export default function Header() {
 	const { classes } = useStyles();
@@ -45,13 +40,13 @@ export default function Header() {
 			</Button.Group>
 
 			<Button.Group>
-				<Link href="/user/signin" passHref>
+				<Link href="/user/SignIn" passHref>
 					<Button variant="outline" component="a">
 						Sign In
 					</Button>
 				</Link>
 
-				<Link href="/user/signup" passHref>
+				<Link href="/user/SignUp" passHref>
 					<Button variant="outline" component="a">
 						Sign Up
 					</Button>
