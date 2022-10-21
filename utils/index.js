@@ -1,4 +1,5 @@
 import * as CONSTANTS from "./constants";
 import * as localStorage from "./local-storage";
+import * as themeHelpers from "./theme-helpers";
 
-export { CONSTANTS, localStorage };
+export { CONSTANTS, localStorage, themeHelpers };
