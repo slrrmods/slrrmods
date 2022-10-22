@@ -24,8 +24,6 @@ export const useStyles = createStyles((theme) => {
 
 		tab: {
 			fontWeight: 500,
-			fontSize: theme.fontSizes.lg,
-			height: 38,
 			borderBottom: 0,
 			color: theme.white,
 

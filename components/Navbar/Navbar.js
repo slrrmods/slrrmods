@@ -48,7 +48,7 @@ export default function Navbar() {
 				tabsList: classes.tabsList,
 				tab: classes.tab,
 			}}>
-			<Tabs.List grow>
+			<Tabs.List>
 				{tabs.map((t) => {
 					return (
 						<Tabs.Tab key={t.path} value={t.path}>

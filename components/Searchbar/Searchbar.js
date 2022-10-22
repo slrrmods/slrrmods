@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useStyles } from "./Searchbar.styles";
 import { useRouter } from "next/router";
+import { useStyles } from "./Searchbar.styles";
 import { getHotkeyHandler } from "@mantine/hooks";
-import { TextInput, ActionIcon } from "@mantine/core";
+import { TextInput, ActionIcon, useMantineTheme } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons";
 
 export default function Searchbar() {
 	const [searchTerm, setSearchTerm] = useState("");
+	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const router = useRouter();
 
@@ -26,7 +27,7 @@ export default function Searchbar() {
 		<TextInput
 			classNames={classes}
 			placeholder="Search"
-			radius="xm"
+			variant="unstyled"
 			value={searchTerm}
 			onChange={(e) => setSearchTerm(e.target.value)}
 			onKeyDown={shortcutsHandler}
@@ -34,12 +35,12 @@ export default function Searchbar() {
 				<>
 					{searchTerm && (
 						<ActionIcon variant="transparent" onClick={() => clearSearch()}>
-							<IconX size={16} />
+							<IconX size={16} color={theme.colors.gray[2]} />
 						</ActionIcon>
 					)}
 
 					<ActionIcon variant="transparent" onClick={() => search()}>
-						<IconSearch size={20} />
+						<IconSearch size={20} color={theme.colors.gray[2]} />
 					</ActionIcon>
 				</>
 			}
