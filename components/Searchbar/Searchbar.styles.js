@@ -12,17 +12,21 @@ export const useStyles = createStyles((theme) => {
 			color: theme.white,
 			border: "1px",
 			borderStyle: "solid",
-			borderColor: themeHelpers.getLightFilledBackground(theme, 0.4),
+			borderColor: themeHelpers.getLightFilledBackground(theme, 0.3),
 			paddingLeft: theme.spacing.sm,
 			paddingRight: theme.spacing.sm,
 			borderRadius: theme.radius.sm,
 
 			"::placeholder": {
-				color: theme.colors.gray[4],
+				color: themeHelpers.getLightFilledBackground(theme, 0.7),
 			},
 
 			":focus": {
-				borderColor: themeHelpers.getLightFilledBackground(theme, 0.6),
+				borderColor: themeHelpers.getLightFilledBackground(theme, 0.7),
+
+				"::placeholder": {
+					color: "transparent",
+				},
 			},
 		},
 

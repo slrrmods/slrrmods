@@ -36,7 +36,7 @@ export default function ThemeContextProvider({ children, preferredTheme }) {
 		<ThemeContext.Provider value={context}>
 			<ColorSchemeProvider colorScheme={theme} toggleColorScheme={toggleTheme}>
 				<MantineProvider
-					theme={{ colorScheme: theme }}
+					theme={{ colorScheme: theme, primaryColor: "red" }}
 					withGlobalStyles
 					withNormalizeCSS>
 					<NotificationsProvider>{children}</NotificationsProvider>

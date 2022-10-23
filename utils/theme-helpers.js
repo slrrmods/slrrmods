@@ -4,7 +4,15 @@ export const getFilledBackground = (theme) => {
 };
 
 export const getLightFilledBackground = (theme, alpha) => {
+	if (alpha < 0) return getDarkFilledBackground(theme, alpha);
+
 	return theme.fn.lighten(getFilledBackground(theme), alpha);
+};
+
+export const getDarkFilledBackground = (theme, alpha) => {
+	if (alpha < 0) return getLightFilledBackground(theme, alpha);
+
+	return theme.fn.darken(getFilledBackground(theme), alpha);
 };
 
 export const getFromConditional = (theme, dark, light) => {

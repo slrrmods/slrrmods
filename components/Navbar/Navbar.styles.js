@@ -3,7 +3,7 @@ import { themeHelpers } from "../../utils";
 
 export const useStyles = createStyles((theme) => {
 	const background = themeHelpers.getFilledBackground(theme);
-	const backgroundLight = themeHelpers.getLightFilledBackground(theme, 0.2);
+	const backgroundLight = themeHelpers.getDarkFilledBackground(theme, 0.1);
 
 	const activeBackground = themeHelpers.getFromConditional(
 		theme,
