@@ -33,11 +33,10 @@ export default function Navbar() {
 	const { classes } = useStyles();
 
 	const router = useRouter();
-	const rootPath = router.asPath.split("/")[1];
-	const currentPath = `/${rootPath}`;
+	const currentPath = `/${router.pathname.split("/")[1]}`;
 
 	const onTabChange = (value) => {
-		router.push(`/${value}`);
+		router.push(`${value}`);
 	};
 
 	return (

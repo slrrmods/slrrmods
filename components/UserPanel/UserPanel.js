@@ -1,7 +1,11 @@
 import { Group, Button } from "@mantine/core";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function UserPanel() {
 	const user = false;
+
+	const router = useRouter();
 
 	return (
 		<>
@@ -9,9 +13,35 @@ export default function UserPanel() {
 
 			{!user && (
 				<Button.Group>
-					<Button variant="filled">Log In</Button>
+					<Link
+						href={{
+							pathname: router.pathname,
+							query: {
+								signIn: true,
+							},
+						}}
+						as="/user/signin"
+						passHref
+						shallow>
+						<Button component="a" variant="filled">
+							Sign In
+						</Button>
+					</Link>
 
-					<Button variant="filled">Sign Up</Button>
+					<Link
+						href={{
+							pathname: router.pathname,
+							query: {
+								signUp: true,
+							},
+						}}
+						as="/user/signup"
+						passHref
+						shallow>
+						<Button component="a" variant="filled">
+							Sign Up
+						</Button>
+					</Link>
 				</Button.Group>
 			)}
 		</>
