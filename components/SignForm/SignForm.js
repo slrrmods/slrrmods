@@ -7,7 +7,13 @@ export default function SignForm() {
 	const router = useRouter();
 	const { signIn, signUp } = router.query;
 	const opened = signIn || signUp;
-	const currentTab = signIn ? "signIn" : "signUp";
+	const currentTab = getCurrentTab();
+
+	function getCurrentTab() {
+		if (signIn) return "signIn";
+		if (signUp) return "signUp";
+		return "";
+	}
 
 	const onClose = () => {
 		router.push(router.pathname, undefined, { shallow: true });
@@ -29,7 +35,10 @@ export default function SignForm() {
 			opened={opened}
 			onClose={onClose}
 			title={<Title order={4}>Welcome to SLRR Mods</Title>}>
-			<Tabs defaultValue={currentTab} onTabChange={onTabChange}>
+			<Tabs
+				defaultValue={currentTab}
+				value={currentTab}
+				onTabChange={onTabChange}>
 				<Tabs.List grow>
 					<Tabs.Tab value="signIn">Sign In</Tabs.Tab>
 					<Tabs.Tab value="signUp">Sign Up</Tabs.Tab>
