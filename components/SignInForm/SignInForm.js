@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
 import { useRouter } from "next/router";
+import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import {
 	Alert,
 	Anchor,
@@ -15,24 +16,34 @@ import {
 import { IconAlertCircle } from "@tabler/icons";
 
 export default function SignInForm() {
-	const [error, setError] = useState("");
 	const router = useRouter();
+
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+
 	const [remember, setRemember] = useLocalStorage({
 		key: "remember-user",
 		defaultValue: false,
+	});
+
+	const form = useForm({
+		initialValues: {
+			user: "",
+			password: "",
+		},
 	});
 
 	const isInModal = !!router.query.signIn;
 
 	const focusTrapRef = useFocusTrap(isInModal);
 
-	const toggleRemember = () => {
+	function toggleRemember() {
 		setRemember((remember) => !remember);
-	};
+	}
 
-	const navigateToForgotPassword = () => {};
+	function navigateToForgotPassword() {}
 
-	const navigateToSignUp = () => {
+	function navigateToSignUp() {
 		if (!isInModal) {
 			router.push("/user/signup");
 			return;
@@ -46,26 +57,42 @@ export default function SignInForm() {
 			"/user/signup",
 			{ shallow: true }
 		);
-	};
+	}
 
-	const clearError = () => {
+	function clearError() {
 		setError("");
-	};
+	}
+
+	function signIn({ user, password }) {
+		const values = { user, password, remember };
+
+		setLoading(true);
+
+		try {
+			console.log(values);
+		} catch (e) {
+			setError(e.message);
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	return (
-		<form ref={focusTrapRef}>
+		<form onSubmit={form.onSubmit(signIn)} ref={focusTrapRef}>
 			<Stack pt="md">
 				<TextInput
 					label="Email or username"
 					required
 					data-autofocus
 					autoComplete="email"
+					{...form.getInputProps("user")}
 				/>
 
 				<PasswordInput
 					label="Password"
 					required
 					autoComplete="current-password"
+					{...form.getInputProps("password")}
 				/>
 
 				{error && (
@@ -96,7 +123,9 @@ export default function SignInForm() {
 					</Anchor>
 				</Group>
 
-				<Button type="submit">Sign In</Button>
+				<Button type="submit" loading={loading}>
+					Sign In
+				</Button>
 
 				<Divider />
 

@@ -12,6 +12,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/server": "^11.10.0",
     "@mantine/core": "^5.5.5",
+    "@mantine/form": "^5.6.3",
     "@mantine/hooks": "^5.5.5",
     "@mantine/next": "^5.5.5",
     "@mantine/notifications": "^5.5.5",
@@ -20,7 +21,8 @@
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "stylis-plugin-rtl": "^2.1.1"
+    "stylis-plugin-rtl": "^2.1.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "eslint": "8.25.0",
