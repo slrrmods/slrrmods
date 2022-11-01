@@ -6,14 +6,14 @@ import {
 	Divider,
 	PasswordInput,
 	Stack,
-	Text,
 	TextInput,
 } from "@mantine/core";
 import { useFocusTrap } from "@mantine/hooks";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import CustomPasswordInput from "../CustomPasswordInput";
 
 export default function SignUpForm() {
 	const [error, setError] = useState("");
@@ -45,17 +45,21 @@ export default function SignUpForm() {
 
 	return (
 		<form ref={focusTrapRef}>
-			<Stack pt="md">
+			<Stack pt="md" spacing="xs">
 				<TextInput label="Email" required data-autofocus autoComplete="email" />
 
 				<TextInput label="Username" required autoComplete="username" />
 
-				<PasswordInput label="Password" required autoComplete="new-password" />
+				<CustomPasswordInput
+					label="Password"
+					required
+					autoComplete="new-password"
+				/>
 
 				<PasswordInput
 					label="Confirm password"
 					required
-					autoComplete="new-password"
+					autoComplete="confirm-password"
 				/>
 
 				<Checkbox
