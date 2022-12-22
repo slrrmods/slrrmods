@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { requestHandler } from "../../utils";
+import { requestHandler } from "../../services";
 
 const configurarion = {
 	GET: {
