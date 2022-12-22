@@ -1,4 +1,4 @@
-export default async function ApiMiddleware(request, response, configuration) {
+export async function handleRequest(request, response, configuration) {
 	const methodConfiguration = configuration[request.method];
 
 	try {
