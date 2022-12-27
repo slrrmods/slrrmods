@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { uuid } from "../utils";
 
 const api = axios.create({
@@ -18,8 +18,23 @@ export async function doApiRequest(route, method, headers, body) {
 		data: body,
 	};
 
-	const response = await api(config);
-	return response.data || {};
+	try {
+		const response = await api(config);
+
+		if (response.data.error) throw new Error(response.data.error);
+
+		return response.data;
+	} catch (error) {
+		if (!(error instanceof AxiosError)) throw error;
+
+		const { response } = error;
+
+		if (!response) throw new Error(error.message);
+
+		if (response.data.error) throw new Error(response.data.error);
+
+		throw new Error("Unknown error");
+	}
 }
 
 function getBaseUrl() {

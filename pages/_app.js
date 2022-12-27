@@ -3,6 +3,10 @@ import Layout from "../components/Layout";
 import { getCookie } from "cookies-next";
 import { CONSTANTS } from "../utils";
 import { ThemeProvider } from "../contexts/ThemeContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps, colorScheme }) {
 	return (
@@ -13,14 +17,18 @@ export default function App({ Component, pageProps, colorScheme }) {
 					name="viewport"
 					content="minimum-scale=1, initial-scale=1, width=device-width"
 				/>
-				<link rel="shortcut icon" href="/favicon.svg" />
+				<link rel="shortcut icon" href="/favicon.ico" />
 			</Head>
 
-			<ThemeProvider preferredTheme={colorScheme}>
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
-			</ThemeProvider>
+			<QueryClientProvider client={queryClient}>
+				<ThemeProvider preferredTheme={colorScheme}>
+					<Layout>
+						<Component {...pageProps} />
+					</Layout>
+
+					<ReactQueryDevtools initialIsOpen={false} />
+				</ThemeProvider>
+			</QueryClientProvider>
 		</>
 	);
 }
