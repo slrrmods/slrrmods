@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IconX, IconCheck } from "@tabler/icons";
 import { PasswordInput, Progress, Text, Popover, Box } from "@mantine/core";
 
-export default function CustomPasswordInput(props) {
+export default function ValidatedPasswordInput(props) {
 	const [popoverOpened, setPopoverOpened] = useState(false);
 	const [value, setValue] = useState("");
 	const checks = requirements.map((requirement, index) => (

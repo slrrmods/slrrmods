@@ -19,9 +19,9 @@ import { useFocusTrap, useDebouncedState } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import * as yup from "yup";
-import CustomPasswordInput from "../CustomPasswordInput";
 import { checkEmailAvailable } from "../../endpoints/users";
 import { validator } from "../../utils";
+import ValidatedPasswordInput from "../ValidatedPasswordInput";
 
 const formInitialValues = {
 	email: "",
@@ -158,7 +158,7 @@ export default function SignUpForm() {
 					{...form.getInputProps("username")}
 				/>
 
-				<CustomPasswordInput
+				<ValidatedPasswordInput
 					label="Password"
 					required
 					autoComplete="new-password"
