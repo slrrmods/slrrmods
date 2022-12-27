@@ -19,7 +19,10 @@ import { useFocusTrap, useDebouncedState } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import * as yup from "yup";
-import { checkEmailAvailable } from "../../endpoints/users";
+import {
+	checkEmailAvailable,
+	checkUsernameAvailable,
+} from "../../endpoints/users";
 import { validator } from "../../utils";
 import ValidatedPasswordInput from "../ValidatedPasswordInput";
 
@@ -60,6 +63,7 @@ const formSchema = yup.object().shape({
 
 export default function SignUpForm() {
 	const [email, setEmail] = useDebouncedState("", 500);
+	const [username, setUsername] = useDebouncedState("", 500);
 	const [error, setError] = useState("");
 
 	const router = useRouter();
@@ -70,10 +74,10 @@ export default function SignUpForm() {
 	const form = useForm({
 		initialValues: formInitialValues,
 		validate: yupResolver(formSchema),
-		validateInputOnBlur: true,
+		validateInputOnChange: true,
 	});
 
-	const canVerifyEmail = email.length > 0 && validator.validateEmail(email);
+	const canVerifyEmail = email.length >= 3 && validator.validateEmail(email);
 	const emailAvailableQuery = useQuery({
 		queryKey: ["checkEmailAvailable", email],
 		queryFn: () => checkEmailAvailable(email),
@@ -81,7 +85,30 @@ export default function SignUpForm() {
 		enabled: canVerifyEmail,
 	});
 
+	const canVerifyUsername = username.length >= 3;
+	const usernameAvailableQuery = useQuery({
+		queryKey: ["checkUsernameAvailable", username],
+		queryFn: () => checkUsernameAvailable(username),
+		retry: false,
+		enabled: canVerifyUsername,
+	});
+
 	const handleSubmit = (values) => {
+		if (emailAvailableQuery.isError) {
+			setError("Email already in use");
+			return;
+		}
+
+		if (usernameAvailableQuery.isError) {
+			setError("Username already in use");
+			return;
+		}
+
+		if (!values.acceptTerms) {
+			setError("You must accept the terms and rules");
+			return;
+		}
+
 		console.log(values);
 	};
 
@@ -105,11 +132,18 @@ export default function SignUpForm() {
 		setError("");
 	};
 
-	const getEmailFiledError = () => {
+	const getEmailError = () => {
 		if (canVerifyEmail && emailAvailableQuery.isError)
 			return "Email already in use";
 
 		return form.getInputProps("email").error;
+	};
+
+	const getUsernameError = () => {
+		if (canVerifyUsername && usernameAvailableQuery.isError)
+			return "Username already in use";
+
+		return form.getInputProps("username").error;
 	};
 
 	return (
@@ -117,7 +151,7 @@ export default function SignUpForm() {
 			<Stack pt="md" spacing="xs">
 				<TextInput
 					label="Email"
-					required
+					withAsterisk
 					data-autofocus
 					autoComplete="email"
 					{...form.getInputProps("email")}
@@ -125,7 +159,7 @@ export default function SignUpForm() {
 						setEmail(event.currentTarget.value);
 						form.getInputProps("email").onChange(event);
 					}}
-					error={getEmailFiledError()}
+					error={getEmailError()}
 					rightSection={
 						<>
 							{canVerifyEmail && emailAvailableQuery.isError && (
@@ -153,21 +187,50 @@ export default function SignUpForm() {
 
 				<TextInput
 					label="Username"
-					required
+					withAsterisk
+					data-autofocus
 					autoComplete="username"
 					{...form.getInputProps("username")}
+					onChange={(event) => {
+						setUsername(event.currentTarget.value);
+						form.getInputProps("username").onChange(event);
+					}}
+					error={getUsernameError()}
+					rightSection={
+						<>
+							{canVerifyUsername && usernameAvailableQuery.isError && (
+								<ThemeIcon variant="outline" radius="xl" color="red" size="sm">
+									<IconX />
+								</ThemeIcon>
+							)}
+							{canVerifyUsername && usernameAvailableQuery.isLoading && (
+								<Loader size="xs" />
+							)}
+							{canVerifyUsername && usernameAvailableQuery.isSuccess && (
+								<Tooltip label="Username available">
+									<ThemeIcon
+										variant="outline"
+										radius="xl"
+										color="teal"
+										size="sm">
+										<IconCheck />
+									</ThemeIcon>
+								</Tooltip>
+							)}
+						</>
+					}
 				/>
 
 				<ValidatedPasswordInput
 					label="Password"
-					required
+					withAsterisk
 					autoComplete="new-password"
 					{...form.getInputProps("password")}
 				/>
 
 				<PasswordInput
 					label="Confirm password"
-					required
+					withAsterisk
 					autoComplete="confirm-password"
 					{...form.getInputProps("confirmPassword")}
 				/>
@@ -198,7 +261,15 @@ export default function SignUpForm() {
 					</Alert>
 				)}
 
-				<Button type="submit">Sign Up</Button>
+				<Button
+					type="submit"
+					disabled={
+						!form.isValid() ||
+						!emailAvailableQuery.isSuccess ||
+						!usernameAvailableQuery.isSuccess
+					}>
+					Sign Up
+				</Button>
 
 				<Divider />
 

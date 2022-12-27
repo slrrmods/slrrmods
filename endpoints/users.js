@@ -7,3 +7,9 @@ export function checkEmailAvailable(email) {
 
 	return get("/users/checkEmailAvailable", { params });
 }
+
+export function checkUsernameAvailable(username) {
+	const params = { username };
+
+	return get("/users/checkUsernameAvailable", { params });
+}

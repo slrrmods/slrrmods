@@ -28,7 +28,10 @@ export default function ValidatedPasswordInput(props) {
 					onBlurCapture={() => setPopoverOpened(false)}>
 					<PasswordInput
 						{...props}
-						onChange={(event) => setValue(event.currentTarget.value)}
+						onChange={(event) => {
+							setValue(event.currentTarget.value);
+							props.onChange(event);
+						}}
 					/>
 				</div>
 			</Popover.Target>

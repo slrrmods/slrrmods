@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-	Footer as MantineFooter,
 	Container,
 	Group,
 	ActionIcon,
@@ -13,7 +12,7 @@ import { IconBrandGithub } from "@tabler/icons";
 
 export default function Footer() {
 	return (
-		<MantineFooter py={8}>
+		<footer py={8}>
 			<Container size="lg">
 				<Stack>
 					<Group position="apart">
@@ -33,6 +32,6 @@ export default function Footer() {
 					</Text>
 				</Stack>
 			</Container>
-		</MantineFooter>
+		</footer>
 	);
 }
