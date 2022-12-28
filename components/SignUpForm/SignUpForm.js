@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -34,48 +34,16 @@ const formInitialValues = {
 	acceptTerms: false,
 };
 
-const formSchema = yup.object().shape({
-	email: yup.string().required().email(),
-	username: yup
-		.string()
-		.required()
-		.min(3, "Username must have at least 3 characters"),
-	password: yup
-		.string()
-		.required()
-		.min(8, "Password must have at least 8 characters")
-		.matches("[0-9]", "Password must contain at least one number")
-		.matches("[a-z]", "Password must contain at least one lowercase letter")
-		.matches("[A-Z]", "Password must contain at least one uppercase letter")
-		.matches(
-			"[ !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]",
-			"Password must contain at least one special character"
-		),
-	confirmPassword: yup
-		.string()
-		.required()
-		.oneOf([yup.ref("password")], "Passwords must match"),
-	acceptTerms: yup
-		.boolean()
-		.required()
-		.oneOf([true], "You must accept the terms and rules"),
-});
-
 export default function SignUpForm() {
 	const [email, setEmail] = useDebouncedState("", 500);
 	const [username, setUsername] = useDebouncedState("", 500);
+	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 
 	const router = useRouter();
 	const isInModal = !!router.query.signUp;
 
 	const focusTrapRef = useFocusTrap(isInModal);
-
-	const form = useForm({
-		initialValues: formInitialValues,
-		validate: yupResolver(formSchema),
-		validateInputOnChange: true,
-	});
 
 	const canVerifyEmail = email.length >= 3 && validator.validateEmail(email);
 	const emailAvailableQuery = useQuery({
@@ -93,23 +61,76 @@ export default function SignUpForm() {
 		enabled: canVerifyUsername,
 	});
 
-	const handleSubmit = (values) => {
-		if (emailAvailableQuery.isError) {
-			setError("Email already in use");
-			return;
-		}
+	const formSchema = yup.object().shape({
+		email: yup
+			.string()
+			.required("Email is required")
+			.email("Email is not valid")
+			.test("emailAvailable", "Email not available", (value) => {
+				return emailAvailableQuery.status !== "error";
+			}),
+		username: yup
+			.string()
+			.required("Username is required")
+			.min(3, "Username must have at least 3 characters")
+			.test("usernameAvailable", "Username not available", (value) => {
+				return usernameAvailableQuery.status !== "error";
+			}),
+		password: yup
+			.string()
+			.required("Password is required")
+			.min(8, "Password must have at least 8 characters")
+			.matches("[0-9]", "Password must contain at least one number")
+			.matches("[a-z]", "Password must contain at least one lowercase letter")
+			.matches("[A-Z]", "Password must contain at least one uppercase letter")
+			.matches(
+				"[ !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]",
+				"Password must contain at least one special character"
+			),
+		confirmPassword: yup
+			.string()
+			.required("Confirm passworrd is requied")
+			.oneOf([yup.ref("password")], "Passwords must match"),
+		acceptTerms: yup
+			.boolean()
+			.required()
+			.oneOf([true], "You must accept the terms and rules"),
+	});
 
-		if (usernameAvailableQuery.isError) {
-			setError("Username already in use");
-			return;
-		}
+	const form = useForm({
+		initialValues: formInitialValues,
+		validate: yupResolver(formSchema),
+		validateInputOnBlur: true,
+	});
 
-		if (!values.acceptTerms) {
-			setError("You must accept the terms and rules");
-			return;
-		}
+	const emailError = form.errors.email;
+	if (emailAvailableQuery.status === "error") {
+		if (!emailError) form.setFieldError("email", "Email not available");
+	} else {
+		if (emailError === "Email not available") form.clearFieldError("email");
+	}
 
-		console.log(values);
+	const usernameError = form.errors.username;
+	if (usernameAvailableQuery.status === "error") {
+		if (!usernameError)
+			form.setFieldError("username", "Username not available");
+	} else {
+		if (usernameError === "Username not available")
+			form.clearFieldError("username");
+	}
+
+	const handleSubmit = async (values) => {
+		try {
+			setLoading(true);
+
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+
+			console.log(values);
+		} catch (error) {
+			setError(error.message);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const navigateToSignIn = () => {
@@ -132,20 +153,6 @@ export default function SignUpForm() {
 		setError("");
 	};
 
-	const getEmailError = () => {
-		if (canVerifyEmail && emailAvailableQuery.isError)
-			return "Email already in use";
-
-		return form.getInputProps("email").error;
-	};
-
-	const getUsernameError = () => {
-		if (canVerifyUsername && usernameAvailableQuery.isError)
-			return "Username already in use";
-
-		return form.getInputProps("username").error;
-	};
-
 	return (
 		<form ref={focusTrapRef} onSubmit={form.onSubmit(handleSubmit)}>
 			<Stack pt="md" spacing="xs">
@@ -159,13 +166,18 @@ export default function SignUpForm() {
 						setEmail(event.currentTarget.value);
 						form.getInputProps("email").onChange(event);
 					}}
-					error={getEmailError()}
 					rightSection={
 						<>
 							{canVerifyEmail && emailAvailableQuery.isError && (
-								<ThemeIcon variant="outline" radius="xl" color="red" size="sm">
-									<IconX />
-								</ThemeIcon>
+								<Tooltip label="Email not available">
+									<ThemeIcon
+										variant="outline"
+										radius="xl"
+										color="red"
+										size="sm">
+										<IconX />
+									</ThemeIcon>
+								</Tooltip>
 							)}
 							{canVerifyEmail && emailAvailableQuery.isLoading && (
 								<Loader size="xs" />
@@ -195,13 +207,18 @@ export default function SignUpForm() {
 						setUsername(event.currentTarget.value);
 						form.getInputProps("username").onChange(event);
 					}}
-					error={getUsernameError()}
 					rightSection={
 						<>
 							{canVerifyUsername && usernameAvailableQuery.isError && (
-								<ThemeIcon variant="outline" radius="xl" color="red" size="sm">
-									<IconX />
-								</ThemeIcon>
+								<Tooltip label="Username not available">
+									<ThemeIcon
+										variant="outline"
+										radius="xl"
+										color="red"
+										size="sm">
+										<IconX />
+									</ThemeIcon>
+								</Tooltip>
 							)}
 							{canVerifyUsername && usernameAvailableQuery.isLoading && (
 								<Loader size="xs" />
@@ -246,7 +263,7 @@ export default function SignUpForm() {
 							</Link>
 						</>
 					}
-					{...form.getInputProps("acceptTerms", { type: "checkbox" })}
+					{...form.getInputProps("acceptTerms")}
 				/>
 
 				{error && (
@@ -261,13 +278,7 @@ export default function SignUpForm() {
 					</Alert>
 				)}
 
-				<Button
-					type="submit"
-					disabled={
-						!form.isValid() ||
-						!emailAvailableQuery.isSuccess ||
-						!usernameAvailableQuery.isSuccess
-					}>
+				<Button type="submit" loading={loading}>
 					Sign Up
 				</Button>
 
