@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
-import { useForm } from "@mantine/form";
+import { useForm, yupResolver } from "@mantine/form";
 import {
 	Alert,
 	Anchor,
@@ -14,6 +14,12 @@ import {
 	TextInput,
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
+import * as yup from "yup";
+
+const formSchema = yup.object().shape({
+	user: yup.string().required("Email or username is required"),
+	password: yup.string().required("Password is required"),
+});
 
 export default function SignInForm() {
 	const router = useRouter();
@@ -31,6 +37,8 @@ export default function SignInForm() {
 			user: "",
 			password: "",
 		},
+		validate: yupResolver(formSchema),
+		validateInputOnBlur: true,
 	});
 
 	const isInModal = !!router.query.signIn;
@@ -63,12 +71,11 @@ export default function SignInForm() {
 		setError("");
 	}
 
-	function signIn({ user, password }) {
+	function handleSubmit({ user, password }) {
 		const values = { user, password, remember };
 
-		setLoading(true);
-
 		try {
+			setLoading(true);
 			console.log(values);
 		} catch (e) {
 			setError(e.message);
@@ -78,11 +85,11 @@ export default function SignInForm() {
 	}
 
 	return (
-		<form onSubmit={form.onSubmit(signIn)} ref={focusTrapRef}>
-			<Stack pt="md">
+		<form ref={focusTrapRef} onSubmit={form.onSubmit(handleSubmit)}>
+			<Stack pt="md" spacing="xs">
 				<TextInput
 					label="Email or username"
-					required
+					withAsterisk
 					data-autofocus
 					autoComplete="email"
 					{...form.getInputProps("user")}
@@ -90,7 +97,7 @@ export default function SignInForm() {
 
 				<PasswordInput
 					label="Password"
-					required
+					withAsterisk
 					autoComplete="current-password"
 					{...form.getInputProps("password")}
 				/>

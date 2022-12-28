@@ -4,7 +4,6 @@ import * as themeHelpers from "./theme-helpers";
 import * as urlBuilder from "./url-builder";
 import * as uuid from "./uuid";
 import * as errorHelpers from "./error-helpers";
-import * as validator from "./validators";
 
 export {
 	CONSTANTS,
@@ -13,5 +12,4 @@ export {
 	urlBuilder,
 	uuid,
 	errorHelpers,
-	validator,
 };

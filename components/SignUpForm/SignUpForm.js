@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +23,6 @@ import {
 	checkEmailAvailable,
 	checkUsernameAvailable,
 } from "../../endpoints/users";
-import { validator } from "../../utils";
 import ValidatedPasswordInput from "../ValidatedPasswordInput";
 
 const formInitialValues = {
@@ -45,7 +44,24 @@ export default function SignUpForm() {
 
 	const focusTrapRef = useFocusTrap(isInModal);
 
-	const canVerifyEmail = email.length >= 3 && validator.validateEmail(email);
+	const emailValidation = yup
+		.string()
+		.required("Email is required")
+		.min(3, "Email must have at least 3 characters")
+		.max(64, "Email must have at most 64 characters")
+		.email("Email is not valid");
+
+	const usernameValidation = yup
+		.string()
+		.required("Username is required")
+		.min(3, "Username must have at least 3 characters")
+		.max(32, "Username must have at most 32 characters")
+		.matches(
+			"^[a-zA-Z0-9_]+$",
+			"Username must contain only letters, numbers and underscores"
+		);
+
+	const canVerifyEmail = emailValidation.isValidSync(email);
 	const emailAvailableQuery = useQuery({
 		queryKey: ["checkEmailAvailable", email],
 		queryFn: () => checkEmailAvailable(email),
@@ -54,7 +70,7 @@ export default function SignUpForm() {
 		refetchOnWindowFocus: false,
 	});
 
-	const canVerifyUsername = username.length >= 3;
+	const canVerifyUsername = usernameValidation.isValidSync(username);
 	const usernameAvailableQuery = useQuery({
 		queryKey: ["checkUsernameAvailable", username],
 		queryFn: () => checkUsernameAvailable(username),
@@ -64,20 +80,16 @@ export default function SignUpForm() {
 	});
 
 	const formSchema = yup.object().shape({
-		email: yup
-			.string()
-			.required("Email is required")
-			.email("Email is not valid")
-			.test("emailAvailable", "Email not available", (value) => {
-				return emailAvailableQuery.status !== "error";
-			}),
-		username: yup
-			.string()
-			.required("Username is required")
-			.min(3, "Username must have at least 3 characters")
-			.test("usernameAvailable", "Username not available", (value) => {
+		email: emailValidation.test("emailAvailable", "Email not available", () => {
+			return emailAvailableQuery.status !== "error";
+		}),
+		username: usernameValidation.test(
+			"usernameAvailable",
+			"Username not available",
+			() => {
 				return usernameAvailableQuery.status !== "error";
-			}),
+			}
+		),
 		password: yup
 			.string()
 			.required("Password is required")
@@ -121,20 +133,6 @@ export default function SignUpForm() {
 			form.clearFieldError("username");
 	}
 
-	const handleSubmit = async (values) => {
-		try {
-			setLoading(true);
-
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-
-			console.log(values);
-		} catch (error) {
-			setError(error.message);
-		} finally {
-			setLoading(false);
-		}
-	};
-
 	const navigateToSignIn = () => {
 		if (!isInModal) {
 			router.push("/user/signIn");
@@ -153,6 +151,20 @@ export default function SignUpForm() {
 
 	const clearError = () => {
 		setError("");
+	};
+
+	const handleSubmit = async (values) => {
+		try {
+			setLoading(true);
+
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+
+			console.log(values);
+		} catch (error) {
+			setError(error.message);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
