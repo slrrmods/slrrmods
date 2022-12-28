@@ -1,4 +1,4 @@
-import { Group, Button } from "@mantine/core";
+import { Button } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -20,7 +20,7 @@ export default function UserPanel() {
 								signIn: true,
 							},
 						}}
-						as="/user/signin"
+						as="/user/signIn"
 						passHref
 						shallow>
 						<Button component="a" variant="filled">
@@ -35,7 +35,7 @@ export default function UserPanel() {
 								signUp: true,
 							},
 						}}
-						as="/user/signup"
+						as="/user/signUp"
 						passHref
 						shallow>
 						<Button component="a" variant="filled">

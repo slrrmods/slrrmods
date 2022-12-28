@@ -45,7 +45,7 @@ export default function SignInForm() {
 
 	function navigateToSignUp() {
 		if (!isInModal) {
-			router.push("/user/signup");
+			router.push("/user/signUp");
 			return;
 		}
 
@@ -54,7 +54,7 @@ export default function SignInForm() {
 				pathname: router.pathname,
 				query: { signUp: true },
 			},
-			"/user/signup",
+			"/user/signUp",
 			{ shallow: true }
 		);
 	}

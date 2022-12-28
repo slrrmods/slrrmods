@@ -1,7 +1,7 @@
 import { Card, Center, Title } from "@mantine/core";
 import SignUpForm from "../../components/SignUpForm";
 
-export default function signup() {
+export default function SignUp() {
 	return (
 		<Center>
 			<Card withBorder shadow="md" style={{ width: "30%" }}>

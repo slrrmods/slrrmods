@@ -25,7 +25,7 @@ export default function SignForm() {
 				pathname: router.pathname,
 				query: { [value]: true },
 			},
-			`/user/${value.toLowerCase()}`,
+			`/user/${value}`,
 			{ shallow: true }
 		);
 	};

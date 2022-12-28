@@ -51,6 +51,7 @@ export default function SignUpForm() {
 		queryFn: () => checkEmailAvailable(email),
 		retry: false,
 		enabled: canVerifyEmail,
+		refetchOnWindowFocus: false,
 	});
 
 	const canVerifyUsername = username.length >= 3;
@@ -59,6 +60,7 @@ export default function SignUpForm() {
 		queryFn: () => checkUsernameAvailable(username),
 		retry: false,
 		enabled: canVerifyUsername,
+		refetchOnWindowFocus: false,
 	});
 
 	const formSchema = yup.object().shape({
@@ -135,7 +137,7 @@ export default function SignUpForm() {
 
 	const navigateToSignIn = () => {
 		if (!isInModal) {
-			router.push("/user/signin");
+			router.push("/user/signIn");
 			return;
 		}
 
@@ -144,7 +146,7 @@ export default function SignUpForm() {
 				pathname: router.pathname,
 				query: { signIn: true },
 			},
-			"/user/signin",
+			"/user/signIn",
 			{ shallow: true }
 		);
 	};
