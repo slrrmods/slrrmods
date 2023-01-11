@@ -9,6 +9,7 @@ import {
 	Checkbox,
 	Divider,
 	Group,
+	LoadingOverlay,
 	PasswordInput,
 	Stack,
 	TextInput,
@@ -38,7 +39,6 @@ export default function SignInForm() {
 			password: "",
 		},
 		validate: yupResolver(formSchema),
-		validateInputOnBlur: true,
 	});
 
 	const isInModal = !!router.query.signIn;
@@ -71,11 +71,13 @@ export default function SignInForm() {
 		setError("");
 	}
 
-	function handleSubmit({ user, password }) {
+	async function handleSubmit({ user, password }) {
 		const values = { user, password, remember };
 
+		setLoading(true);
 		try {
-			setLoading(true);
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+
 			console.log(values);
 		} catch (e) {
 			setError(e.message);
@@ -85,66 +87,80 @@ export default function SignInForm() {
 	}
 
 	return (
-		<form ref={focusTrapRef} onSubmit={form.onSubmit(handleSubmit)}>
-			<Stack pt="md" spacing="xs">
-				<TextInput
-					label="Email or username"
-					withAsterisk
-					data-autofocus
-					autoComplete="email"
-					{...form.getInputProps("user")}
+		<Stack pt="md" spacing="xs" ref={focusTrapRef}>
+			<form
+				onSubmit={form.onSubmit(handleSubmit)}
+				style={{ position: "relative" }}>
+				<LoadingOverlay
+					visible={loading}
+					overlayBlur={2}
+					transitionDuration={200}
+					zIndex={5}
 				/>
 
-				<PasswordInput
-					label="Password"
-					withAsterisk
-					autoComplete="current-password"
-					{...form.getInputProps("password")}
-				/>
-
-				{error && (
-					<Alert
-						title="Error"
-						color="red"
-						variant="filled"
-						withCloseButton
-						onClose={clearError}
-						icon={<IconAlertCircle />}>
-						{error}
-					</Alert>
-				)}
-
-				<Group position="apart">
-					<Checkbox
-						checked={remember}
-						onChange={toggleRemember}
-						label="Remember me"
+				<Stack spacing="xs">
+					<TextInput
+						label="Email or username"
+						disabled={loading}
+						autoComplete="email"
+						withAsterisk
+						data-autofocus
+						{...form.getInputProps("user")}
 					/>
 
-					<Anchor
-						component="button"
-						type="button"
-						size="sm"
-						onClick={navigateToForgotPassword}>
-						{"Forgot password?"}
-					</Anchor>
-				</Group>
+					<PasswordInput
+						disabled={loading}
+						label="Password"
+						withAsterisk
+						autoComplete="current-password"
+						{...form.getInputProps("password")}
+					/>
 
-				<Button type="submit" loading={loading}>
-					Sign In
-				</Button>
+					{error && (
+						<Alert
+							title="Error"
+							color="red"
+							variant="filled"
+							withCloseButton
+							onClose={clearError}
+							icon={<IconAlertCircle />}>
+							{error}
+						</Alert>
+					)}
 
-				<Divider />
+					<Group position="apart">
+						<Checkbox
+							disabled={loading}
+							checked={remember}
+							onChange={toggleRemember}
+							label="Remember me"
+						/>
 
-				<Anchor
-					component="button"
-					type="button"
-					color="dimmed"
-					size="xs"
-					onClick={navigateToSignUp}>
-					{"Don't have an account? Sign up"}
-				</Anchor>
-			</Stack>
-		</form>
+						<Anchor
+							component="button"
+							type="button"
+							size="sm"
+							onClick={navigateToForgotPassword}>
+							{"Forgot password?"}
+						</Anchor>
+					</Group>
+
+					<Button type="submit" loading={loading}>
+						Sign In
+					</Button>
+				</Stack>
+			</form>
+
+			<Divider />
+
+			<Anchor
+				component="button"
+				type="button"
+				color="dimmed"
+				size="xs"
+				onClick={navigateToSignUp}>
+				{"Don't have an account? Sign up"}
+			</Anchor>
+		</Stack>
 	);
 }

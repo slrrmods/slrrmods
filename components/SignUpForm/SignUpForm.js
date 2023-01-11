@@ -9,13 +9,14 @@ import {
 	Checkbox,
 	Divider,
 	Loader,
+	LoadingOverlay,
 	PasswordInput,
 	Stack,
 	TextInput,
 	ThemeIcon,
 	Tooltip,
 } from "@mantine/core";
-import { useFocusTrap, useDebouncedState } from "@mantine/hooks";
+import { useFocusTrap, useDebouncedValue } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import * as yup from "yup";
@@ -33,9 +34,32 @@ const formInitialValues = {
 	acceptTerms: false,
 };
 
+const emailValidation = yup
+	.string()
+	.required("Email is required")
+	.min(3, "Email must have at least 3 characters")
+	.max(64, "Email must have at most 64 characters")
+	.email("Email is not valid");
+
+const usernameValidation = yup
+	.string()
+	.required("Username is required")
+	.min(3, "Username must have at least 3 characters")
+	.max(32, "Username must have at most 32 characters")
+	.matches(
+		"^[a-zA-Z0-9_]+$",
+		"Username must contain only letters, numbers and underscores"
+	);
+
 export default function SignUpForm() {
-	const [email, setEmail] = useDebouncedState("", 500);
-	const [username, setUsername] = useDebouncedState("", 500);
+	const [email, setEmail] = useState("");
+	const [debouncedEmail] = useDebouncedValue(email, 500);
+	const isDebouncingEmail = email !== debouncedEmail;
+
+	const [username, setUsername] = useState("");
+	const [debouncedUsername] = useDebouncedValue(username, 500);
+	const isDebouncingUsername = username !== debouncedUsername;
+
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 
@@ -44,36 +68,23 @@ export default function SignUpForm() {
 
 	const focusTrapRef = useFocusTrap(isInModal);
 
-	const emailValidation = yup
-		.string()
-		.required("Email is required")
-		.min(3, "Email must have at least 3 characters")
-		.max(64, "Email must have at most 64 characters")
-		.email("Email is not valid");
+	const canVerifyEmail =
+		!isDebouncingEmail && emailValidation.isValidSync(debouncedEmail);
 
-	const usernameValidation = yup
-		.string()
-		.required("Username is required")
-		.min(3, "Username must have at least 3 characters")
-		.max(32, "Username must have at most 32 characters")
-		.matches(
-			"^[a-zA-Z0-9_]+$",
-			"Username must contain only letters, numbers and underscores"
-		);
-
-	const canVerifyEmail = emailValidation.isValidSync(email);
 	const emailAvailableQuery = useQuery({
-		queryKey: ["checkEmailAvailable", email],
-		queryFn: () => checkEmailAvailable(email),
+		queryKey: ["checkEmailAvailable", debouncedEmail],
+		queryFn: () => checkEmailAvailable(debouncedEmail),
 		retry: false,
 		enabled: canVerifyEmail,
 		refetchOnWindowFocus: false,
 	});
 
-	const canVerifyUsername = usernameValidation.isValidSync(username);
+	const canVerifyUsername =
+		!isDebouncingUsername && usernameValidation.isValidSync(debouncedUsername);
+
 	const usernameAvailableQuery = useQuery({
-		queryKey: ["checkUsernameAvailable", username],
-		queryFn: () => checkUsernameAvailable(username),
+		queryKey: ["checkUsernameAvailable", debouncedUsername],
+		queryFn: () => checkUsernameAvailable(debouncedUsername),
 		retry: false,
 		enabled: canVerifyUsername,
 		refetchOnWindowFocus: false,
@@ -114,7 +125,6 @@ export default function SignUpForm() {
 	const form = useForm({
 		initialValues: formInitialValues,
 		validate: yupResolver(formSchema),
-		validateInputOnBlur: true,
 	});
 
 	const emailError = form.errors.email;
@@ -133,7 +143,7 @@ export default function SignUpForm() {
 			form.clearFieldError("username");
 	}
 
-	const navigateToSignIn = () => {
+	function navigateToSignIn() {
 		if (!isInModal) {
 			router.push("/user/signIn");
 			return;
@@ -147,13 +157,18 @@ export default function SignUpForm() {
 			"/user/signIn",
 			{ shallow: true }
 		);
-	};
+	}
 
-	const clearError = () => {
+	function clearError() {
 		setError("");
-	};
+	}
 
-	const handleSubmit = async (values) => {
+	async function handleSubmit(values) {
+		if (isDebouncingEmail || isDebouncingUsername) return;
+
+		if (emailAvailableQuery.isLoading || usernameAvailableQuery.isLoading)
+			return;
+
 		try {
 			setLoading(true);
 
@@ -165,148 +180,173 @@ export default function SignUpForm() {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}
 
 	return (
-		<form ref={focusTrapRef} onSubmit={form.onSubmit(handleSubmit)}>
-			<Stack pt="md" spacing="xs">
-				<TextInput
-					label="Email"
-					withAsterisk
-					data-autofocus
-					autoComplete="email"
-					{...form.getInputProps("email")}
-					onChange={(event) => {
-						setEmail(event.currentTarget.value);
-						form.getInputProps("email").onChange(event);
-					}}
-					rightSection={
-						<>
-							{canVerifyEmail && emailAvailableQuery.isError && (
-								<Tooltip label="Email not available">
-									<ThemeIcon
-										variant="outline"
-										radius="xl"
-										color="red"
-										size="sm">
-										<IconX />
-									</ThemeIcon>
-								</Tooltip>
-							)}
-							{canVerifyEmail && emailAvailableQuery.isLoading && (
-								<Loader size="xs" />
-							)}
-							{canVerifyEmail && emailAvailableQuery.isSuccess && (
-								<Tooltip label="Email available">
-									<ThemeIcon
-										variant="outline"
-										radius="xl"
-										color="teal"
-										size="sm">
-										<IconCheck />
-									</ThemeIcon>
-								</Tooltip>
-							)}
-						</>
-					}
+		<Stack pt="md" spacing="xs" ref={focusTrapRef}>
+			<form
+				onSubmit={form.onSubmit(handleSubmit)}
+				style={{ position: "relative" }}>
+				<LoadingOverlay
+					visible={loading}
+					overlayBlur={2}
+					transitionDuration={200}
+					zIndex={5}
 				/>
 
-				<TextInput
-					label="Username"
-					withAsterisk
-					data-autofocus
-					autoComplete="username"
-					{...form.getInputProps("username")}
-					onChange={(event) => {
-						setUsername(event.currentTarget.value);
-						form.getInputProps("username").onChange(event);
-					}}
-					rightSection={
-						<>
-							{canVerifyUsername && usernameAvailableQuery.isError && (
-								<Tooltip label="Username not available">
-									<ThemeIcon
-										variant="outline"
-										radius="xl"
-										color="red"
-										size="sm">
-										<IconX />
-									</ThemeIcon>
-								</Tooltip>
-							)}
-							{canVerifyUsername && usernameAvailableQuery.isLoading && (
-								<Loader size="xs" />
-							)}
-							{canVerifyUsername && usernameAvailableQuery.isSuccess && (
-								<Tooltip label="Username available">
-									<ThemeIcon
-										variant="outline"
-										radius="xl"
-										color="teal"
-										size="sm">
-										<IconCheck />
-									</ThemeIcon>
-								</Tooltip>
-							)}
-						</>
-					}
-				/>
+				<Stack spacing="xs">
+					<TextInput
+						label="Email"
+						value={email}
+						disabled={loading}
+						autoComplete="email"
+						withAsterisk
+						data-autofocus
+						{...form.getInputProps("email")}
+						onChange={(event) => {
+							setEmail(event.currentTarget.value);
+							form.getInputProps("email").onChange(event);
+						}}
+						rightSection={
+							!loading && (
+								<>
+									{canVerifyEmail && emailAvailableQuery.isError && (
+										<Tooltip label="Email not available">
+											<ThemeIcon
+												variant="outline"
+												radius="xl"
+												color="red"
+												size="sm">
+												<IconX />
+											</ThemeIcon>
+										</Tooltip>
+									)}
 
-				<ValidatedPasswordInput
-					label="Password"
-					withAsterisk
-					autoComplete="new-password"
-					{...form.getInputProps("password")}
-				/>
+									{canVerifyEmail && emailAvailableQuery.isLoading && (
+										<Loader size="xs" />
+									)}
 
-				<PasswordInput
-					label="Confirm password"
-					withAsterisk
-					autoComplete="confirm-password"
-					{...form.getInputProps("confirmPassword")}
-				/>
+									{canVerifyEmail && emailAvailableQuery.isSuccess && (
+										<Tooltip label="Email available">
+											<ThemeIcon
+												variant="outline"
+												radius="xl"
+												color="teal"
+												size="sm">
+												<IconCheck />
+											</ThemeIcon>
+										</Tooltip>
+									)}
+								</>
+							)
+						}
+					/>
 
-				<Checkbox
-					label={
-						<>
-							{"I accept the "}
-							<Link href="/rules" passHref>
-								<Anchor component="a" target="_blank">
-									terms and rules
-								</Anchor>
-							</Link>
-						</>
-					}
-					{...form.getInputProps("acceptTerms")}
-				/>
+					<TextInput
+						label="Username"
+						value={username}
+						disabled={loading}
+						autoComplete="username"
+						withAsterisk
+						{...form.getInputProps("username")}
+						onChange={(event) => {
+							setUsername(event.currentTarget.value);
+							form.getInputProps("username").onChange(event);
+						}}
+						rightSection={
+							!loading && (
+								<>
+									{canVerifyUsername && usernameAvailableQuery.isError && (
+										<Tooltip label="Username not available">
+											<ThemeIcon
+												variant="outline"
+												radius="xl"
+												color="red"
+												size="sm">
+												<IconX />
+											</ThemeIcon>
+										</Tooltip>
+									)}
 
-				{error && (
-					<Alert
-						title="Error"
-						color="red"
-						variant="filled"
-						withCloseButton
-						onClose={clearError}
-						icon={<IconAlertCircle />}>
-						{error}
-					</Alert>
-				)}
+									{canVerifyUsername && usernameAvailableQuery.isLoading && (
+										<Loader size="xs" />
+									)}
 
-				<Button type="submit" loading={loading}>
-					Sign Up
-				</Button>
+									{canVerifyUsername && usernameAvailableQuery.isSuccess && (
+										<Tooltip label="Username available">
+											<ThemeIcon
+												variant="outline"
+												radius="xl"
+												color="teal"
+												size="sm">
+												<IconCheck />
+											</ThemeIcon>
+										</Tooltip>
+									)}
+								</>
+							)
+						}
+					/>
 
-				<Divider />
+					<ValidatedPasswordInput
+						label="Password"
+						disabled={loading}
+						autoComplete="new-password"
+						withAsterisk
+						{...form.getInputProps("password")}
+					/>
 
-				<Anchor
-					component="button"
-					type="button"
-					color="dimmed"
-					size="xs"
-					onClick={navigateToSignIn}>
-					{"Already have an account? Sign in"}
-				</Anchor>
-			</Stack>
-		</form>
+					<PasswordInput
+						label="Confirm password"
+						disabled={loading}
+						autoComplete="confirm-password"
+						withAsterisk
+						{...form.getInputProps("confirmPassword")}
+					/>
+
+					<Checkbox
+						disabled={loading}
+						label={
+							<>
+								{"I accept the "}
+								<Link href="/rules" passHref>
+									<Anchor component="a" target="_blank">
+										terms and rules
+									</Anchor>
+								</Link>
+							</>
+						}
+						{...form.getInputProps("acceptTerms")}
+					/>
+
+					{error && (
+						<Alert
+							title="Error"
+							color="red"
+							variant="filled"
+							withCloseButton
+							onClose={clearError}
+							icon={<IconAlertCircle />}>
+							{error}
+						</Alert>
+					)}
+
+					<Button type="submit" loading={loading}>
+						Sign Up
+					</Button>
+				</Stack>
+			</form>
+
+			<Divider />
+
+			<Anchor
+				component="button"
+				type="button"
+				color="dimmed"
+				size="xs"
+				onClick={navigateToSignIn}>
+				{"Already have an account? Sign in"}
+			</Anchor>
+		</Stack>
 	);
 }

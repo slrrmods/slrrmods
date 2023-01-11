@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { requestHandler } from "../../../services";
+import { requestHandler, supabaseClient } from "../../../services";
 
 const configurarion = {
 	GET: {
@@ -15,10 +15,14 @@ export default function handler(req, res) {
 	requestHandler.handleRequest(req, res, configurarion);
 }
 
-function onGet(req, res) {
+async function onGet(req, res) {
 	const email = req.query.email;
 
-	if (email === "a@a.com")
+	const client = supabaseClient.createClient();
+
+	const { data } = await client.from("emails").select().eq("email", email);
+
+	if (data.length > 0)
 		return res.status(200).json({ error: "Email is already in use" });
 
 	return res.status(200).json({ message: "Email is available" });

@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { requestHandler } from "../../../services";
+import { requestHandler, supabaseClient } from "../../../services";
 
 const configurarion = {
 	GET: {
@@ -15,10 +15,17 @@ export default function handler(req, res) {
 	requestHandler.handleRequest(req, res, configurarion);
 }
 
-function onGet(req, res) {
+async function onGet(req, res) {
 	const username = req.query.username;
 
-	if (username === "adnan54")
+	const client = supabaseClient.createClient();
+
+	const { data } = await client
+		.from("usernames")
+		.select("*")
+		.eq("username", username);
+
+	if (data.length > 0)
 		return res.status(200).json({ error: "Username is already in use" });
 
 	return res.status(200).json({ message: "Username is available" });
