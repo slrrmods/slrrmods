@@ -47,7 +47,7 @@ export default function NotFound() {
 				address, or the page has been moved to another URL.
 			</Text>
 
-			<Link href="/" passHref>
+			<Link href="/" passHref legacyBehavior>
 				<Button component="a" variant="subtle" size="md">
 					Take me back to home page
 				</Button>

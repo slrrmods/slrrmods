@@ -18,7 +18,10 @@ export default function Footer() {
 					<Group position="apart">
 						<Logo />
 
-						<Link href="https://github.com/adnan-54/slrrmods" passHref>
+						<Link
+							href="https://github.com/adnan-54/slrrmods"
+							passHref
+							legacyBehavior>
 							<ActionIcon component="a" size="lg">
 								<IconBrandGithub stroke={1.5} />
 							</ActionIcon>

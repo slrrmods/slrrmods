@@ -309,7 +309,7 @@ export default function SignUpForm() {
 						label={
 							<>
 								{"I accept the "}
-								<Link href="/rules" passHref>
+								<Link href="/rules" passHref legacyBehavior>
 									<Anchor component="a" target="_blank">
 										terms and rules
 									</Anchor>

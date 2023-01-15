@@ -22,7 +22,8 @@ export default function UserPanel() {
 						}}
 						as="/user/signIn"
 						passHref
-						shallow>
+						shallow
+						legacyBehavior>
 						<Button component="a" variant="filled">
 							Sign In
 						</Button>
@@ -37,7 +38,8 @@ export default function UserPanel() {
 						}}
 						as="/user/signUp"
 						passHref
-						shallow>
+						shallow
+						legacyBehavior>
 						<Button component="a" variant="filled">
 							Sign Up
 						</Button>
