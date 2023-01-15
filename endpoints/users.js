@@ -1,6 +1,6 @@
 import { methodsFactory } from "../services";
 
-const { get } = methodsFactory.createMethods();
+const { get, post } = methodsFactory.createMethods();
 
 export function checkEmailAvailable(email) {
 	const params = { email };
@@ -12,4 +12,10 @@ export function checkUsernameAvailable(username) {
 	const params = { username };
 
 	return get("/users/checkUsernameAvailable", { params });
+}
+
+export function signUp(email, username, password) {
+	const body = { email, username, password };
+
+	return post("/users/signUp", { body });
 }

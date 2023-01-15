@@ -20,7 +20,10 @@ async function onGet(req, res) {
 
 	const client = supabaseClient.createClient();
 
-	const { data } = await client.from("emails").select().eq("email", email);
+	const { data } = await client
+		.from("users")
+		.select("email")
+		.eq("email", email);
 
 	if (data.length > 0)
 		return res.status(200).json({ error: "Email is already in use" });

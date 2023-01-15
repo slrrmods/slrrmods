@@ -21,8 +21,8 @@ async function onGet(req, res) {
 	const client = supabaseClient.createClient();
 
 	const { data } = await client
-		.from("usernames")
-		.select("*")
+		.from("users")
+		.select("username")
 		.eq("username", username);
 
 	if (data.length > 0)

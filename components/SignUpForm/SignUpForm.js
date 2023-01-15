@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
 	Alert,
 	Anchor,
@@ -20,10 +20,7 @@ import { useFocusTrap, useDebouncedValue } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import * as yup from "yup";
-import {
-	checkEmailAvailable,
-	checkUsernameAvailable,
-} from "../../endpoints/users";
+import * as users from "../../endpoints/users";
 import ValidatedPasswordInput from "../ValidatedPasswordInput";
 
 const formInitialValues = {
@@ -60,9 +57,6 @@ export default function SignUpForm() {
 	const [debouncedUsername] = useDebouncedValue(username, 500);
 	const isDebouncingUsername = username !== debouncedUsername;
 
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState("");
-
 	const router = useRouter();
 	const isInModal = !!router.query.signUp;
 
@@ -70,10 +64,9 @@ export default function SignUpForm() {
 
 	const canVerifyEmail =
 		!isDebouncingEmail && emailValidation.isValidSync(debouncedEmail);
-
 	const emailAvailableQuery = useQuery({
 		queryKey: ["checkEmailAvailable", debouncedEmail],
-		queryFn: () => checkEmailAvailable(debouncedEmail),
+		queryFn: () => users.checkEmailAvailable(debouncedEmail),
 		retry: false,
 		enabled: canVerifyEmail,
 		refetchOnWindowFocus: false,
@@ -81,14 +74,25 @@ export default function SignUpForm() {
 
 	const canVerifyUsername =
 		!isDebouncingUsername && usernameValidation.isValidSync(debouncedUsername);
-
 	const usernameAvailableQuery = useQuery({
 		queryKey: ["checkUsernameAvailable", debouncedUsername],
-		queryFn: () => checkUsernameAvailable(debouncedUsername),
+		queryFn: () => users.checkUsernameAvailable(debouncedUsername),
 		retry: false,
 		enabled: canVerifyUsername,
 		refetchOnWindowFocus: false,
 	});
+
+	const signUpMutation = useMutation({
+		mutationFn: ({ email, username, password }) => {
+			return users.signUp(email, username, password);
+		},
+		onSuccess: (data) => {
+			console.log(data);
+		},
+	});
+
+	const loading = signUpMutation.isLoading;
+	const error = signUpMutation.error;
 
 	const formSchema = yup.object().shape({
 		email: emailValidation.test("emailAvailable", "Email not available", () => {
@@ -160,26 +164,16 @@ export default function SignUpForm() {
 	}
 
 	function clearError() {
-		setError("");
+		signUpMutation.reset();
 	}
 
-	async function handleSubmit(values) {
+	function handleSubmit(values) {
 		if (isDebouncingEmail || isDebouncingUsername) return;
 
 		if (emailAvailableQuery.isLoading || usernameAvailableQuery.isLoading)
 			return;
 
-		try {
-			setLoading(true);
-
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-
-			console.log(values);
-		} catch (error) {
-			setError(error.message);
-		} finally {
-			setLoading(false);
-		}
+		signUpMutation.mutate(values);
 	}
 
 	return (
@@ -319,6 +313,10 @@ export default function SignUpForm() {
 						{...form.getInputProps("acceptTerms")}
 					/>
 
+					<Button type="submit" loading={loading}>
+						Sign Up
+					</Button>
+
 					{error && (
 						<Alert
 							title="Error"
@@ -327,13 +325,9 @@ export default function SignUpForm() {
 							withCloseButton
 							onClose={clearError}
 							icon={<IconAlertCircle />}>
-							{error}
+							{error.message}
 						</Alert>
 					)}
-
-					<Button type="submit" loading={loading}>
-						Sign Up
-					</Button>
 				</Stack>
 			</form>
 

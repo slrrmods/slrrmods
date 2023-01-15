@@ -1,7 +1,8 @@
 --
 -- Create continents enum
 --
-CREATE TYPE public.continents AS ENUM (
+CREATE TYPE public.continents AS ENUM 
+(
     'Africa',
     'Antarctica',
     'Asia',
@@ -14,7 +15,8 @@ CREATE TYPE public.continents AS ENUM (
 --
 -- Create countries table
 --
-CREATE TABLE public.countries (
+CREATE TABLE public.countries 
+(
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name TEXT,
   iso2 TEXT NOT NULL,
