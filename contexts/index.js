@@ -1,3 +1,1 @@
-import { useThemeContext } from "./ThemeContext";
-
-export { useThemeContext };
+export { useThemeContext } from "./ThemeContext";

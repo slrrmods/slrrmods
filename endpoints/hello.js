@@ -1,9 +1,9 @@
-import { methodsFactory } from "../services";
+import { createMethods } from "../services/methods-factory";
 
-const { get } = methodsFactory.createMethods();
+const { get } = createMethods();
 
 export function sayHello(name) {
-	const params = { name };
+	const query = { name };
 
-	return get("/hello", { params });
+	return get("/hello", { query });
 }

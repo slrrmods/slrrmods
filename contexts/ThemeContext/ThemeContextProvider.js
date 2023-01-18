@@ -3,26 +3,25 @@ import { useHotkeys } from "@mantine/hooks";
 import { setCookie } from "cookies-next";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
-import { CONSTANTS, localStorage } from "../../utils";
+import { useThemeStorage } from "../../utils/local-storage";
+import { THEME_STORAGE_KEY } from "../../utils/constants";
 import { ThemeContext } from ".";
 
 export default function ThemeContextProvider({ children, preferredTheme }) {
-	const { useThemeStorage } = localStorage;
-
 	const [theme, setTheme] = useThemeStorage(preferredTheme);
 
 	useEffect(() => {
-		setCookie(CONSTANTS.THEME_STORAGE_KEY, theme, {
+		setCookie(THEME_STORAGE_KEY, theme, {
 			maxAge: 60 * 60 * 24 * 30,
 		});
 	}, [theme]);
 
-	const toggleTheme = (value) => {
-		const nextTheme = value || (theme === "dark" ? "light" : "dark");
+	function toggleTheme() {
+		const nextTheme = theme === "dark" ? "light" : "dark";
 		setTheme(nextTheme);
-	};
+	}
 
-	useHotkeys([["mod+J", () => toggleTheme()]]);
+	useHotkeys([["mod+J", toggleTheme]]);
 
 	const context = {
 		availableThemes: ["light", "dark"],

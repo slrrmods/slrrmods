@@ -1,31 +1,26 @@
 import * as yup from "yup";
-import { requestHandler, supabaseClient } from "../../../services";
+import { handleRequest } from "../../../services/request-handler";
+import { verifyEmailExists } from "../../../services/data-validations";
+import { emailValidation } from "../../../utils/validations";
 
 const configurarion = {
 	GET: {
 		role: "public",
 		query: yup.object().shape({
-			email: yup.string().required(),
+			email: emailValidation,
 		}),
 		handler: onGet,
 	},
 };
 
 export default function handler(req, res) {
-	requestHandler.handleRequest(req, res, configurarion);
+	handleRequest(req, res, configurarion);
 }
 
 async function onGet(req, res) {
 	const email = req.query.email;
 
-	const client = supabaseClient.createClient();
-
-	const { data } = await client
-		.from("users")
-		.select("email")
-		.eq("email", email);
-
-	if (data.length > 0)
+	if (await verifyEmailExists(email))
 		return res.status(200).json({ error: "Email is already in use" });
 
 	return res.status(200).json({ message: "Email is available" });

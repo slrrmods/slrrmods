@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Title, Text, Button, Container, createStyles } from "@mantine/core";
-import { themeHelpers } from "../utils";
+import * as themeHelpers from "../utils/theme-helpers";
 
 const useStyles = createStyles((theme) => ({
 	root: {

@@ -1,21 +1,27 @@
-import { methodsFactory } from "../services";
+import { createMethods } from "../services/methods-factory";
 
-const { get, post } = methodsFactory.createMethods();
+const { get, post } = createMethods();
 
 export function checkEmailAvailable(email) {
-	const params = { email };
+	const query = { email };
 
-	return get("/users/checkEmailAvailable", { params });
+	return get("/users/checkEmailAvailable", { query });
 }
 
 export function checkUsernameAvailable(username) {
-	const params = { username };
+	const query = { username };
 
-	return get("/users/checkUsernameAvailable", { params });
+	return get("/users/checkUsernameAvailable", { query });
 }
 
 export function signUp(email, username, password) {
-	const body = { email, username, password };
+	const data = { email, username, password };
 
-	return post("/users/signUp", { body });
+	return post("/users/signUp", { data });
+}
+
+export function resendEmailVerification(token) {
+	const query = { token };
+
+	return post("/users/resendEmailVerification", { query });
 }

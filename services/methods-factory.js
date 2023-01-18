@@ -1,5 +1,5 @@
-import { apiClient } from "./";
-import { urlBuilder } from "../utils";
+import { doApiRequest } from "./api-client";
+import { buildUrl } from "../utils/url-builder";
 
 export function createMethods() {
 	return {
@@ -15,10 +15,9 @@ function createMethod(method) {
 	return (endpoint, options) => {
 		if (!endpoint) throw new Error("Endpoint is required");
 
-		const { headers, params, body } = options;
+		const { headers, query, data } = options;
+		const url = buildUrl(endpoint, query);
 
-		const route = urlBuilder.buildUrl(endpoint, params);
-
-		return apiClient.doApiRequest(route, method, headers ?? {}, body);
+		return doApiRequest(url, method, headers, data);
 	};
 }

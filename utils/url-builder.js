@@ -1,10 +1,10 @@
-export function buildUrl(url, params) {
-	if (!params) return url;
+export function buildUrl(url, query) {
+	if (!query) return url;
 
 	const urlParams = new URLSearchParams();
 
-	Object.keys(params).forEach((key) => {
-		const value = params[key];
+	Object.keys(query).forEach((key) => {
+		const value = query[key];
 
 		if (value !== null && value !== undefined) urlParams.append(key, value);
 	});

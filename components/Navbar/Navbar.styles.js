@@ -1,5 +1,5 @@
 import { createStyles } from "@mantine/core";
-import { themeHelpers } from "../../utils";
+import * as themeHelpers from "../../utils/theme-helpers";
 
 export const useStyles = createStyles((theme) => {
 	const background = themeHelpers.getFilledBackground(theme);

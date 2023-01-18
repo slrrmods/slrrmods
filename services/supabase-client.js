@@ -1,8 +1,14 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
+let client = null;
+
 export function createClient() {
-	if (typeof window === "undefined") return createForServer();
-	return createForClient();
+	if (client !== null) return client;
+
+	if (typeof window === "undefined") client = createForServer();
+	else client = createForClient();
+
+	return client;
 }
 
 function createForClient() {

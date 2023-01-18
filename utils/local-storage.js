@@ -1,5 +1,5 @@
 import { useLocalStorage } from "@mantine/hooks";
-import { CONSTANTS } from ".";
+import { THEME_STORAGE_KEY, DEFAULT_THEME } from "./constants";
 
 export const tryGetItem = (key) => {
 	if (typeof window !== "undefined")
@@ -7,11 +7,10 @@ export const tryGetItem = (key) => {
 	return null;
 };
 
-export const getTheme = () =>
-	tryGetItem(CONSTANTS.THEME_STORAGE_KEY) || CONSTANTS.DEFAULT_THEME;
+export const getTheme = () => tryGetItem(THEME_STORAGE_KEY) || DEFAULT_THEME;
 
 export const useThemeStorage = (defaultValue) =>
 	useLocalStorage({
-		key: CONSTANTS.THEME_STORAGE_KEY,
-		defaultValue: defaultValue || CONSTANTS.THEME_STORAGE_KEY,
+		key: THEME_STORAGE_KEY,
+		defaultValue: defaultValue || THEME_STORAGE_KEY,
 	});

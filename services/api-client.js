@@ -1,21 +1,24 @@
 import axios, { AxiosError } from "axios";
-import { uuid } from "../utils";
+import { ENVIROMENT_URL } from "../utils/constants";
+import { newUuid } from "../utils/uuid";
 
 const api = axios.create({
-	baseURL: getBaseUrl(),
+	baseURL: `${ENVIROMENT_URL}/api`,
 	withCredentials: true,
 });
 
-export async function doApiRequest(route, method, headers, body) {
-	headers["request-id"] = uuid.getNew();
+export async function doApiRequest(url, method, headers, data) {
+	if (!headers) headers = {};
 
-	if (body) headers["content-type"] = "application/json";
+	headers["request-id"] = newUuid();
+
+	if (data) headers["content-type"] = "application/json";
 
 	const config = {
-		url: route,
+		url,
 		method,
 		headers,
-		data: body,
+		data,
 	};
 
 	try {
@@ -35,10 +38,4 @@ export async function doApiRequest(route, method, headers, body) {
 
 		throw new Error("Unknown error");
 	}
-}
-
-function getBaseUrl() {
-	const environment = process.env.NODE_ENV;
-	if (environment === "development") return "http://localhost:3000/api";
-	return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`;
 }

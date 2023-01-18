@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { requestHandler } from "../../services";
+import { handleRequest } from "../../services/request-handler";
 
 const configurarion = {
 	GET: {
@@ -14,7 +14,7 @@ const configurarion = {
 };
 
 export default function handler(req, res) {
-	requestHandler.handleRequest(req, res, configurarion);
+	handleRequest(req, res, configurarion);
 }
 
 function onGet(req, res) {

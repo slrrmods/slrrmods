@@ -22,6 +22,7 @@ export async function handleRequest(request, response, configuration) {
 	} catch (e) {
 		//todo: log error to supabase
 
+		console.log(e);
 		return response.status(500).json({ error: "Internal server error" });
 	}
 
