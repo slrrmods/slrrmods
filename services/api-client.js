@@ -76,7 +76,7 @@ const securityHeaders = [
 	},
 	{
 		key: "Referrer-Policy",
-		value: "no-referrer",
+		value: "origin",
 	},
 	{
 		key: "Strict-Transport-Security",
