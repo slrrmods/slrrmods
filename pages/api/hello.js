@@ -1,9 +1,9 @@
 import * as yup from "yup";
 import { handleRequest } from "../../services/request-handler";
 
-const configurarion = {
+const configurarions = {
 	GET: {
-		role: "public",
+		authorization: "public",
 		headers: {},
 		body: {},
 		query: yup.object().shape({
@@ -13,10 +13,10 @@ const configurarion = {
 	},
 };
 
-export default function handler(req, res) {
-	handleRequest(req, res, configurarion);
+export default async function handler(req, res) {
+	return await handleRequest(req, res, configurarions);
 }
 
-function onGet(req, res) {
-	return res.status(200).json({ message: `Hello ${req.query.name}` });
+function onGet({ response, query }) {
+	return response.status(200).json({ message: `Hello ${query.name}` });
 }

@@ -1,14 +1,24 @@
-export async function handleRequest(request, response, configuration) {
-	const methodConfiguration = configuration[request.method];
+import { logError, reportToEmail } from "./error-handling";
+
+export async function handleRequest(request, response, configurations) {
+	const method = request.method;
+	const configuration = configurations[method];
+
+	const context = {
+		request,
+		response,
+		method,
+		configuration,
+	};
 
 	try {
-		validateMethod(request, methodConfiguration);
+		validateMethod(request, configuration);
 
-		//todo: validate role
+		//todo: validate authorizaiton and include user in context
 
-		await validateHeaders(request, methodConfiguration);
-		await validateQuery(request, methodConfiguration);
-		await validateBody(request, methodConfiguration);
+		context.headers = await validateHeaders(request, configuration);
+		context.query = await validateQuery(request, configuration);
+		context.body = await validateBody(request, configuration);
 	} catch ({ status, message }) {
 		return response
 			.status(status ?? 400)
@@ -16,54 +26,103 @@ export async function handleRequest(request, response, configuration) {
 	}
 
 	try {
-		const { handler } = methodConfiguration;
-
-		return await handler(request, response);
-	} catch (e) {
-		//todo: log error to supabase
-
-		console.log(e);
+		const { handler } = configuration;
+		return await handler(context);
+	} catch (error) {
+		await handleError(error, request, response);
 		return response.status(500).json({ error: "Internal server error" });
 	}
+}
 
-	return response.status(418).send();
+async function handleError(error, request, response) {
+	try {
+		const errorInfos = {
+			message: error.message,
+			stack: error.stack,
+			toString: error.toString(),
+		};
+
+		const requestInfos = {
+			httpVersion: request.httpVersion,
+			complete: request.complete,
+			rawHeaders: request.rawHeaders,
+			rawTrailers: request.rawTrailers,
+			aborted: request.aborted,
+			upgrade: request.upgrade,
+			url: request.url,
+			method: request.method,
+			statusCode: request.statusCode,
+			statusMessage: request.statusMessage,
+			query: request.query,
+			body: request.body,
+			ip: request.connection.remoteAddress,
+		};
+
+		const responseInfos = {
+			httpVersion: request.httpVersion,
+			complete: request.complete,
+			rawHeaders: request.rawHeaders,
+			rawTrailers: request.rawTrailers,
+			aborted: request.aborted,
+			upgrade: request.upgrade,
+			url: request.url,
+			method: request.method,
+			statusCode: request.statusCode,
+			statusMessage: request.statusMessage,
+			query: request.query,
+			body: request.body,
+		};
+
+		const context = {
+			error: errorInfos,
+			request: requestInfos,
+			response: responseInfos,
+		};
+
+		await logError(error.message, context);
+		await reportToEmail(error.message, context);
+	} catch {}
 }
 
 function validateMethod(request, configuration) {
-	if (configuration === undefined) {
+	if (configuration === undefined)
 		throw { status: 405, message: `Method '${request.method}' not allowed` };
-	}
 }
 
 async function validateHeaders(request, configuration) {
 	const headers = request.headers;
 	const headersSchema = configuration.headers;
 
-	await validateSchema(headersSchema, headers, "Headers");
+	if (headers["request-token"] === undefined)
+		throw { status: 401, message: "Invalid request" };
+
+	if (headers["client-token"] === undefined)
+		throw { status: 401, message: "Invalid request" };
+
+	return await validateSchema(headersSchema, headers, "Headers");
 }
 
 async function validateQuery(request, configuration) {
 	const query = request.query;
 	const querySchema = configuration.query;
 
-	await validateSchema(querySchema, query, "Query parameters");
+	return await validateSchema(querySchema, query, "Query parameters");
 }
 
 async function validateBody(request, configuration) {
 	const body = request.body;
 	const bodySchema = configuration.body;
 
-	await validateSchema(bodySchema, body, "Body");
+	return await validateSchema(bodySchema, body, "Body");
 }
 
 async function validateSchema(schema, value, scope) {
-	if (schema === undefined) return;
+	if (schema === undefined) return {};
+	if (schema.validate === undefined) return {};
 
 	try {
-		await schema.validate(value);
+		return await schema.validate(value);
 	} catch (e) {
-		if (e instanceof TypeError) return;
-
-		throw { status: 400, message: `${scope}: ${e.errors[0]}` };
+		throw { status: 400, message: `${scope}: ${e.message}` };
 	}
 }

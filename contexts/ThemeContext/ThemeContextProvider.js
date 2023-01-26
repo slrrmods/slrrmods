@@ -4,14 +4,14 @@ import { setCookie } from "cookies-next";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { useThemeStorage } from "../../utils/local-storage";
-import { THEME_STORAGE_KEY } from "../../utils/constants";
+import { THEME_COOKIE_KEY } from "../../utils/constants";
 import { ThemeContext } from ".";
 
 export default function ThemeContextProvider({ children, preferredTheme }) {
 	const [theme, setTheme] = useThemeStorage(preferredTheme);
 
 	useEffect(() => {
-		setCookie(THEME_STORAGE_KEY, theme, {
+		setCookie(THEME_COOKIE_KEY, theme, {
 			maxAge: 60 * 60 * 24 * 30,
 		});
 	}, [theme]);

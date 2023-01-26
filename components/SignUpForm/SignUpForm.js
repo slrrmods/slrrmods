@@ -71,12 +71,25 @@ export default function SignUpForm() {
 		refetchOnWindowFocus: false,
 	});
 
+	const signInMutation = useMutation({
+		mutationFn: async ({ username, password }) => {
+			await users.signIn(username, password, true);
+		},
+		onSuccess: () => {
+			close();
+		},
+	});
+
 	const signUpMutation = useMutation({
-		mutationFn: ({ email, username, password }) => {
-			return users.signUp(email, username, password);
+		mutationFn: async ({ email, username, password }) => {
+			await users.signUp(email, username, password);
+			return {
+				username,
+				password,
+			};
 		},
 		onSuccess: (data) => {
-			console.log(data);
+			signInMutation.mutate(data);
 		},
 	});
 
@@ -123,6 +136,11 @@ export default function SignUpForm() {
 			form.clearFieldError("username");
 	}
 
+	function close() {
+		if (isInModal) router.push(router.pathname, undefined, { shallow: true });
+		else router.push("/");
+	}
+
 	function navigateToSignIn() {
 		if (!isInModal) {
 			router.push("/user/signIn");
@@ -137,10 +155,6 @@ export default function SignUpForm() {
 			"/user/signIn",
 			{ shallow: true }
 		);
-	}
-
-	function clearError() {
-		signUpMutation.reset();
 	}
 
 	function handleSubmit(values) {
@@ -299,7 +313,7 @@ export default function SignUpForm() {
 							color="red"
 							variant="filled"
 							withCloseButton
-							onClose={clearError}
+							onClose={() => signUpMutation.reset()}
 							icon={<IconAlertCircle />}>
 							{error.message}
 						</Alert>

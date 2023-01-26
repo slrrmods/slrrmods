@@ -1,27 +1,25 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { verifyEmailExists } from "../../../services/data-validations";
-import { emailValidation } from "../../../utils/validations";
+import { verifyEmailExists } from "../../../services/user-service";
 
-const configurarion = {
+const configurarions = {
 	GET: {
-		role: "public",
 		query: yup.object().shape({
-			email: emailValidation,
+			email: yup.string().required().email(),
 		}),
 		handler: onGet,
 	},
 };
 
-export default function handler(req, res) {
-	handleRequest(req, res, configurarion);
+export default async function handler(req, res) {
+	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet(req, res) {
-	const email = req.query.email;
+async function onGet({ response, query }) {
+	const { email } = query;
 
 	if (await verifyEmailExists(email))
-		return res.status(200).json({ error: "Email is already in use" });
+		return response.status(200).json({ error: "Email is already in use" });
 
-	return res.status(200).json({ message: "Email is available" });
+	return response.status(200).json({ message: "Email is available" });
 }

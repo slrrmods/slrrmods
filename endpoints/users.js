@@ -14,6 +14,12 @@ export function checkUsernameAvailable(username) {
 	return get("/users/checkUsernameAvailable", { query });
 }
 
+export function signIn(username, password, sso) {
+	const data = { username, password, sso };
+
+	return post("/users/signIn", { data });
+}
+
 export function signUp(email, username, password) {
 	const data = { email, username, password };
 

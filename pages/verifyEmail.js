@@ -1,11 +1,10 @@
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Center, Stack, Title, Text } from "@mantine/core";
 import { IconMail } from "@tabler/icons";
-import { createClient } from "../services/supabase-client";
-import { isBase64Valid } from "../utils/uuid";
 import { resendEmailVerification } from "../endpoints/users";
-import { useRouter } from "next/router";
+import { validateToken } from "../services/email-verification";
 
 function Success() {
 	return (
@@ -89,36 +88,14 @@ export async function getServerSideProps(context) {
 	}
 
 	const { token } = context.query;
-
 	if (!token) return redirectToMain();
-	if (!isBase64Valid(token)) return redirectToMain();
 
-	const client = createClient();
-	const { data, error } = await client
-		.from("users")
-		.select("id, email_confirmation_sent_at")
-		.eq("email_confirmation_token", token);
-
-	if (error) return redirectToMain();
-	if (data.length === 0) return redirectToMain();
-
-	const user = data[0];
-
-	const now = new Date();
-	const sentAt = new Date(user.email_confirmation_sent_at);
-	const diff = now.getTime() - sentAt.getTime();
-	const diffHours = Math.floor(diff / (1000 * 60 * 60));
-
-	if (diffHours > 48) return showResult("expired");
-
-	await client
-		.from("users")
-		.update({
-			email_confirmed_at: new Date(),
-			email_confirmation_token: null,
-			email_confirmation_sent_at: null,
-		})
-		.eq("id", user.id);
+	try {
+		await validateToken(token);
+	} catch (error) {
+		if (error.message === "Token expired") return showResult("expired");
+		return redirectToMain();
+	}
 
 	return showResult("success");
 }

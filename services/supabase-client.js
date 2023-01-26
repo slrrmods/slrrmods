@@ -1,11 +1,12 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { IS_IN_SERVER_ENV } from "../utils/constants";
 
 let client = null;
 
 export function createClient() {
 	if (client !== null) return client;
 
-	if (typeof window === "undefined") client = createForServer();
+	if (IS_IN_SERVER_ENV) client = createForServer();
 	else client = createForClient();
 
 	return client;

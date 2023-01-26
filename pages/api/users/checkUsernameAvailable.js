@@ -1,27 +1,25 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { verifyUsernameExists } from "../../../services/data-validations";
-import { usernameValidation } from "../../../utils/validations";
+import { verifyUsernameExists } from "../../../services/user-service";
 
-const configurarion = {
+const configurarions = {
 	GET: {
-		role: "public",
 		query: yup.object().shape({
-			username: usernameValidation,
+			username: yup.string().required(),
 		}),
 		handler: onGet,
 	},
 };
 
-export default function handler(req, res) {
-	handleRequest(req, res, configurarion);
+export default async function handler(req, res) {
+	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet(req, res) {
-	const username = req.query.username;
+async function onGet({ response, query }) {
+	const { username } = query;
 
 	if (await verifyUsernameExists(username))
-		return res.status(200).json({ error: "Username is already in use" });
+		return response.status(200).json({ error: "Username is already in use" });
 
-	return res.status(200).json({ message: "Username is available" });
+	return response.status(200).json({ message: "Username is available" });
 }

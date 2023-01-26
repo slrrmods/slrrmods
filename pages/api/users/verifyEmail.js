@@ -1,13 +1,13 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { resendEmailVerification } from "../../../services/email-verification";
+import { validateToken } from "../../../services/email-verification";
 
 const configurarions = {
-	POST: {
+	GET: {
 		query: yup.object().shape({
 			token: yup.string().required(),
 		}),
-		handler: onPost,
+		handler: onGet,
 	},
 };
 
@@ -15,14 +15,14 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ response, query }) {
+async function onGet({ response, query }) {
 	const { token } = query;
 
 	try {
-		await resendEmailVerification(token);
+		await validateToken(token);
 	} catch (error) {
-		return response.status(400).json({ error: error.message });
+		return response.status(403).json({ error: error.message });
 	}
 
-	return response.status(200).json({ message: "Success" });
+	return response.status(200).json({ message: "success" });
 }

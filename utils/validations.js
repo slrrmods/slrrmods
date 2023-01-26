@@ -33,5 +33,3 @@ export const confirmPasswordValidation = yup
 	.string()
 	.required("Confirm passworrd is requied")
 	.oneOf([yup.ref("password")], "Passwords must match");
-
-export const emailTokenValidation = yup.string().required("Token is required");

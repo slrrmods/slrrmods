@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
+import { useMutation } from "@tanstack/react-query";
 import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import {
@@ -15,6 +15,7 @@ import {
 	TextInput,
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
+import { signIn } from "../../endpoints/users";
 import * as yup from "yup";
 
 const formSchema = yup.object().shape({
@@ -24,9 +25,6 @@ const formSchema = yup.object().shape({
 
 export default function SignInForm() {
 	const router = useRouter();
-
-	const [error, setError] = useState("");
-	const [loading, setLoading] = useState(false);
 
 	const [remember, setRemember] = useLocalStorage({
 		key: "remember-user",
@@ -45,11 +43,24 @@ export default function SignInForm() {
 
 	const focusTrapRef = useFocusTrap(isInModal);
 
-	function toggleRemember() {
-		setRemember((remember) => !remember);
-	}
+	const signInMutation = useMutation({
+		mutationFn: ({ user, password }) => {
+			return signIn(user, password, remember);
+		},
+		onSuccess: () => {
+			close();
+		},
+	});
+
+	const loading = signInMutation.isLoading;
+	const error = signInMutation.error;
 
 	function navigateToForgotPassword() {}
+
+	function close() {
+		if (isInModal) router.push(router.pathname, undefined, { shallow: true });
+		else router.push("/");
+	}
 
 	function navigateToSignUp() {
 		if (!isInModal) {
@@ -67,23 +78,8 @@ export default function SignInForm() {
 		);
 	}
 
-	function clearError() {
-		setError("");
-	}
-
-	async function handleSubmit({ user, password }) {
-		const values = { user, password, remember };
-
-		setLoading(true);
-		try {
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-
-			console.log(values);
-		} catch (e) {
-			setError(e.message);
-		} finally {
-			setLoading(false);
-		}
+	function handleSubmit(values) {
+		signInMutation.mutate(values);
 	}
 
 	return (
@@ -122,9 +118,9 @@ export default function SignInForm() {
 							color="red"
 							variant="filled"
 							withCloseButton
-							onClose={clearError}
+							onClose={() => signInMutation.reset()}
 							icon={<IconAlertCircle />}>
-							{error}
+							{error.message}
 						</Alert>
 					)}
 
@@ -132,7 +128,7 @@ export default function SignInForm() {
 						<Checkbox
 							disabled={loading}
 							checked={remember}
-							onChange={toggleRemember}
+							onChange={() => setRemember((v) => !v)}
 							label="Remember me"
 						/>
 

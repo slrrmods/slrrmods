@@ -22,10 +22,33 @@ CREATE TABLE public.countries
   iso2 TEXT NOT NULL,
   iso3 TEXT,
   local_name TEXT,
-  continent continents
+  continent continents,
+  flag_url TEXT
 );
 
+--
+-- Create a function that inserts the country flag url
+--
+CREATE OR REPLACE FUNCTION public.insert_country_flag_url() RETURNS trigger 
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    NEW.flag_url = CONCAT('https://mwqgchjcmnzxtwxkficf.supabase.co/storage/v1/object/public/flags/', LOWER(NEW.iso2), '.png');
+    RETURN NEW;
+END;
+$$;
+
+--
+-- Create a trigger to update the country flag url on inserts
+--
+CREATE TRIGGER insert_country_flag_url
+    BEFORE INSERT ON public.countries
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.insert_country_flag_url();
+
+--
 -- Insert all countries
+--
 INSERT INTO public.countries (name, iso2, iso3, local_name, continent) 
 VALUES
   ('Bonaire, Sint Eustatius and Saba', 'BQ', 'BES', null, null),
@@ -277,14 +300,3 @@ VALUES
   ('Zimbabwe', 'ZW', 'ZWE', 'Zimbabwe', 'Africa'),
   ('Afghanistan', 'AF', 'AFG', 'Afganistan/Afqanestan', 'Asia'),
   ('Algeria', 'DZ', 'DZA', 'Al-Jazair/Algerie', 'Africa');
-
---
--- Create a view for all countries in alphabetic order with their flag url
---
-CREATE VIEW public.ordered_countries AS
-SELECT 
-  *, 
-  CONCAT('https://tahgityrwapnyvoondiy.supabase.co/storage/v1/object/public/flags/', LOWER(iso2), '.png') AS flag_url 
-FROM public.countries 
-ORDER BY name ASC;
-
