@@ -1,4 +1,7 @@
+import { ENVIROMENT_URL } from "../utils/constants";
+import { getIp } from "../utils/ip";
 import { logError, reportToEmail } from "./error-handling";
+import rateLimit from "./rate-limit";
 
 export async function handleRequest(request, response, configurations) {
 	const method = request.method;
@@ -13,6 +16,7 @@ export async function handleRequest(request, response, configurations) {
 
 	try {
 		validateMethod(request, configuration);
+		applyRateLimit(request, response, configuration);
 
 		//todo: validate authorizaiton and include user in context
 
@@ -87,6 +91,36 @@ async function handleError(error, request, response) {
 function validateMethod(request, configuration) {
 	if (configuration === undefined)
 		throw { status: 405, message: `Method '${request.method}' not allowed` };
+}
+
+const rateLimiters = {};
+const defaultLimitConfiguration = {
+	limit: 5,
+	interval: 60 * 1000,
+	usersPerSecond: 50,
+};
+
+function applyRateLimit(request, response, configuration) {
+	const { limit, interval, usersPerSecond } = {
+		...defaultLimitConfiguration,
+		...configuration.rateLimit,
+	};
+
+	const url = new URL(request.url, ENVIROMENT_URL);
+	const endPoint = url.pathname;
+
+	if (!rateLimiters[endPoint])
+		rateLimiters[endPoint] = rateLimit(limit, interval, usersPerSecond);
+
+	const limiter = rateLimiters[endPoint];
+
+	const token = getIp(request);
+
+	try {
+		limiter.check(token, response);
+	} catch {
+		throw { status: 429, message: "Too many requests" };
+	}
 }
 
 async function validateHeaders(request, configuration) {

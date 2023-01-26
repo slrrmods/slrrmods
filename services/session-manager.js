@@ -6,6 +6,7 @@ import { createClient } from "./supabase-client";
 import { createRandomToken } from "../utils/tokenizer";
 import { encrypt, decrypt } from "../utils/crypto";
 import { SESSION_COOKIE_KEY, IS_DEVELOPMENT_ENV } from "../utils/constants";
+import { getIp } from "../utils/ip";
 
 const tokenSchema = yup.object().shape({
 	session: yup.string().required(),
@@ -59,8 +60,7 @@ async function createSession(user, sso, request) {
 	if (sso) expiresAt.setDate(expiresAt.getDate() + 7);
 	else expiresAt.setHours(expiresAt.getHours() + 12);
 
-	const ip =
-		request.headers["x-forwarded-for"] || request.connection.remoteAddress;
+	const ip = getIp(request);
 
 	const geo = geoip.lookup(ip);
 	const city = geo ? geo.city : "Unknown";
