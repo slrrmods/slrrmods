@@ -10,12 +10,7 @@ const api = axios.create({
 const clientToken = newBase64Uuid();
 
 export async function doApiRequest(url, method, headers, data) {
-	if (!headers) headers = {};
-
-	headers["request-token"] = newBase64Uuid();
-	headers["client-token"] = clientToken;
-
-	if (data) headers["content-type"] = "application/json";
+	headers = getDefaultHeaders(headers);
 
 	const config = {
 		url,
@@ -42,3 +37,73 @@ export async function doApiRequest(url, method, headers, data) {
 		throw new Error("Unknown error");
 	}
 }
+
+function getDefaultHeaders(headers, data) {
+	if (!headers) headers = {};
+
+	headers["Request-Token"] = newBase64Uuid();
+	headers["Client-Token"] = clientToken;
+	if (data) headers["Content-Type"] = "application/json";
+
+	securityHeaders.forEach((header) => {
+		headers[header.key] = header.value;
+	});
+
+	return headers;
+}
+
+const securityHeaders = [
+	{
+		key: "Content-Security-Policy",
+		value:
+			"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self' 'unsafe-eval';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
+	},
+	{
+		key: "Cross-Origin-Embedder-Policy",
+		value: "require-corp",
+	},
+	{
+		key: "Cross-Origin-Opener-Policy",
+		value: "same-origin",
+	},
+	{
+		key: "Cross-Origin-Resource-Policy",
+		value: "same-origin",
+	},
+	{
+		key: "Origin-Agent-Cluster",
+		value: "?1",
+	},
+	{
+		key: "Referrer-Policy",
+		value: "no-referrer",
+	},
+	{
+		key: "Strict-Transport-Security",
+		value: "max-age=15552000; includeSubDomains",
+	},
+	{
+		key: "X-Content-Type-Options",
+		value: "nosniff",
+	},
+	{
+		key: "X-DNS-Prefetch-Control",
+		value: "off",
+	},
+	{
+		key: "X-Download-Options",
+		value: "noopen",
+	},
+	{
+		key: "X-Frame-Options",
+		value: "SAMEORIGIN",
+	},
+	{
+		key: "X-Permitted-Cross-Domain-Policies",
+		value: "none",
+	},
+	{
+		key: "X-XSS-Protection",
+		value: "0",
+	},
+];

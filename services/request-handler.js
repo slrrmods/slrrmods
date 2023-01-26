@@ -93,10 +93,10 @@ async function validateHeaders(request, configuration) {
 	const headers = request.headers;
 	const headersSchema = configuration.headers;
 
-	if (headers["request-token"] === undefined)
+	if (!headers["request-token"])
 		throw { status: 401, message: "Invalid request" };
 
-	if (headers["client-token"] === undefined)
+	if (!headers["client-token"])
 		throw { status: 401, message: "Invalid request" };
 
 	return await validateSchema(headersSchema, headers, "Headers");
