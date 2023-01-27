@@ -15,6 +15,10 @@ const configurarions = {
 			password: passwordValidation,
 		}),
 		handler: onPost,
+		rateLimit: {
+			limit: 5,
+			interval: 60 * 1000,
+		},
 	},
 };
 

@@ -8,6 +8,10 @@ const configurarions = {
 			token: yup.string().required(),
 		}),
 		handler: onPost,
+		rateLimit: {
+			limit: 2,
+			interval: 2 * 60 * 1000,
+		},
 	},
 };
 

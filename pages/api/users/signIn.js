@@ -15,6 +15,10 @@ const configurarions = {
 			sso: yup.boolean().required(),
 		}),
 		handler: onPost,
+		rateLimit: {
+			limit: 5,
+			interval: 60 * 1000,
+		},
 	},
 };
 

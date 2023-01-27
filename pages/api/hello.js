@@ -10,9 +10,6 @@ const configurarions = {
 			name: yup.string().required(),
 		}),
 		handler: onGet,
-		rateLimit: {
-			limit: 10,
-		},
 	},
 };
 

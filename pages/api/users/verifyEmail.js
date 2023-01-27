@@ -8,6 +8,10 @@ const configurarions = {
 			token: yup.string().required(),
 		}),
 		handler: onGet,
+		rateLimit: {
+			limit: 3,
+			interval: 60 * 1000,
+		},
 	},
 };
 

@@ -8,6 +8,10 @@ const configurarions = {
 			email: yup.string().required().email(),
 		}),
 		handler: onGet,
+		rateLimit: {
+			limit: 10,
+			interval: 30 * 1000,
+		},
 	},
 };
 

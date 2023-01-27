@@ -97,7 +97,7 @@ const rateLimiters = {};
 const defaultLimitConfiguration = {
 	limit: 5,
 	interval: 60 * 1000,
-	usersPerSecond: 50,
+	usersPerSecond: 100,
 };
 
 function applyRateLimit(request, response, configuration) {

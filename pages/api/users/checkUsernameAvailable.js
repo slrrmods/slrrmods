@@ -8,6 +8,10 @@ const configurarions = {
 			username: yup.string().required(),
 		}),
 		handler: onGet,
+		rateLimit: {
+			limit: 10,
+			interval: 30 * 1000,
+		},
 	},
 };
 
