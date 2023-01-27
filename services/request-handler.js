@@ -1,4 +1,5 @@
 import { ENVIROMENT_URL } from "../utils/constants";
+import { log } from "next-axiom";
 import { getIp } from "../utils/ip";
 import { logError, reportToEmail } from "./error-handling";
 import rateLimit from "./rate-limit";
@@ -83,6 +84,7 @@ async function handleError(error, request, response) {
 			response: responseInfos,
 		};
 
+		log.error(error.message, context);
 		await logError(error.message, context);
 		await reportToEmail(error.message, context);
 	} catch {}

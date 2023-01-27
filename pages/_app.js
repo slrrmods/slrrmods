@@ -9,6 +9,7 @@ import { ThemeProvider } from "../contexts/ThemeContext";
 import Layout from "../components/Layout";
 
 const queryClient = new QueryClient();
+
 export default function MyApp({ Component, pageProps, colorScheme }) {
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -46,3 +47,5 @@ MyApp.getInitialProps = async (appContext) => {
 		colorScheme,
 	};
 };
+
+export { reportWebVitals } from "next-axiom";

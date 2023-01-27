@@ -1,8 +1,10 @@
+const { withAxiom } = require("next-axiom");
+
 const securityHeaders = [
 	{
 		key: "Content-Security-Policy",
 		value:
-			"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self' https://vercel.live/ 'unsafe-eval';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
+			"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self' 'unsafe-eval';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
 	},
 	{
 		key: "Cross-Origin-Embedder-Policy",
@@ -67,4 +69,6 @@ const nextConfig = {
 	},
 };
 
-module.exports = nextConfig;
+module.exports = withAxiom({
+	...nextConfig,
+});
