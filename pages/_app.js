@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import Head from "next/head";
 import App from "next/app";
 import { getCookie } from "cookies-next";
@@ -8,7 +9,6 @@ import { ThemeProvider } from "../contexts/ThemeContext";
 import Layout from "../components/Layout";
 
 const queryClient = new QueryClient();
-
 export default function MyApp({ Component, pageProps, colorScheme }) {
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -26,6 +26,7 @@ export default function MyApp({ Component, pageProps, colorScheme }) {
 
 				<Layout>
 					<Component {...pageProps} />
+					<Analytics />
 				</Layout>
 
 				<ReactQueryDevtools initialIsOpen={false} />
