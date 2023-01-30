@@ -26,7 +26,10 @@ async function onPost({ response, body }) {
 	const { email } = body;
 	const user = await getFromEmail(email);
 
-	if (!user) return response.status(200).json({ message: "Success" });
+	if (!user) {
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+		return response.status(200).json({ message: "Success" });
+	}
 
 	try {
 		await sendResetPassword(user);

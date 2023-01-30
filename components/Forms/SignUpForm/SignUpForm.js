@@ -93,7 +93,7 @@ export default function SignUpForm() {
 		},
 	});
 
-	const loading = signUpMutation.isLoading;
+	const loading = signUpMutation.isLoading || signInMutation.isLoading;
 	const error = signUpMutation.error;
 
 	const formSchema = yup.object().shape({
