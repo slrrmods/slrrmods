@@ -1,5 +1,5 @@
-import { Title } from "@mantine/core";
 import Link from "next/link";
+import { Title } from "@mantine/core";
 
 export default function Logo() {
 	return (

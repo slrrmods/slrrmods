@@ -1,4 +1,4 @@
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 import { createClient } from "./supabase-client";
 import { sendEmailVerification } from "./email-verification";
 
@@ -24,6 +24,17 @@ export async function verifyUsernameExists(username) {
 	return data !== null;
 }
 
+export async function validateUser(username, password) {
+	const user = await getFromUsername(username);
+	if (!user) throw new Error("Invalid email/username or password");
+	if (!user.active) throw new Error("Account is not active");
+
+	//todo: check if user is not banned
+
+	const passwordMatch = await compare(password, user.password);
+	if (!passwordMatch) throw new Error("Invalid email/username or password");
+}
+
 export async function getFromId(id) {
 	const { data } = await client
 		.from("users")
@@ -37,6 +48,26 @@ export async function getFromId(id) {
 export async function getFromEmailOrUsername(emailOrUsername) {
 	if (emailOrUsername.includes("@")) return await getFromEmail(emailOrUsername);
 	return await getFromUsername(emailOrUsername);
+}
+
+export async function getFromEmail(email) {
+	const { data } = await client
+		.from("users")
+		.select()
+		.eq("email", email)
+		.maybeSingle();
+
+	return data;
+}
+
+export async function getFromUsername(username) {
+	const { data } = await client
+		.from("users")
+		.select()
+		.eq("username", username)
+		.maybeSingle();
+
+	return data;
 }
 
 export async function updateLastLogin(user) {
@@ -68,24 +99,4 @@ export async function createNew(email, username, password) {
 	await sendEmailVerification(user);
 
 	return user;
-}
-
-async function getFromEmail(email) {
-	const { data } = await client
-		.from("users")
-		.select()
-		.eq("email", email)
-		.maybeSingle();
-
-	return data;
-}
-
-async function getFromUsername(username) {
-	const { data } = await client
-		.from("users")
-		.select()
-		.eq("username", username)
-		.maybeSingle();
-
-	return data;
 }

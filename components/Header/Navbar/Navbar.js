@@ -36,7 +36,8 @@ export default function Navbar() {
 	const currentPath = `/${router.pathname.split("/")[1]}`;
 
 	const onTabChange = (value) => {
-		router.push(`${value}`);
+		if (router.asPath === value) return;
+		router.push(value);
 	};
 
 	return (

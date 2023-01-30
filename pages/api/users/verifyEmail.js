@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { validateToken } from "../../../services/email-verification";
+import { verifyEmail } from "../../../services/email-verification";
 
 const configurarions = {
 	GET: {
@@ -23,7 +23,7 @@ async function onGet({ response, query }) {
 	const { token } = query;
 
 	try {
-		await validateToken(token);
+		await verifyEmail(token);
 	} catch (error) {
 		return response.status(403).json({ error: error.message });
 	}

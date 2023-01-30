@@ -20,7 +20,7 @@ export default function UserPanel() {
 								signIn: true,
 							},
 						}}
-						as="/user/signIn"
+						as="/users/signIn"
 						passHref
 						shallow
 						legacyBehavior>
@@ -36,7 +36,7 @@ export default function UserPanel() {
 								signUp: true,
 							},
 						}}
-						as="/user/signUp"
+						as="/users/signUp"
 						passHref
 						shallow
 						legacyBehavior>

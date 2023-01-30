@@ -2,7 +2,7 @@ import { Container } from "@mantine/core";
 import { useStyles } from "./Layout.styles";
 import Header from "../Header";
 import Footer from "../Footer";
-import SignForm from "../SignForm";
+import Modals from "../Modals";
 
 export default function Layout({ children }) {
 	const { classes } = useStyles();
@@ -17,7 +17,7 @@ export default function Layout({ children }) {
 
 			<Footer />
 
-			<SignForm />
+			<Modals />
 		</div>
 	);
 }

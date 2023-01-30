@@ -7,8 +7,8 @@ import {
 	Divider,
 	Text,
 } from "@mantine/core";
-import Logo from "../Logo";
 import { IconBrandGithub } from "@tabler/icons";
+import Logo from "../Logo";
 
 export default function Footer() {
 	return (

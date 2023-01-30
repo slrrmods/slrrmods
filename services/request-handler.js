@@ -1,4 +1,4 @@
-import { ENVIROMENT_URL } from "../utils/constants";
+import { ENVIROMENT_URL, IS_DEVELOPMENT_ENV } from "../utils/constants";
 import { log } from "next-axiom";
 import { getIp } from "../utils/ip";
 import { logError, reportToEmail } from "./error-handling";
@@ -103,6 +103,8 @@ const defaultLimitConfiguration = {
 };
 
 function applyRateLimit(request, response, configuration) {
+	if (IS_DEVELOPMENT_ENV) return;
+
 	const { limit, interval, usersPerSecond } = {
 		...defaultLimitConfiguration,
 		...configuration.rateLimit,

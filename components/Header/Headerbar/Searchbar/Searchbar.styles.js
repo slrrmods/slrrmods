@@ -1,5 +1,5 @@
 import { createStyles } from "@mantine/core";
-import * as themeHelpers from "../../utils/theme-helpers";
+import * as themeHelpers from "../../../../utils/theme-helpers";
 
 export const useStyles = createStyles((theme) => {
 	return {

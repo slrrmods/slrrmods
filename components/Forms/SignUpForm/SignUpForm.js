@@ -19,15 +19,15 @@ import {
 import { useFocusTrap, useDebouncedValue } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
+import { ValidatedPasswordInput } from "../../Inputs";
 import * as yup from "yup";
-import * as users from "../../endpoints/users";
-import ValidatedPasswordInput from "../ValidatedPasswordInput";
+import * as users from "../../../endpoints/users";
 import {
 	emailValidation,
 	usernameValidation,
 	passwordValidation,
 	confirmPasswordValidation,
-} from "../../utils/validations";
+} from "../../../utils/validations";
 
 const formInitialValues = {
 	email: "",
@@ -75,7 +75,7 @@ export default function SignUpForm() {
 		mutationFn: async ({ username, password }) => {
 			await users.signIn(username, password, true);
 		},
-		onSuccess: () => {
+		onSettled: () => {
 			close();
 		},
 	});
@@ -143,7 +143,7 @@ export default function SignUpForm() {
 
 	function navigateToSignIn() {
 		if (!isInModal) {
-			router.push("/user/signIn");
+			router.push("/users/signIn");
 			return;
 		}
 
@@ -152,7 +152,7 @@ export default function SignUpForm() {
 				pathname: router.pathname,
 				query: { signIn: true },
 			},
-			"/user/signIn",
+			"/users/signIn",
 			{ shallow: true }
 		);
 	}

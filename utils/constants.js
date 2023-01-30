@@ -1,5 +1,5 @@
 export const IS_DEVELOPMENT_ENV = process.env.NODE_ENV === "development";
-export const IS_IN_SERVER_ENV = typeof window === "undefined";
+export const IS_SERVER_ENV = typeof window === "undefined";
 
 export const DEFAULT_THEME = "light";
 export const THEME_COOKIE_KEY = "app-theme";

@@ -1,7 +1,7 @@
 import { useStyles } from "./Header.styles";
 import { Container, Stack } from "@mantine/core";
-import Headerbar from "../Headerbar";
-import Navbar from "../Navbar";
+import Headerbar from "./Headerbar";
+import Navbar from "./Navbar";
 
 export default function Header() {
 	const { classes } = useStyles();

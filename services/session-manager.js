@@ -7,6 +7,11 @@ import { createRandomToken } from "../utils/tokenizer";
 import { encrypt, decrypt } from "../utils/crypto";
 import { SESSION_COOKIE_KEY, IS_DEVELOPMENT_ENV } from "../utils/constants";
 import { getIp } from "../utils/ip";
+import {
+	updateLastLogin,
+	validateUser,
+	getFromEmailOrUsername,
+} from "./user-service";
 
 const tokenSchema = yup.object().shape({
 	session: yup.string().required(),
@@ -15,11 +20,21 @@ const tokenSchema = yup.object().shape({
 
 const client = createClient();
 
-export async function joinNewSession(user, sso, request, response) {
+export async function joinNewSession(
+	username,
+	password,
+	sso,
+	request,
+	response
+) {
 	await quitCurrentSession(request, response);
+	await validateUser(username, password);
 
+	const user = await getFromEmailOrUsername(username);
 	const { session, token } = await createSession(user, sso, request);
 	writeToCookies(session, token, request, response);
+
+	await updateLastLogin(user);
 }
 
 export async function quitCurrentSession(request, response) {
@@ -33,7 +48,7 @@ export async function quitCurrentSession(request, response) {
 			.eq("id", token.session)
 			.maybeSingle();
 
-		if (!session) throw new Error("Invalid session");
+		if (!session) return;
 
 		const tokenMatch = await compare(token.value, session.token);
 		if (!tokenMatch) throw new Error("Invalid session");
@@ -51,8 +66,23 @@ export async function revokeSession(session) {
 
 	await client
 		.from("sessions")
-		.update({ revoked_at: new Date() })
-		.eq("id", session.id);
+		.update({
+			revoked_at: new Date(),
+			token: null,
+		})
+		.eq("id", session.id)
+		.is("revoked_at", null);
+}
+
+export async function revokeAllSessions(user) {
+	await client
+		.from("sessions")
+		.update({
+			revoked_at: new Date(),
+			token: null,
+		})
+		.eq("owner", user.id)
+		.is("revoked_at", null);
 }
 
 async function createSession(user, sso, request) {

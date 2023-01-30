@@ -1,27 +1,55 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Center, Stack, Title, Text } from "@mantine/core";
-import { IconMail } from "@tabler/icons";
+import { Button, Center, Stack, Title, Text, Card, Group } from "@mantine/core";
+import { IconCircleCheck, IconInfoCircle, IconMail } from "@tabler/icons";
 import { resendEmailVerification } from "../endpoints/users";
-import { validateToken } from "../services/email-verification";
+import { verifyEmail } from "../services/email-verification";
+import { useEffect } from "react";
 
-function Success() {
+export default function VerifyEmail({ result, token }) {
+	const router = useRouter();
+
+	useEffect(() => {
+		if (router.query.token)
+			router.replace("/verifyEmail", undefined, { shallow: true });
+	}, [router]);
+
+	const isSuccess = result === "success";
 	return (
-		<>
-			<Title>Email verified successfully</Title>
+		<Center>
+			<Card
+				withBorder
+				shadow="md"
+				style={{ minWidth: "350px", maxWidth: "450px", width: "100%" }}
+				p={0}>
+				<Stack bg={isSuccess ? "green" : "red"} p="md" c="white" spacing="sm">
+					{isSuccess ? <Success /> : <Expired />}
 
-			<Text color="dimmed" size="lg">
-				Thank you for verifying your email.
-			</Text>
-		</>
+					<Link href="/" passHref legacyBehavior>
+						<Button component="a">Go to Home</Button>
+					</Link>
+				</Stack>
+			</Card>
+		</Center>
 	);
 }
 
-function Expired() {
-	const router = useRouter();
-	const { token } = router.query;
+function Success() {
+	return (
+		<Group align="center" noWrap>
+			<IconCircleCheck style={{ width: "15%", height: "15%" }} />
 
+			<Stack>
+				<Title order={3}>Success!</Title>
+
+				<Text>Email verified successfully.</Text>
+			</Stack>
+		</Group>
+	);
+}
+
+function Expired({ token }) {
 	const resendEmailMutation = useMutation({
 		mutationFn: () => {
 			return resendEmailVerification(token);
@@ -33,39 +61,26 @@ function Expired() {
 
 	return (
 		<>
-			<Title>Your email verification has expired</Title>
+			<Group noWrap align="center">
+				<IconInfoCircle style={{ width: "20%", height: "20%" }} />
 
-			<Text color="dimmed" size="lg">
-				Email verifications expires after 48 hours, but you can request a new
-				one.
-			</Text>
+				<Stack>
+					<Title order={3}>Email verification has expired</Title>
+
+					<Text>
+						Email verifications expires after 48 hours, but you can request a
+						new one.
+					</Text>
+				</Stack>
+			</Group>
 
 			<Button
-				size="lg"
 				leftIcon={<IconMail />}
 				onClick={() => resendEmailMutation.mutate()}
 				loading={resendEmailMutation.isLoading}>
 				Resend verification email
 			</Button>
 		</>
-	);
-}
-
-export default function VerifyEmail({ result }) {
-	const isSuccess = result === "success";
-
-	return (
-		<Center>
-			<Stack align="center">
-				{isSuccess ? <Success /> : <Expired />}
-
-				<Link href="/" passHref legacyBehavior>
-					<Button component="a" variant="subtle" size="md">
-						Take me back to home page
-					</Button>
-				</Link>
-			</Stack>
-		</Center>
 	);
 }
 
@@ -79,10 +94,11 @@ export async function getServerSideProps(context) {
 		};
 	}
 
-	function showResult(result) {
+	function showResult(result, token = undefined) {
 		return {
 			props: {
 				result,
+				token,
 			},
 		};
 	}
@@ -91,9 +107,9 @@ export async function getServerSideProps(context) {
 	if (!token) return redirectToMain();
 
 	try {
-		await validateToken(token);
+		await verifyEmail(token);
 	} catch (error) {
-		if (error.message === "Token expired") return showResult("expired");
+		if (error.message === "Token expired") return showResult("expired", token);
 		return redirectToMain();
 	}
 

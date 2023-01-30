@@ -1,15 +1,18 @@
 import { Card, Center, Title } from "@mantine/core";
-import SingInForm from "../../components/SignInForm";
+import { SignInForm } from "../../components/Forms";
 
 export default function SignIn() {
 	return (
 		<Center>
-			<Card withBorder shadow="md" style={{ width: "30%" }}>
+			<Card
+				withBorder
+				shadow="md"
+				style={{ minWidth: "350px", maxWidth: "450px", width: "100%" }}>
 				<Card.Section withBorder p="xs">
 					<Title order={3}>Sign In</Title>
 				</Card.Section>
 
-				<SingInForm />
+				<SignInForm />
 			</Card>
 		</Center>
 	);

@@ -1,9 +1,8 @@
-import { Modal, Tabs, Title } from "@mantine/core";
 import { useRouter } from "next/router";
-import SignInForm from "../SignInForm";
-import SignUpForm from "../SignUpForm";
+import { Modal, Tabs, Title } from "@mantine/core";
+import { SignInForm, SignUpForm } from "../../Forms";
 
-export default function SignForm() {
+export default function SignModal() {
 	const router = useRouter();
 	const { signIn, signUp } = router.query;
 	const opened = signIn || signUp;
@@ -15,20 +14,20 @@ export default function SignForm() {
 		return "";
 	}
 
-	const onClose = () => {
+	function onClose() {
 		router.push(router.pathname, undefined, { shallow: true });
-	};
+	}
 
-	const onTabChange = (value) => {
+	function onTabChange(value) {
 		router.push(
 			{
 				pathname: router.pathname,
 				query: { [value]: true },
 			},
-			`/user/${value}`,
+			`/users/${value}`,
 			{ shallow: true }
 		);
-	};
+	}
 
 	return (
 		<Modal

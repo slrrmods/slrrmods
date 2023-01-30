@@ -15,8 +15,8 @@ import {
 	TextInput,
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
-import { signIn } from "../../endpoints/users";
 import * as yup from "yup";
+import { signIn } from "../../../endpoints/users";
 
 const formSchema = yup.object().shape({
 	user: yup.string().required("Email or username is required"),
@@ -55,16 +55,25 @@ export default function SignInForm() {
 	const loading = signInMutation.isLoading;
 	const error = signInMutation.error;
 
-	function navigateToForgotPassword() {}
+	function navigateToForgotPassword() {
+		if (!isInModal) {
+			router.push("/users/forgotPassword");
+			return;
+		}
 
-	function close() {
-		if (isInModal) router.push(router.pathname, undefined, { shallow: true });
-		else router.push("/");
+		router.push(
+			{
+				pathname: router.pathname,
+				query: { forgotPassword: true },
+			},
+			"/users/forgotPassword",
+			{ shallow: true }
+		);
 	}
 
 	function navigateToSignUp() {
 		if (!isInModal) {
-			router.push("/user/signUp");
+			router.push("/users/signUp");
 			return;
 		}
 
@@ -73,13 +82,18 @@ export default function SignInForm() {
 				pathname: router.pathname,
 				query: { signUp: true },
 			},
-			"/user/signUp",
+			"/users/signUp",
 			{ shallow: true }
 		);
 	}
 
 	function handleSubmit(values) {
 		signInMutation.mutate(values);
+	}
+
+	function close() {
+		if (isInModal) router.push(router.pathname, undefined, { shallow: true });
+		else router.push("/");
 	}
 
 	return (

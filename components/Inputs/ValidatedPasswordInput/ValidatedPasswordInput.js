@@ -19,9 +19,11 @@ export default function ValidatedPasswordInput(props) {
 	return (
 		<Popover
 			opened={popoverOpened}
-			position="bottom"
-			width="target"
-			transition="pop">
+			arrowPosition="center"
+			withArrow
+			position="right-start"
+			transition="pop"
+			shadow="md">
 			<Popover.Target>
 				<div
 					onFocusCapture={() => setPopoverOpened(true)}

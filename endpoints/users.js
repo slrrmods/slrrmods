@@ -31,3 +31,15 @@ export function resendEmailVerification(token) {
 
 	return post("/users/resendEmailVerification", { query });
 }
+
+export function sendResetPassword(email) {
+	const data = { email };
+
+	return post("/users/sendResetPassword", { data });
+}
+
+export function resetPassword(token, password) {
+	const data = { token, password };
+
+	return post("/users/resetPassword", { data });
+}
