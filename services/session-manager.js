@@ -49,6 +49,8 @@ export async function quitCurrentSession(request, response) {
 			.maybeSingle();
 
 		if (!session) return;
+		if (session.revoked_at) return;
+		if (!session.token) return;
 
 		const tokenMatch = await compare(token.value, session.token);
 		if (!tokenMatch) throw new Error("Invalid session");
@@ -70,8 +72,7 @@ export async function revokeSession(session) {
 			revoked_at: new Date(),
 			token: null,
 		})
-		.eq("id", session.id)
-		.is("revoked_at", null);
+		.eq("id", session.id);
 }
 
 export async function revokeAllSessions(user) {
