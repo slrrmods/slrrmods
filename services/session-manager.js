@@ -136,6 +136,8 @@ function removeFromCookies(request, response) {
 	deleteCookie(SESSION_COOKIE_KEY, {
 		req: request,
 		res: response,
+		httpOnly: true,
+		secure: !IS_DEVELOPMENT_ENV,
 		path: "/",
 	});
 }

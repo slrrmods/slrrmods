@@ -26,7 +26,7 @@ export async function sendResetPassword(user) {
 		year: new Date().getFullYear(),
 	});
 
-	await sendHtml(email, "", html);
+	await sendHtml(email, "Reset your password", html);
 }
 
 export async function resetPassword(encryptedToken, newPassword) {
@@ -58,7 +58,7 @@ export async function resetPassword(encryptedToken, newPassword) {
 		year: new Date().getFullYear(),
 	});
 
-	await sendHtml(user.email, "", html);
+	await sendHtml(user.email, "Password updated", html);
 }
 
 export async function validateToken(encryptedToken) {

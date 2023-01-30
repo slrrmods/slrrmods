@@ -48,7 +48,7 @@ export async function sendEmailVerification(user) {
 		year: new Date().getFullYear(),
 	});
 
-	await sendHtml(email, "", html);
+	await sendHtml(email, "Confirm your email", html);
 }
 
 export async function verifyEmail(encryptedToken) {
@@ -76,7 +76,7 @@ export async function verifyEmail(encryptedToken) {
 		year: new Date().getFullYear(),
 	});
 
-	await sendHtml(user.email, "", html);
+	await sendHtml(user.email, "Email confirmed", html);
 }
 
 async function validateToken(encryptedToken) {
