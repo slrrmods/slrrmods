@@ -25,7 +25,7 @@ export async function verifyUsernameExists(username) {
 }
 
 export async function validateUser(username, password) {
-	const user = await getFromUsername(username);
+	const user = await getFromEmailOrUsername(username);
 	if (!user) throw new Error("Invalid email/username or password");
 	if (!user.active) throw new Error("Account is not active");
 
