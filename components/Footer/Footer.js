@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
 	Container,
 	Group,
@@ -6,8 +5,10 @@ import {
 	Stack,
 	Divider,
 	Text,
+	Tooltip,
 } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons";
+import Link from "../Link";
 import Logo from "../Logo";
 
 export default function Footer() {
@@ -18,14 +19,17 @@ export default function Footer() {
 					<Group position="apart">
 						<Logo />
 
-						<Link
-							href="https://github.com/adnan-54/slrrmods"
-							passHref
-							legacyBehavior>
-							<ActionIcon component="a" size="lg">
-								<IconBrandGithub stroke={1.5} />
-							</ActionIcon>
-						</Link>
+						<Tooltip
+							openDelay={500}
+							transition="fade"
+							transitionDuration={300}
+							label="Source code">
+							<Link href="https://github.com/adnan-54/slrrmods" newTab>
+								<ActionIcon>
+									<IconBrandGithub />
+								</ActionIcon>
+							</Link>
+						</Tooltip>
 					</Group>
 
 					<Divider />

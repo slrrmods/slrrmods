@@ -37,6 +37,21 @@ export async function joinNewSession(
 	await updateLastLogin(user);
 }
 
+export async function getCurrentSession(request, response) {
+	const token = await getFromCookies(request, response);
+	if (!token) throw new Error("User not logged in");
+
+	const { data } = await client
+		.from("sessions")
+		.select()
+		.eq("id", token.session)
+		.maybeSingle();
+
+	if (!data) throw new Error("User not logged in");
+
+	return data;
+}
+
 export async function quitCurrentSession(request, response) {
 	try {
 		const token = await getFromCookies(request, response);
@@ -128,7 +143,7 @@ function writeToCookies(session, token, request, response) {
 		httpOnly: true,
 		secure: !IS_DEVELOPMENT_ENV,
 		sameSite: "strict",
-		expires: session.sso ? session.expiresAt : undefined,
+		expires: session.sso ? new Date(session.expires_at) : undefined,
 		path: "/",
 	});
 }

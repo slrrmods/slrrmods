@@ -6,10 +6,13 @@ export const tryGetItem = (key) => {
 	return JSON.parse(localStorage.getItem(key));
 };
 
-export const getTheme = () => tryGetItem(THEME_COOKIE_KEY) || DEFAULT_THEME;
+export function getTheme() {
+	return tryGetItem(THEME_COOKIE_KEY) || DEFAULT_THEME;
+}
 
-export const useThemeStorage = (defaultValue) =>
-	useLocalStorage({
+export function useThemeStorage(defaultValue) {
+	return useLocalStorage({
 		key: THEME_COOKIE_KEY,
-		defaultValue: defaultValue || THEME_COOKIE_KEY,
+		defaultValue: defaultValue || DEFAULT_THEME,
 	});
+}

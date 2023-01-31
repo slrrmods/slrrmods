@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import {
 	Alert,
 	Anchor,
@@ -28,6 +27,8 @@ import {
 	passwordValidation,
 	confirmPasswordValidation,
 } from "../../../utils/validations";
+import { useUserContext } from "../../../contexts/UserContext";
+import Link from "../../Link";
 
 const formInitialValues = {
 	email: "",
@@ -71,9 +72,11 @@ export default function SignUpForm() {
 		refetchOnWindowFocus: false,
 	});
 
+	const userContext = useUserContext();
 	const signInMutation = useMutation({
 		mutationFn: async ({ username, password }) => {
 			await users.signIn(username, password, true);
+			userContext.signIn();
 		},
 		onSettled: () => {
 			close();
@@ -293,10 +296,8 @@ export default function SignUpForm() {
 						label={
 							<>
 								{"I accept the "}
-								<Link href="/rules" passHref legacyBehavior>
-									<Anchor component="a" target="_blank">
-										terms and rules
-									</Anchor>
+								<Link href="/rules" newTab>
+									<Anchor>terms and rules</Anchor>
 								</Link>
 							</>
 						}

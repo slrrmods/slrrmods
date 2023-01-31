@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm, yupResolver } from "@mantine/form";
@@ -23,6 +22,7 @@ import {
 } from "../utils/validations";
 import { resetPassword } from "../endpoints/users";
 import { useRouter } from "next/router";
+import Link from "../components/Link";
 
 const formSchema = yup.object().shape({
 	password: passwordValidation,
@@ -139,8 +139,8 @@ function Reset({ token }) {
 						</Stack>
 					</Group>
 
-					<Link href="/users/signIn" passHref legacyBehavior>
-						<Button component="a">Sign In</Button>
+					<Link href="/users/signIn">
+						<Button>Sign In</Button>
 					</Link>
 				</Stack>
 			)}
@@ -156,8 +156,8 @@ function Reset({ token }) {
 						</Stack>
 					</Group>
 
-					<Link href="/users/forgotPassword" passHref legacyBehavior>
-						<Button component="a">Try again</Button>
+					<Link href="/users/forgotPassword">
+						<Button>Try again</Button>
 					</Link>
 				</Stack>
 			)}
@@ -186,8 +186,8 @@ function Expired() {
 					</Stack>
 				</Group>
 
-				<Link href="/users/forgotPassword" passHref legacyBehavior>
-					<Button component="a">Request New</Button>
+				<Link href="/users/forgotPassword">
+					<Button>Request New</Button>
 				</Link>
 			</Stack>
 		</Card>

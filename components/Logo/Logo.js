@@ -1,12 +1,10 @@
-import Link from "next/link";
 import { Title } from "@mantine/core";
+import Link from "../Link";
 
 export default function Logo() {
 	return (
-		<Link href="/" passHref legacyBehavior>
-			<Title order={3} component="a">
-				SLRR MODS
-			</Title>
+		<Link href="/">
+			<Title order={3}>SLRR MODS</Title>
 		</Link>
 	);
 }

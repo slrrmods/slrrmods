@@ -17,6 +17,7 @@ import {
 import { IconAlertCircle } from "@tabler/icons";
 import * as yup from "yup";
 import { signIn } from "../../../endpoints/users";
+import { useUserContext } from "../../../contexts/UserContext";
 
 const formSchema = yup.object().shape({
 	user: yup.string().required("Email or username is required"),
@@ -43,9 +44,11 @@ export default function SignInForm() {
 
 	const focusTrapRef = useFocusTrap(isInModal);
 
+	const userContext = useUserContext();
 	const signInMutation = useMutation({
-		mutationFn: ({ user, password }) => {
-			return signIn(user, password, remember);
+		mutationFn: async ({ user, password }) => {
+			await signIn(user, password, remember);
+			userContext.signIn();
 		},
 		onSuccess: () => {
 			close();

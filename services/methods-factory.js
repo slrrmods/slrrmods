@@ -12,7 +12,7 @@ export function createMethods() {
 }
 
 function createMethod(method) {
-	return (endpoint, options) => {
+	return (endpoint, options = {}) => {
 		if (!endpoint) throw new Error("Endpoint is required");
 
 		const { headers, query, data } = options;

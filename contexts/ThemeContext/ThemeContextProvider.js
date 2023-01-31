@@ -7,8 +7,8 @@ import { useThemeStorage } from "../../utils/local-storage";
 import { THEME_COOKIE_KEY } from "../../utils/constants";
 import { ThemeContext } from ".";
 
-export default function ThemeContextProvider({ children, preferredTheme }) {
-	const [theme, setTheme] = useThemeStorage(preferredTheme);
+export default function ThemeContextProvider({ children, currentTheme }) {
+	const [theme, setTheme] = useThemeStorage(currentTheme);
 
 	useEffect(() => {
 		setCookie(THEME_COOKIE_KEY, theme, {

@@ -43,3 +43,11 @@ export function resetPassword(token, password) {
 
 	return post("/users/resetPassword", { data });
 }
+
+export function getUserInfo() {
+	return get("/users/getUserInfo");
+}
+
+export function signOff() {
+	return post("/users/signOff");
+}

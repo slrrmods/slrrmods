@@ -1,6 +1,9 @@
-import { useStyles } from "./Navbar.styles";
-import { Tabs, Button } from "@mantine/core";
 import { useRouter } from "next/router";
+import { useStyles } from "./Navbar.styles";
+import { useThemeContext } from "../../../contexts/ThemeContext";
+import { Tabs, Group, ActionIcon, Tooltip } from "@mantine/core";
+import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons";
+import Link from "../../Link";
 
 const tabs = [
 	{
@@ -31,8 +34,9 @@ const tabs = [
 
 export default function Navbar() {
 	const { classes } = useStyles();
-
 	const router = useRouter();
+	const { toggleTheme, isDark } = useThemeContext();
+
 	const currentPath = `/${router.pathname.split("/")[1]}`;
 
 	const onTabChange = (value) => {
@@ -41,22 +45,41 @@ export default function Navbar() {
 	};
 
 	return (
-		<Tabs
-			value={currentPath}
-			onTabChange={onTabChange}
-			classNames={{
-				tabsList: classes.tabsList,
-				tab: classes.tab,
-			}}>
-			<Tabs.List>
-				{tabs.map((t) => {
-					return (
-						<Tabs.Tab key={t.path} value={t.path}>
-							{t.title}
-						</Tabs.Tab>
-					);
-				})}
-			</Tabs.List>
-		</Tabs>
+		<Group position="apart">
+			<Tabs
+				value={currentPath}
+				onTabChange={onTabChange}
+				classNames={{
+					tabsList: classes.tabsList,
+					tab: classes.tab,
+				}}>
+				<Tabs.List>
+					{tabs.map((t) => {
+						return (
+							<Tabs.Tab key={t.path} value={t.path}>
+								{t.title}
+							</Tabs.Tab>
+						);
+					})}
+				</Tabs.List>
+			</Tabs>
+
+			<Tooltip
+				position="bottom"
+				openDelay={500}
+				transition="fade"
+				transitionDuration={300}
+				label={isDark ? "Light mode" : "Dark mode"}>
+				<ActionIcon
+					my={-1}
+					mx="sm"
+					size="lg"
+					variant="filled"
+					color="blue"
+					onClick={toggleTheme}>
+					{isDark ? <IconSun /> : <IconMoonStars />}
+				</ActionIcon>
+			</Tooltip>
+		</Group>
 	);
 }

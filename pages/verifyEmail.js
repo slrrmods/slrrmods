@@ -1,11 +1,11 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Center, Stack, Title, Text, Card, Group } from "@mantine/core";
 import { IconCircleCheck, IconInfoCircle, IconMail } from "@tabler/icons";
 import { resendEmailVerification } from "../endpoints/users";
 import { verifyEmail } from "../services/email-verification";
-import { useEffect } from "react";
+import Link from "../components/Link";
 
 export default function VerifyEmail({ result, token }) {
 	const router = useRouter();
@@ -26,8 +26,8 @@ export default function VerifyEmail({ result, token }) {
 				<Stack bg={isSuccess ? "green" : "red"} p="md" c="white" spacing="sm">
 					{isSuccess ? <Success /> : <Expired />}
 
-					<Link href="/" passHref legacyBehavior>
-						<Button component="a">Go to Home</Button>
+					<Link href="/">
+						<Button>Go to Home</Button>
 					</Link>
 				</Stack>
 			</Card>

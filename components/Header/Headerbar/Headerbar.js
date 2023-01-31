@@ -1,16 +1,18 @@
-import { Group } from "@mantine/core";
+import { Flex, Group } from "@mantine/core";
 import Logo from "../../Logo";
 import Searchbar from "./Searchbar";
 import UserPanel from "./UserPanel";
 
 export default function Headerbar() {
 	return (
-		<Group position="apart">
+		<Group grow>
 			<Logo />
 
 			<Searchbar />
 
-			<UserPanel />
+			<Flex gap="md" justify="flex-end">
+				<UserPanel />
+			</Flex>
 		</Group>
 	);
 }

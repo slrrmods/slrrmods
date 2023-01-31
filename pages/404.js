@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Title, Text, Button, Container, createStyles } from "@mantine/core";
+import Link from "../components/Link";
 import * as themeHelpers from "../utils/theme-helpers";
 
 const useStyles = createStyles((theme) => ({
@@ -47,8 +47,8 @@ export default function NotFound() {
 				address, or the page has been moved to another URL.
 			</Text>
 
-			<Link href="/" passHref legacyBehavior>
-				<Button component="a" variant="subtle" size="md">
+			<Link href="/">
+				<Button variant="subtle" size="md">
 					Take me back to home page
 				</Button>
 			</Link>
