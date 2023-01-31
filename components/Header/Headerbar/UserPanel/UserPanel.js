@@ -8,7 +8,7 @@ export default function UserPanel() {
 
 	const router = useRouter();
 
-	if (loading) return <Loader color="white" variant="dots" />;
+	if (loading) return <Loader mx="md" size="sm" color="white" variant="dots" />;
 
 	if (user)
 		return (

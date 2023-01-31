@@ -7,6 +7,7 @@ export const useStyles = createStyles((theme) => {
 	return {
 		header: {
 			position: "sticky",
+			top: 0,
 			paddingTop: theme.spacing.sm,
 			backgroundColor: background,
 			color: theme.white,
