@@ -1,5 +1,4 @@
 import { handleRequest } from "../../../services/request-handler";
-import { getCurrentSession } from "../../../services/session-manager";
 import { getInfos } from "../../../services/user-service";
 
 const configurarions = {
@@ -12,8 +11,7 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet({ request, response }) {
-	const session = await getCurrentSession(request, response);
+async function onGet({ session }) {
 	const user = await getInfos(session.owner);
 
 	return {

@@ -26,15 +26,20 @@ export async function verifyUsernameExists(username) {
 	return data !== null;
 }
 
-export async function validateUser(username, password) {
+export async function getFromLogin(username, password) {
 	const user = await getFromEmailOrUsername(username);
-	if (!user.active) throw new ValidationError("Account is not active");
-
-	//todo: check if user is not banned
 
 	const passwordMatch = await compare(password, user.password);
 	if (!passwordMatch)
 		throw new ValidationError("Invalid email/username or password");
+
+	//todo: check if user is not banned
+
+	if (!user.active) throw new ValidationError("Account is not active");
+
+	await updateLastLogin(user);
+
+	return user;
 }
 
 export async function getInfos(id) {

@@ -1,17 +1,13 @@
 import * as yup from "yup";
 import geoip from "geoip-lite";
 import { hash, compare } from "bcrypt";
-import { setCookie, getCookie, deleteCookie } from "cookies-next";
+import { setCookie, getCookie, deleteCookie, hasCookie } from "cookies-next";
 import { createClient } from "./supabase-client";
 import { createRandomToken } from "../utils/tokenizer";
 import { encrypt, decrypt } from "../utils/crypto";
 import { SESSION_COOKIE_KEY, IS_DEVELOPMENT_ENV } from "../utils/constants";
 import { getIp } from "../utils/ip";
-import {
-	updateLastLogin,
-	validateUser,
-	getFromEmailOrUsername,
-} from "./user-service";
+import { getFromLogin } from "./user-service";
 import { ValidationError } from "../classes";
 
 const tokenSchema = yup.object().shape({
@@ -21,66 +17,56 @@ const tokenSchema = yup.object().shape({
 
 const client = createClient();
 
+export async function validateCurrentSession(request, response) {
+	if (!containsSession(request, response)) return undefined;
+
+	const session = await getCurrentSession(request, response);
+
+	if (session.revoked_at) {
+		await quitSession(session, request, response);
+		throw new ValidationError("Session revoked", 401);
+	}
+
+	if (new Date() > new Date(session.expires_at)) {
+		await quitSession(session, request, response);
+		throw new ValidationError("Session expired", 401);
+	}
+
+	await client
+		.from("sessions")
+		.update({ updated_at: new Date() })
+		.eq("id", session.id);
+
+	return session;
+}
+
 export async function joinNewSession(
 	username,
 	password,
 	sso,
 	request,
-	response
+	response,
+	currentSession
 ) {
-	await quitCurrentSession(request, response);
-	await validateUser(username, password);
+	try {
+		await quitSession(currentSession, request, response);
+	} catch {}
 
-	const user = await getFromEmailOrUsername(username);
+	const user = await getFromLogin(username, password);
 	const { session, token } = await createSession(user, sso, request);
 	writeToCookies(session, token, request, response);
-
-	await updateLastLogin(user);
 }
 
-export async function getCurrentSession(request, response) {
-	const token = await getFromCookies(request, response);
-	if (!token) throw new ValidationError("User not logged in");
-
-	const { data } = await client
-		.from("sessions")
-		.select()
-		.eq("id", token.session)
-		.maybeSingle();
-
-	if (!data) throw new ValidationError("User not logged in");
-
-	return data;
-}
-
-export async function quitCurrentSession(request, response) {
+export async function quitSession(session, request, response) {
 	try {
-		const token = await getFromCookies(request, response);
-		if (!token) return;
-
-		const { data: session } = await client
-			.from("sessions")
-			.select()
-			.eq("id", token.session)
-			.maybeSingle();
-
-		if (!session) return;
-		if (session.revoked_at) return;
-		if (!session.token) return;
-
-		const tokenMatch = await compare(token.value, session.token);
-		if (!tokenMatch) throw new ValidationError("Invalid session");
-
 		await revokeSession(session);
-	} catch (error) {
-		throw error;
 	} finally {
 		removeFromCookies(request, response);
 	}
 }
 
 export async function revokeSession(session) {
-	if (session.revokedAt) throw new ValidationError("Session already revoked");
+	if (session.revoked_at) throw new ValidationError("Session already revoked");
 
 	await client
 		.from("sessions")
@@ -100,6 +86,30 @@ export async function revokeAllSessions(user) {
 		})
 		.eq("owner", user.id)
 		.is("revoked_at", null);
+}
+
+async function getCurrentSession(request, response) {
+	try {
+		const token = await getFromCookies(request, response);
+		if (!token) throw new ValidationError("User not logged in");
+
+		const { data } = await client
+			.from("sessions")
+			.select()
+			.eq("id", token.session)
+			.maybeSingle();
+
+		if (!data) throw new ValidationError("Invalid session", 401);
+		if (!data.token) throw new ValidationError("Invalid session", 401);
+
+		const tokenMatches = await compare(token.value, data.token);
+		if (!tokenMatches) throw new ValidationError("Invalid session", 401);
+
+		return data;
+	} catch (error) {
+		removeFromCookies(request, response);
+		throw error;
+	}
 }
 
 async function createSession(user, sso, request) {
@@ -135,6 +145,10 @@ async function getFromCookies(request, response) {
 	const cookie = getCookie(SESSION_COOKIE_KEY, { req: request, res: response });
 	if (cookie) return await parseToken(cookie);
 	return undefined;
+}
+
+function containsSession(request, response) {
+	return hasCookie(SESSION_COOKIE_KEY, { req: request, res: response });
 }
 
 function writeToCookies(session, token, request, response) {

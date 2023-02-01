@@ -1,5 +1,6 @@
 import validateMethod from "./validate-method";
 import applyRateLimit from "./rate-limiting";
+import validateSession from "./validate-session";
 import validateHeaders from "./validate-headers";
 import validateQuery from "./validate-query";
 import validateBody from "./validate-body";
@@ -7,6 +8,7 @@ import validateBody from "./validate-body";
 const middlewares = [
 	validateMethod,
 	applyRateLimit,
+	validateSession,
 	validateHeaders,
 	validateQuery,
 	validateBody,

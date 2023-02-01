@@ -1,5 +1,5 @@
 import { handleRequest } from "../../../services/request-handler";
-import { quitCurrentSession } from "../../../services/session-manager";
+import { quitSession } from "../../../services/session-manager";
 
 const configurarions = {
 	POST: {
@@ -15,6 +15,6 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ request, response }) {
-	await quitCurrentSession(request, response);
+async function onPost({ request, response, session }) {
+	await quitSession(session, request, response);
 }

@@ -4,6 +4,11 @@ import { ValidationError } from "../classes";
 import { IS_DEVELOPMENT_ENV } from "../utils/constants";
 import { log } from "next-axiom";
 
+const defaultResult = {
+	status: 200,
+	data: { message: "Success" },
+};
+
 export async function handleRequest(request, response, configurations) {
 	const context = {
 		request,
@@ -16,10 +21,10 @@ export async function handleRequest(request, response, configurations) {
 		await runMiddlewares(context);
 
 		const { handler } = context.configuration;
+		const handlerResult = await handler(context);
 		const result = {
-			status: 200,
-			data: { message: "Success" },
-			...(await handler(context)),
+			...defaultResult,
+			...handlerResult,
 		};
 
 		return response.status(result.status).json(result.data);
