@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { ValidationError } from "../classes";
 import { hash, compare } from "bcrypt";
 import { createClient } from "./supabase-client";
 import { getFromId } from "./user-service";
@@ -17,23 +18,22 @@ const client = createClient();
 
 export async function resendEmailVerification(encryptedToken) {
 	const token = await parseToken(encryptedToken);
-
 	const user = await getFromId(token.user);
-	if (!user) throw new Error("Invalid token");
 
 	if (!user.email_confirmation_token)
-		throw new Error("Email already confirmed");
+		throw new ValidationError("Email already confirmed");
 
-	if (!user.email_confirmation_sent_at) throw new Error("Token expired");
+	if (!user.email_confirmation_sent_at)
+		throw new ValidationError("Token expired");
 
 	const now = new Date();
 	const sentAt = new Date(user.email_confirmation_sent_at);
 	const diff = now.getTime() - sentAt.getTime();
 	const diffHours = Math.floor(diff / (1000 * 60 * 60));
-	if (diffHours <= 48) throw new Error("Token is not expired");
+	if (diffHours <= 48) throw new ValidationError("Token is not expired");
 
 	const tokenMatch = await compare(token.value, user.email_confirmation_token);
-	if (!tokenMatch) throw new Error("Invalid token");
+	if (!tokenMatch) throw new ValidationError("Invalid token");
 
 	await sendEmailVerification(user);
 }
@@ -83,22 +83,22 @@ async function validateToken(encryptedToken) {
 	const token = await parseToken(encryptedToken);
 
 	const user = await getFromId(token.user);
-	if (!user) throw new Error("Invalid token");
-	if (!user.active) throw new Error("User is not active");
+	if (!user.active) throw new ValidationError("User is not active");
 
 	if (!user.email_confirmation_token)
-		throw new Error("Email already confirmed");
+		throw new ValidationError("Email already confirmed");
 
-	if (!user.email_confirmation_sent_at) throw new Error("Token expired");
+	if (!user.email_confirmation_sent_at)
+		throw new ValidationError("Token expired");
 
 	const now = new Date();
 	const sentAt = new Date(user.email_confirmation_sent_at);
 	const diff = now.getTime() - sentAt.getTime();
 	const diffHours = Math.floor(diff / (1000 * 60 * 60));
-	if (diffHours > 48) throw new Error("Token expired");
+	if (diffHours > 48) throw new ValidationError("Token expired");
 
 	const tokenMatch = await compare(token.value, user.email_confirmation_token);
-	if (!tokenMatch) throw new Error("Invalid token");
+	if (!tokenMatch) throw new ValidationError("Invalid token");
 
 	return token;
 }
@@ -127,6 +127,6 @@ async function parseToken(encryptedToken) {
 		const parsedToken = JSON.parse(decryptedToken);
 		return await tokenSchema.validate(parsedToken);
 	} catch {
-		throw new Error("Invalid token");
+		throw new ValidationError("Invalid token");
 	}
 }

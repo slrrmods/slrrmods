@@ -12,6 +12,7 @@ import {
 	validateUser,
 	getFromEmailOrUsername,
 } from "./user-service";
+import { ValidationError } from "../classes";
 
 const tokenSchema = yup.object().shape({
 	session: yup.string().required(),
@@ -39,7 +40,7 @@ export async function joinNewSession(
 
 export async function getCurrentSession(request, response) {
 	const token = await getFromCookies(request, response);
-	if (!token) throw new Error("User not logged in");
+	if (!token) throw new ValidationError("User not logged in");
 
 	const { data } = await client
 		.from("sessions")
@@ -47,7 +48,7 @@ export async function getCurrentSession(request, response) {
 		.eq("id", token.session)
 		.maybeSingle();
 
-	if (!data) throw new Error("User not logged in");
+	if (!data) throw new ValidationError("User not logged in");
 
 	return data;
 }
@@ -68,7 +69,7 @@ export async function quitCurrentSession(request, response) {
 		if (!session.token) return;
 
 		const tokenMatch = await compare(token.value, session.token);
-		if (!tokenMatch) throw new Error("Invalid session");
+		if (!tokenMatch) throw new ValidationError("Invalid session");
 
 		await revokeSession(session);
 	} catch (error) {
@@ -79,7 +80,7 @@ export async function quitCurrentSession(request, response) {
 }
 
 export async function revokeSession(session) {
-	if (session.revokedAt) throw new Error("Session already revoked");
+	if (session.revokedAt) throw new ValidationError("Session already revoked");
 
 	await client
 		.from("sessions")
@@ -181,6 +182,6 @@ async function parseToken(encryptedToken) {
 		const parsedToken = JSON.parse(descryptedToken);
 		return await tokenSchema.validate(parsedToken);
 	} catch {
-		throw new Error("Invalid token");
+		throw new ValidationError("Invalid token");
 	}
 }

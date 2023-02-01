@@ -17,6 +17,8 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-function onGet({ response, query }) {
-	return response.status(200).json({ message: `Hello ${query.name}` });
+function onGet({ query }) {
+	return {
+		data: { message: `Hello ${query.name}` },
+	};
 }

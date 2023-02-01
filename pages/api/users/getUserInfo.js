@@ -13,11 +13,10 @@ export default async function handler(req, res) {
 }
 
 async function onGet({ request, response }) {
-	try {
-		const session = await getCurrentSession(request, response);
-		const user = await getInfos(session.owner);
-		return response.status(200).json(user);
-	} catch (error) {
-		return response.status(400).json({ error: error.message });
-	}
+	const session = await getCurrentSession(request, response);
+	const user = await getInfos(session.owner);
+
+	return {
+		data: { user },
+	};
 }

@@ -19,11 +19,16 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet({ response, query }) {
+async function onGet({ query }) {
 	const { email } = query;
 
-	if (await verifyEmailExists(email))
-		return response.status(200).json({ error: "Email is already in use" });
+	if (await verifyEmailExists(email)) {
+		return {
+			data: { error: "Email is already in use" },
+		};
+	}
 
-	return response.status(200).json({ message: "Email is available" });
+	return {
+		data: { message: "Email is available" },
+	};
 }

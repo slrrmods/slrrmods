@@ -8,6 +8,7 @@ import { createRandomToken } from "../utils/tokenizer";
 import { encrypt, decrypt } from "../utils/crypto";
 import { createFromTemplate, EMAIL_TEMPLATES } from "../utils/email-templates";
 import { ENVIROMENT_URL } from "../utils/constants";
+import { ValidationError } from "../classes";
 
 const tokenSchema = yup.object().shape({
 	user: yup.string().required(),
@@ -65,20 +66,21 @@ export async function validateToken(encryptedToken) {
 	const token = await parseToken(encryptedToken);
 
 	const user = await getFromId(token.user);
-	if (!user) throw new Error("Invalid token");
-	if (!user.active) throw new Error("User is not active");
+	if (!user.active) throw new ValidationError("User is not active");
 
-	if (!user.password_recovery_token) throw new Error("Password already reset");
-	if (!user.password_recovery_sent_at) throw new Error("Token expired");
+	if (!user.password_recovery_token)
+		throw new ValidationError("Password already reset");
+	if (!user.password_recovery_sent_at)
+		throw new ValidationError("Token expired");
 
 	const now = new Date();
 	const sentAt = new Date(user.password_recovery_sent_at);
 	const diff = now.getTime() - sentAt.getTime();
 	const diffHours = Math.floor(diff / (1000 * 60 * 60));
-	if (diffHours > 24) throw new Error("Token expired");
+	if (diffHours > 24) throw new ValidationError("Token expired");
 
 	const tokenMatch = await compare(token.value, user.password_recovery_token);
-	if (!tokenMatch) throw new Error("Invalid token");
+	if (!tokenMatch) throw new ValidationError("Invalid token");
 
 	return token;
 }
@@ -107,6 +109,6 @@ async function parseToken(encryptedToken) {
 		const token = JSON.parse(decryptedToken);
 		return await tokenSchema.validate(token);
 	} catch {
-		throw new Error("Invalid token");
+		throw new ValidationError("Invalid token");
 	}
 }

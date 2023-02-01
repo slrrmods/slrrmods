@@ -19,11 +19,16 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet({ response, query }) {
+async function onGet({ query }) {
 	const { username } = query;
 
-	if (await verifyUsernameExists(username))
-		return response.status(200).json({ error: "Username is already in use" });
+	if (await verifyUsernameExists(username)) {
+		return {
+			data: { error: "Username is already in use" },
+		};
+	}
 
-	return response.status(200).json({ message: "Username is available" });
+	return {
+		data: { message: "Username is available" },
+	};
 }

@@ -22,14 +22,8 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ response, body }) {
+async function onPost({ body }) {
 	const { token, password } = body;
 
-	try {
-		await resetPassword(token, password);
-	} catch (error) {
-		return response.status(400).json({ error: error.message });
-	} finally {
-		return response.status(200).json({ message: "Success" });
-	}
+	await resetPassword(token, password);
 }

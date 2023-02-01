@@ -26,14 +26,12 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ response, body }) {
+async function onPost({ body }) {
 	const { email, username, password } = body;
 
-	try {
-		await createNew(email, username, password);
-	} catch (error) {
-		return response.status(400).json({ error: error.message });
-	}
+	await createNew(email, username, password);
 
-	return response.status(201).json({ message: "Success" });
+	return {
+		status: 201,
+	};
 }

@@ -1,3 +1,4 @@
+import { ValidationError } from "../../classes";
 import { handleRequest } from "../../services/request-handler";
 
 const configurarions = {
@@ -12,5 +13,5 @@ export default async function handler(req, res) {
 }
 
 function onGet() {
-	throw new Error("Test error");
+	throw new ValidationError("Test error");
 }

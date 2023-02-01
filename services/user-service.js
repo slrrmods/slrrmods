@@ -2,6 +2,7 @@ import { hash, compare } from "bcrypt";
 import { createClient } from "./supabase-client";
 import { sendEmailVerification } from "./email-verification";
 import { camelizeKeys } from "humps";
+import { ValidationError } from "../classes";
 
 const client = createClient();
 
@@ -27,18 +28,17 @@ export async function verifyUsernameExists(username) {
 
 export async function validateUser(username, password) {
 	const user = await getFromEmailOrUsername(username);
-	if (!user) throw new Error("Invalid email/username or password");
-	if (!user.active) throw new Error("Account is not active");
+	if (!user.active) throw new ValidationError("Account is not active");
 
 	//todo: check if user is not banned
 
 	const passwordMatch = await compare(password, user.password);
-	if (!passwordMatch) throw new Error("Invalid email/username or password");
+	if (!passwordMatch)
+		throw new ValidationError("Invalid email/username or password");
 }
 
 export async function getInfos(id) {
 	const user = await getFromId(id);
-	if (!user) throw new Error("Invalid email/username or password");
 
 	user.country = undefined;
 	if (user.id_country) {
@@ -68,7 +68,7 @@ export async function getFromId(id) {
 		.eq("id", id)
 		.maybeSingle();
 
-	if (!data) throw new Error("Invalid email/username or password");
+	if (!data) throw new ValidationError("Invalid email/username or password");
 
 	return data;
 }
@@ -85,7 +85,7 @@ export async function getFromEmail(email) {
 		.eq("email", email)
 		.maybeSingle();
 
-	if (!data) throw new Error("Invalid email/username or password");
+	if (!data) throw new ValidationError("Invalid email/username or password");
 
 	return data;
 }
@@ -97,7 +97,7 @@ export async function getFromUsername(username) {
 		.eq("username", username)
 		.maybeSingle();
 
-	if (!data) throw new Error("Invalid email/username or password");
+	if (!data) throw new ValidationError("Invalid email/username or password");
 
 	return data;
 }
@@ -111,10 +111,10 @@ export async function updateLastLogin(user) {
 
 export async function createNew(email, username, password) {
 	if (await verifyEmailExists(email))
-		throw new Error("Email is already in use");
+		throw new ValidationError("Email is already in use");
 
 	if (await verifyUsernameExists(username))
-		throw new Error("Username is already in use");
+		throw new ValidationError("Username is already in use");
 
 	const encryptedPassword = await hash(password, 10);
 

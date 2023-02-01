@@ -19,14 +19,8 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ response, query }) {
+async function onPost({ query }) {
 	const { token } = query;
 
-	try {
-		await resendEmailVerification(token);
-	} catch (error) {
-		return response.status(400).json({ error: error.message });
-	}
-
-	return response.status(200).json({ message: "Success" });
+	await resendEmailVerification(token);
 }

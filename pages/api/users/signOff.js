@@ -15,12 +15,6 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ request, response, body }) {
-	try {
-		await quitCurrentSession(request, response);
-	} catch (error) {
-		return response.status(403).json({ error: error.message });
-	}
-
-	response.status(200).json({ message: "Success" });
+async function onPost({ request, response }) {
+	await quitCurrentSession(request, response);
 }

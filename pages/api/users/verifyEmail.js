@@ -19,14 +19,8 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onGet({ response, query }) {
+async function onGet({ query }) {
 	const { token } = query;
 
-	try {
-		await verifyEmail(token);
-	} catch (error) {
-		return response.status(403).json({ error: error.message });
-	}
-
-	return response.status(200).json({ message: "success" });
+	await verifyEmail(token);
 }

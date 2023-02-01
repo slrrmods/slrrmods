@@ -24,11 +24,5 @@ export default async function handler(req, res) {
 async function onPost({ request, response, body }) {
 	const { username, password, sso } = body;
 
-	try {
-		await joinNewSession(username, password, sso, request, response);
-	} catch (error) {
-		return response.status(403).json({ error: error.message });
-	}
-
-	response.status(200).json({ message: "Success" });
+	await joinNewSession(username, password, sso, request, response);
 }

@@ -22,18 +22,15 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ response, body }) {
+async function onPost({ body }) {
 	const { email } = body;
-	const user = await getFromEmail(email);
+
+	let user = undefined;
+	try {
+		user = await getFromEmail(email);
+	} catch {}
 
 	if (!user) {
 		await new Promise((resolve) => setTimeout(resolve, 3000));
-		return response.status(200).json({ message: "Success" });
-	}
-
-	try {
-		await sendResetPassword(user);
-	} finally {
-		return response.status(200).json({ message: "Success" });
-	}
+	} else await sendResetPassword(user);
 }
