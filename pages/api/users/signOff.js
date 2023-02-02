@@ -3,6 +3,7 @@ import { quitSession } from "../../../services/session-manager";
 
 const configurarions = {
 	POST: {
+		authentication: true,
 		handler: onPost,
 		rateLimit: {
 			limit: 5,

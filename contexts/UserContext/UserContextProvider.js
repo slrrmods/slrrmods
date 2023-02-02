@@ -46,11 +46,11 @@ export default function UserContextProvider({
 			//todo: get only necessary data
 			return getUserInfo();
 		},
-		onSuccess: ({ user }) => {
+		onSuccess: (data) => {
 			setStorageUser({
-				id: user.id,
-				username: user.username,
-				profilePicture: user.profilePicture,
+				id: data.id,
+				username: data.username,
+				profilePicture: data.profilePicture,
 			});
 		},
 		onMutate: () => setLoading(true),

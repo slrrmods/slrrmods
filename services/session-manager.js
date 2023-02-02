@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import geoip from "geoip-lite";
 import { hash, compare } from "bcrypt";
-import { setCookie, getCookie, deleteCookie, hasCookie } from "cookies-next";
+import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { createClient } from "./supabase-client";
 import { createRandomToken } from "../utils/tokenizer";
 import { encrypt, decrypt } from "../utils/crypto";
@@ -17,27 +17,45 @@ const tokenSchema = yup.object().shape({
 
 const client = createClient();
 
-export async function validateCurrentSession(request, response) {
-	if (!containsSession(request, response)) return undefined;
+export async function getCurrentSession(request, response) {
+	const token = await getFromCookies(request, response);
+	if (!token) return undefined;
 
-	const session = await getCurrentSession(request, response);
-
-	if (session.revoked_at) {
-		await quitSession(session, request, response);
-		throw new ValidationError("Session revoked", 401);
-	}
-
-	if (new Date() > new Date(session.expires_at)) {
-		await quitSession(session, request, response);
-		throw new ValidationError("Session expired", 401);
-	}
-
-	await client
+	const { data } = await client
 		.from("sessions")
-		.update({ updated_at: new Date() })
-		.eq("id", session.id);
+		.select()
+		.eq("id", token.session)
+		.maybeSingle();
 
-	return session;
+	return data;
+}
+
+export async function validateSession(session, request, response) {
+	try {
+		if (!session) throw new ValidationError("Invalid session", 401);
+		if (!session.token) throw new ValidationError("Invalid session", 401);
+
+		if (session.revoked_at) throw new ValidationError("Session revoked", 401);
+
+		if (new Date() > new Date(session.expires_at))
+			throw new ValidationError("Session expired", 401);
+
+		const token = await getFromCookies(request, response);
+
+		const tokenMatches = await compare(token.value, session.token);
+		if (!tokenMatches) throw new ValidationError("Invalid session", 401);
+
+		if (token.session !== session.id)
+			throw new ValidationError("Invalid session", 401);
+
+		await client
+			.from("sessions")
+			.update({ updated_at: new Date() })
+			.eq("id", session.id);
+	} catch (error) {
+		await quitSession(session, request, response);
+		throw error;
+	}
 }
 
 export async function joinNewSession(
@@ -48,9 +66,7 @@ export async function joinNewSession(
 	response,
 	currentSession
 ) {
-	try {
-		await quitSession(currentSession, request, response);
-	} catch {}
+	if (currentSession) await quitSession(currentSession, request, response);
 
 	const user = await getFromLogin(username, password);
 	const { session, token } = await createSession(user, sso, request);
@@ -60,6 +76,7 @@ export async function joinNewSession(
 export async function quitSession(session, request, response) {
 	try {
 		await revokeSession(session);
+	} catch {
 	} finally {
 		removeFromCookies(request, response);
 	}
@@ -86,30 +103,6 @@ export async function revokeAllSessions(user) {
 		})
 		.eq("owner", user.id)
 		.is("revoked_at", null);
-}
-
-async function getCurrentSession(request, response) {
-	try {
-		const token = await getFromCookies(request, response);
-		if (!token) throw new ValidationError("User not logged in");
-
-		const { data } = await client
-			.from("sessions")
-			.select()
-			.eq("id", token.session)
-			.maybeSingle();
-
-		if (!data) throw new ValidationError("Invalid session", 401);
-		if (!data.token) throw new ValidationError("Invalid session", 401);
-
-		const tokenMatches = await compare(token.value, data.token);
-		if (!tokenMatches) throw new ValidationError("Invalid session", 401);
-
-		return data;
-	} catch (error) {
-		removeFromCookies(request, response);
-		throw error;
-	}
 }
 
 async function createSession(user, sso, request) {
@@ -145,10 +138,6 @@ async function getFromCookies(request, response) {
 	const cookie = getCookie(SESSION_COOKIE_KEY, { req: request, res: response });
 	if (cookie) return await parseToken(cookie);
 	return undefined;
-}
-
-function containsSession(request, response) {
-	return hasCookie(SESSION_COOKIE_KEY, { req: request, res: response });
 }
 
 function writeToCookies(session, token, request, response) {

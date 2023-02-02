@@ -21,8 +21,8 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ request, response, body, session }) {
-	const { username, password, sso } = body;
+async function onPost({ request, response, body }) {
+	const { username, password, sso, session } = body;
 
 	await joinNewSession(username, password, sso, request, response, session);
 }

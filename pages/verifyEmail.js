@@ -24,7 +24,7 @@ export default function VerifyEmail({ result, token }) {
 				style={{ minWidth: "350px", maxWidth: "450px", width: "100%" }}
 				p={0}>
 				<Stack bg={isSuccess ? "green" : "red"} p="md" c="white" spacing="sm">
-					{isSuccess ? <Success /> : <Expired />}
+					{isSuccess ? <Success /> : <Expired token={token} />}
 
 					<Link href="/">
 						<Button>Go to Home</Button>

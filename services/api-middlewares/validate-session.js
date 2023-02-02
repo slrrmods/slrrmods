@@ -1,7 +1,10 @@
-import { validateCurrentSession } from "../session-manager";
+import { getCurrentSession, validateSession } from "../session-manager";
 
-export default async function validateSession(context) {
+export default async function validateCurrentSession(context) {
 	const { request, response } = context;
 
-	context.session = await validateCurrentSession(request, response);
+	const currentSession = await getCurrentSession(request, response);
+	if (!currentSession) return;
+	await validateSession(currentSession, request, response);
+	context.session = currentSession;
 }

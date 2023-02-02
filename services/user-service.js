@@ -33,37 +33,34 @@ export async function getFromLogin(username, password) {
 	if (!passwordMatch)
 		throw new ValidationError("Invalid email/username or password");
 
-	//todo: check if user is not banned
-
-	if (!user.active) throw new ValidationError("Account is not active");
-
+	await validateUser(user);
 	await updateLastLogin(user);
 
 	return user;
 }
 
-export async function getInfos(id) {
-	const user = await getFromId(id);
+export async function getInfos(user) {
+	const userInfos = { ...user };
 
-	user.country = undefined;
-	if (user.id_country) {
+	userInfos.country = undefined;
+	if (userInfos.id_country) {
 		const { data } = await client
 			.from("countries")
 			.select()
-			.eq("id", user.country);
+			.eq("id", userInfos.country);
 
-		user.country = data;
+		userInfos.country = data;
 	}
 
-	delete user.id_country;
-	delete user.email_confirmation_sent_at;
-	delete user.email_confirmation_token;
-	delete user.password;
-	delete user.password_recovered_at;
-	delete user.password_recovery_sent_at;
-	delete user.password_recovery_token;
+	delete userInfos.id_country;
+	delete userInfos.email_confirmation_sent_at;
+	delete userInfos.email_confirmation_token;
+	delete userInfos.password;
+	delete userInfos.password_recovered_at;
+	delete userInfos.password_recovery_sent_at;
+	delete userInfos.password_recovery_token;
 
-	return camelizeKeys(user);
+	return camelizeKeys(userInfos);
 }
 
 export async function getFromId(id) {
@@ -105,6 +102,12 @@ export async function getFromUsername(username) {
 	if (!data) throw new ValidationError("Invalid email/username or password");
 
 	return data;
+}
+
+export async function validateUser(user) {
+	//todo: check if user is not banned
+
+	if (!user.active) throw new ValidationError("Account is not active");
 }
 
 export async function updateLastLogin(user) {
