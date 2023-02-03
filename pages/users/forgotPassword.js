@@ -1,7 +1,19 @@
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 import { Card, Center, Title } from "@mantine/core";
 import { ForgotPasswordForm } from "../../components/Forms";
+import { useUserContext } from "../../contexts";
 
 export default function ForgotPassword() {
+	const router = useRouter();
+	const { user } = useUserContext();
+
+	useEffect(() => {
+		if (user) router.push("/");
+	}, [user, router]);
+
+	if (user) return <></>;
+
 	return (
 		<Center>
 			<Card

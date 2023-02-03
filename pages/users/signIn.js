@@ -1,7 +1,18 @@
 import { Card, Center, Title } from "@mantine/core";
+import { useRouter } from "next/router";
 import { SignInForm } from "../../components/Forms";
+import { useUserContext } from "../../contexts";
 
 export default function SignIn() {
+	const router = useRouter();
+	const { user } = useUserContext();
+
+	useEffect(() => {
+		if (user) router.push("/");
+	}, [user, router]);
+
+	if (user) return <></>;
+
 	return (
 		<Center>
 			<Card

@@ -17,7 +17,12 @@ import {
 import { IconAlertCircle } from "@tabler/icons";
 import * as yup from "yup";
 import { signIn } from "../../../endpoints/users";
-import { useUserContext } from "../../../contexts/UserContext";
+import { useUserContext } from "../../../contexts";
+
+const formInitialValues = {
+	user: "",
+	password: "",
+};
 
 const formSchema = yup.object().shape({
 	user: yup.string().required("Email or username is required"),
@@ -25,38 +30,33 @@ const formSchema = yup.object().shape({
 });
 
 export default function SignInForm() {
+	const userContext = useUserContext();
 	const router = useRouter();
-
 	const [remember, setRemember] = useLocalStorage({
 		key: "remember-user",
 		defaultValue: false,
 	});
 
-	const form = useForm({
-		initialValues: {
-			user: "",
-			password: "",
-		},
-		validate: yupResolver(formSchema),
-	});
-
 	const isInModal = !!router.query.signIn;
-
 	const focusTrapRef = useFocusTrap(isInModal);
 
-	const userContext = useUserContext();
-	const signInMutation = useMutation({
+	const {
+		mutate: trySignIn,
+		reset,
+		isLoading,
+		error,
+	} = useMutation({
 		mutationFn: async ({ user, password }) => {
 			await signIn(user, password, remember);
 			userContext.signIn();
 		},
-		onSuccess: () => {
-			close();
-		},
+		onSuccess: () => close(),
 	});
 
-	const loading = signInMutation.isLoading;
-	const error = signInMutation.error;
+	const form = useForm({
+		initialValues: formInitialValues,
+		validate: yupResolver(formSchema),
+	});
 
 	function navigateToForgotPassword() {
 		if (!isInModal) {
@@ -91,7 +91,7 @@ export default function SignInForm() {
 	}
 
 	function handleSubmit(values) {
-		signInMutation.mutate(values);
+		trySignIn(values);
 	}
 
 	function close() {
@@ -99,13 +99,15 @@ export default function SignInForm() {
 		else router.push("/");
 	}
 
+	if (userContext.user) return <></>;
+
 	return (
 		<Stack pt="md" spacing="xs" ref={focusTrapRef}>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
 				style={{ position: "relative" }}>
 				<LoadingOverlay
-					visible={loading}
+					visible={isLoading}
 					overlayBlur={2}
 					transitionDuration={200}
 					zIndex={5}
@@ -114,7 +116,7 @@ export default function SignInForm() {
 				<Stack spacing="xs">
 					<TextInput
 						label="Email or username"
-						disabled={loading}
+						disabled={isLoading}
 						autoComplete="email"
 						withAsterisk
 						data-autofocus
@@ -122,7 +124,7 @@ export default function SignInForm() {
 					/>
 
 					<PasswordInput
-						disabled={loading}
+						disabled={isLoading}
 						label="Password"
 						withAsterisk
 						autoComplete="current-password"
@@ -135,7 +137,7 @@ export default function SignInForm() {
 							color="red"
 							variant="filled"
 							withCloseButton
-							onClose={() => signInMutation.reset()}
+							onClose={() => reset()}
 							icon={<IconAlertCircle />}>
 							{error.message}
 						</Alert>
@@ -143,7 +145,7 @@ export default function SignInForm() {
 
 					<Group position="apart">
 						<Checkbox
-							disabled={loading}
+							disabled={isLoading}
 							checked={remember}
 							onChange={() => setRemember((v) => !v)}
 							label="Remember me"
@@ -158,7 +160,7 @@ export default function SignInForm() {
 						</Anchor>
 					</Group>
 
-					<Button type="submit" loading={loading}>
+					<Button type="submit" loading={isLoading}>
 						Sign In
 					</Button>
 				</Stack>

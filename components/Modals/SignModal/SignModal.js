@@ -1,11 +1,13 @@
 import { useRouter } from "next/router";
 import { Modal, Tabs, Title } from "@mantine/core";
 import { SignInForm, SignUpForm } from "../../Forms";
+import { useUserContext } from "../../../contexts";
 
 export default function SignModal() {
 	const router = useRouter();
+	const { user } = useUserContext();
 	const { signIn, signUp } = router.query;
-	const opened = signIn || signUp;
+	const opened = (signIn || signUp) && !user;
 	const currentTab = getCurrentTab();
 
 	function getCurrentTab() {

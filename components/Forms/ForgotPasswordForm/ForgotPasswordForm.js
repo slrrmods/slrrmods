@@ -15,14 +15,16 @@ import { IconArrowLeft } from "@tabler/icons";
 import * as yup from "yup";
 import { emailValidation } from "../../../utils/validations";
 import { sendResetPassword } from "../../../endpoints/users";
+import { useUserContext } from "../../../contexts";
 
 const formSchema = yup.object().shape({
 	email: emailValidation,
 });
 
 export default function ForgotPasswordForm() {
-	const [hasSent, setHasSent] = useState(false);
 	const router = useRouter();
+	const { user } = useUserContext();
+	const [hasSent, setHasSent] = useState(false);
 	const isInModal = !!router.query.forgotPassword;
 	const focusTrapRef = useFocusTrap(isInModal);
 
@@ -51,7 +53,7 @@ export default function ForgotPasswordForm() {
 		},
 	});
 
-	const loading = resetPasswordMutation.isLoading;
+	const isLoading = resetPasswordMutation.isLoading;
 
 	function handleSubmit(values) {
 		resetPasswordMutation.mutate(values);
@@ -67,6 +69,8 @@ export default function ForgotPasswordForm() {
 		if (isInModal) router.push(router.pathname, undefined, { shallow: true });
 		else router.push("/");
 	}
+
+	if (user) return <></>;
 
 	if (hasSent)
 		return (
@@ -93,7 +97,7 @@ export default function ForgotPasswordForm() {
 			style={{ position: "relative" }}>
 			<Stack spacing="xs">
 				<LoadingOverlay
-					visible={loading}
+					visible={isLoading}
 					overlayBlur={2}
 					transitionDuration={200}
 					zIndex={5}
@@ -101,14 +105,14 @@ export default function ForgotPasswordForm() {
 
 				<TextInput
 					label="Email"
-					disabled={loading}
+					disabled={isLoading}
 					autoComplete="email"
 					withAsterisk
 					data-autofocus
 					{...form.getInputProps("email")}
 				/>
 
-				<Button type="submit" loading={loading}>
+				<Button type="submit" loading={isLoading}>
 					Recover Password
 				</Button>
 			</Stack>

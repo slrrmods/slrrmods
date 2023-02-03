@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
 import { Modal, Title } from "@mantine/core";
 import { ForgotPasswordForm } from "../../Forms";
+import { useUserContext } from "../../../contexts";
 
 export default function ForgotPasswordModal() {
 	const router = useRouter();
-	const opened = router.query.forgotPassword;
+	const { user } = useUserContext();
+	const opened = router.query.forgotPassword && !user;
 
 	function onClose() {
 		router.push(router.pathname, undefined, { shallow: true });

@@ -1,85 +1,83 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
-import { useLocalStorage } from "@mantine/hooks";
+import { useInterval, useLocalStorage } from "@mantine/hooks";
 import { deleteCookie, setCookie } from "cookies-next";
 import { USER_COOKIE_KEY } from "../../utils/constants";
+import { getIdentity, signOff as signOffUser } from "../../endpoints/users";
 import { UserContext } from ".";
-import { getUserInfo, signOff as signOffUser } from "../../endpoints/users";
 
-export default function UserContextProvider({
-	children,
-	currentUser: cookieUser,
-}) {
+export default function UserContextProvider({ children, currentUser }) {
 	const router = useRouter();
-	const [loading, setLoading] = useState(false);
-	const [user, setUser] = useState(cookieUser);
-	const loadedRef = useRef(false);
+	const [user, setUser] = useState(currentUser);
 	const [storageUser, setStorageUser, removeStorageUser] = useLocalStorage({
 		key: USER_COOKIE_KEY,
 		defaultValue: undefined,
 	});
+	const storageLoadedRef = useRef(false);
+	if (storageUser) storageLoadedRef.current = true;
+	const storageUserLoaded = storageLoadedRef.current;
+
+	const { mutate: signOff, isLoading: isSignOffLoading } = useMutation({
+		mutationFn: () => {
+			if (user) signOffUser();
+		},
+		onSettled: () => {
+			setStorageUser(undefined);
+			removeStorageUser();
+		},
+	});
+
+	const { mutate: signIn, isLoading: isSignInLoading } = useMutation({
+		mutationFn: () => getIdentity(),
+		onSuccess: (data) => setStorageUser(data),
+		onError: () => signOff(),
+	});
+
+	const { mutate: update } = useMutation({
+		mutationFn: () => getIdentity(),
+		onSuccess: (data) => setStorageUser(data),
+		onError: () => signOff(),
+	});
 
 	useEffect(() => {
-		//todo: revalidate session
+		if (currentUser) update();
 	}, []);
 
 	useEffect(() => {
-		if (cookieUser) setStorageUser(cookieUser);
-	}, [cookieUser, setStorageUser]);
+		if (storageUserLoaded) setUser(storageUser);
+	}, [storageUser, storageUserLoaded]);
 
 	useEffect(() => {
-		if (storageUser) loadedRef.current = true;
-		if (!loadedRef.current) return;
+		deleteCookie(USER_COOKIE_KEY);
 
-		setUser(storageUser);
+		if (!storageUser) return;
 
-		if (storageUser) {
-			setCookie(USER_COOKIE_KEY, storageUser, {
-				maxAge: 60 * 60 * 24 * 30,
-			});
-		} else deleteCookie(USER_COOKIE_KEY);
+		const cookieInfos = {
+			id: storageUser.id,
+			username: storageUser.username,
+			profilePicture: storageUser.profilePicture,
+		};
+
+		const cookieOptions = {
+			maxAge: 60 * 60 * 24 * 30,
+		};
+
+		setCookie(USER_COOKIE_KEY, cookieInfos, cookieOptions);
 	}, [storageUser]);
 
-	const getUserInfoMutation = useMutation({
-		mutationFn: () => {
-			//todo: get only necessary data
-			return getUserInfo();
-		},
-		onSuccess: (data) => {
-			setStorageUser({
-				id: data.id,
-				username: data.username,
-				profilePicture: data.profilePicture,
-			});
-		},
-		onMutate: () => setLoading(true),
-		onSettled: () => setLoading(false),
-	});
+	const updateInterval = useInterval(update, 1000 * 60 * 5);
 
-	const signOffMutation = useMutation({
-		mutationFn: () => signOffUser(),
-		onMutate: () => setLoading(true),
-		onSettled: () => setLoading(false),
-	});
-
-	function signIn() {
-		getUserInfoMutation.mutate();
-	}
-
-	function signOff() {
-		setStorageUser(undefined);
-		removeStorageUser();
-		signOffMutation.mutate();
-		deleteCookie(USER_COOKIE_KEY);
-		router.push("/");
-	}
+	useEffect(() => {
+		updateInterval.start();
+		return updateInterval.stop;
+	}, []);
 
 	const context = {
 		signIn,
 		signOff,
 		user,
-		loading,
+		loading: isSignInLoading || isSignOffLoading,
 	};
 
 	return (

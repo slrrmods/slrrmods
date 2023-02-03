@@ -63,11 +63,8 @@ export async function joinNewSession(
 	password,
 	sso,
 	request,
-	response,
-	currentSession
+	response
 ) {
-	if (currentSession) await quitSession(currentSession, request, response);
-
 	const user = await getFromLogin(username, password);
 	const { session, token } = await createSession(user, sso, request);
 	writeToCookies(session, token, request, response);

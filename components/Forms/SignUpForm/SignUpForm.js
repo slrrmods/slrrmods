@@ -27,7 +27,7 @@ import {
 	passwordValidation,
 	confirmPasswordValidation,
 } from "../../../utils/validations";
-import { useUserContext } from "../../../contexts/UserContext";
+import { useUserContext } from "../../../contexts";
 import Link from "../../Link";
 
 const formInitialValues = {
@@ -38,7 +38,20 @@ const formInitialValues = {
 	acceptTerms: false,
 };
 
+const formSchema = yup.object().shape({
+	email: emailValidation,
+	username: usernameValidation,
+	password: passwordValidation,
+	confirmPassword: confirmPasswordValidation,
+	acceptTerms: yup
+		.boolean()
+		.required()
+		.oneOf([true], "You must accept the terms and rules"),
+});
+
 export default function SignUpForm() {
+	const router = useRouter();
+	const userContext = useUserContext();
 	const [email, setEmail] = useState("");
 	const [debouncedEmail] = useDebouncedValue(email, 500);
 	const isDebouncingEmail = email !== debouncedEmail;
@@ -47,13 +60,12 @@ export default function SignUpForm() {
 	const [debouncedUsername] = useDebouncedValue(username, 500);
 	const isDebouncingUsername = username !== debouncedUsername;
 
-	const router = useRouter();
 	const isInModal = !!router.query.signUp;
-
 	const focusTrapRef = useFocusTrap(isInModal);
 
 	const canVerifyEmail =
 		!isDebouncingEmail && emailValidation.isValidSync(debouncedEmail);
+
 	const emailAvailableQuery = useQuery({
 		queryKey: ["checkEmailAvailable", debouncedEmail],
 		queryFn: () => users.checkEmailAvailable(debouncedEmail),
@@ -64,6 +76,7 @@ export default function SignUpForm() {
 
 	const canVerifyUsername =
 		!isDebouncingUsername && usernameValidation.isValidSync(debouncedUsername);
+
 	const usernameAvailableQuery = useQuery({
 		queryKey: ["checkUsernameAvailable", debouncedUsername],
 		queryFn: () => users.checkUsernameAvailable(debouncedUsername),
@@ -72,15 +85,12 @@ export default function SignUpForm() {
 		refetchOnWindowFocus: false,
 	});
 
-	const userContext = useUserContext();
 	const signInMutation = useMutation({
 		mutationFn: async ({ username, password }) => {
-			await users.signIn(username, password, true);
+			await users.signIn(username, password, false);
 			userContext.signIn();
 		},
-		onSettled: () => {
-			close();
-		},
+		onSettled: () => close(),
 	});
 
 	const signUpMutation = useMutation({
@@ -91,46 +101,39 @@ export default function SignUpForm() {
 				password,
 			};
 		},
-		onSuccess: (data) => {
-			signInMutation.mutate(data);
-		},
+		onSuccess: (data) => signInMutation.mutate(data),
 	});
 
-	const loading = signUpMutation.isLoading || signInMutation.isLoading;
+	const isLoading = signUpMutation.isLoading || signInMutation.isLoading;
 	const error = signUpMutation.error;
 
-	const formSchema = yup.object().shape({
-		email: emailValidation.test("emailAvailable", "Email not available", () => {
-			return emailAvailableQuery.status !== "error";
-		}),
+	const updatedFormSchema = {
+		...formSchema,
+		email: emailValidation.test(
+			"emailAvailable",
+			"Email not available",
+			() => emailAvailableQuery.status !== "error"
+		),
 		username: usernameValidation.test(
 			"usernameAvailable",
 			"Username not available",
-			() => {
-				return usernameAvailableQuery.status !== "error";
-			}
+			() => usernameAvailableQuery.status !== "error"
 		),
-		password: passwordValidation,
-		confirmPassword: confirmPasswordValidation,
-		acceptTerms: yup
-			.boolean()
-			.required()
-			.oneOf([true], "You must accept the terms and rules"),
-	});
+	};
 
 	const form = useForm({
 		initialValues: formInitialValues,
-		validate: yupResolver(formSchema),
+		validate: yupResolver(updatedFormSchema),
 	});
 
-	const emailError = form.errors.email;
+	const { email: emailError, username: usernameError } = form.errors;
+
 	if (emailAvailableQuery.status === "error") {
 		if (!emailError) form.setFieldError("email", "Email not available");
 	} else {
 		if (emailError === "Email not available") form.clearFieldError("email");
 	}
 
-	const usernameError = form.errors.username;
 	if (usernameAvailableQuery.status === "error") {
 		if (!usernameError)
 			form.setFieldError("username", "Username not available");
@@ -169,13 +172,15 @@ export default function SignUpForm() {
 		signUpMutation.mutate(values);
 	}
 
+	if (userContext.user) return <></>;
+
 	return (
 		<Stack pt="md" spacing="xs" ref={focusTrapRef}>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
 				style={{ position: "relative" }}>
 				<LoadingOverlay
-					visible={loading}
+					visible={isLoading}
 					overlayBlur={2}
 					transitionDuration={200}
 					zIndex={5}
@@ -185,7 +190,7 @@ export default function SignUpForm() {
 					<TextInput
 						label="Email"
 						value={email}
-						disabled={loading}
+						disabled={isLoading}
 						autoComplete="email"
 						withAsterisk
 						data-autofocus
@@ -195,7 +200,7 @@ export default function SignUpForm() {
 							form.getInputProps("email").onChange(event);
 						}}
 						rightSection={
-							!loading && (
+							!isLoading && (
 								<>
 									{canVerifyEmail && emailAvailableQuery.isError && (
 										<Tooltip label="Email not available">
@@ -232,7 +237,7 @@ export default function SignUpForm() {
 					<TextInput
 						label="Username"
 						value={username}
-						disabled={loading}
+						disabled={isLoading}
 						autoComplete="username"
 						withAsterisk
 						{...form.getInputProps("username")}
@@ -241,7 +246,7 @@ export default function SignUpForm() {
 							form.getInputProps("username").onChange(event);
 						}}
 						rightSection={
-							!loading && (
+							!isLoading && (
 								<>
 									{canVerifyUsername && usernameAvailableQuery.isError && (
 										<Tooltip label="Username not available">
@@ -277,7 +282,7 @@ export default function SignUpForm() {
 
 					<ValidatedPasswordInput
 						label="Password"
-						disabled={loading}
+						disabled={isLoading}
 						autoComplete="new-password"
 						withAsterisk
 						{...form.getInputProps("password")}
@@ -285,14 +290,14 @@ export default function SignUpForm() {
 
 					<PasswordInput
 						label="Confirm password"
-						disabled={loading}
+						disabled={isLoading}
 						autoComplete="confirm-password"
 						withAsterisk
 						{...form.getInputProps("confirmPassword")}
 					/>
 
 					<Checkbox
-						disabled={loading}
+						disabled={isLoading}
 						label={
 							<>
 								{"I accept the "}
@@ -304,7 +309,7 @@ export default function SignUpForm() {
 						{...form.getInputProps("acceptTerms")}
 					/>
 
-					<Button type="submit" loading={loading}>
+					<Button type="submit" loading={isLoading}>
 						Sign Up
 					</Button>
 

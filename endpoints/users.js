@@ -14,16 +14,8 @@ export function checkUsernameAvailable(username) {
 	return get("/users/checkUsernameAvailable", { query });
 }
 
-export function signIn(username, password, sso) {
-	const data = { username, password, sso };
-
-	return post("/users/signIn", { data });
-}
-
-export function signUp(email, username, password) {
-	const data = { email, username, password };
-
-	return post("/users/signUp", { data });
+export function getIdentity() {
+	return get("/users/getIdentity");
 }
 
 export function resendEmailVerification(token) {
@@ -32,22 +24,36 @@ export function resendEmailVerification(token) {
 	return post("/users/resendEmailVerification", { query });
 }
 
-export function sendResetPassword(email) {
-	const data = { email };
-
-	return post("/users/sendResetPassword", { data });
-}
-
 export function resetPassword(token, password) {
 	const data = { token, password };
 
 	return post("/users/resetPassword", { data });
 }
 
-export function getUserInfo() {
-	return get("/users/getUserInfo");
+export function sendResetPassword(email) {
+	const data = { email };
+
+	return post("/users/sendResetPassword", { data });
+}
+
+export function signIn(username, password, sso) {
+	const data = { username, password, sso };
+
+	return post("/users/signIn", { data });
 }
 
 export function signOff() {
 	return post("/users/signOff");
+}
+
+export function signUp(email, username, password) {
+	const data = { email, username, password };
+
+	return post("/users/signUp", { data });
+}
+
+export function verifyEmail(token) {
+	const query = { token };
+
+	return get("/users/verifyEmail", { query });
 }

@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { joinNewSession } from "../../../services/session-manager";
+import { joinNewSession, quitSession } from "../../../services/session-manager";
 
 const configurarions = {
 	POST: {
@@ -24,5 +24,6 @@ export default async function handler(req, res) {
 async function onPost({ request, response, body }) {
 	const { username, password, sso, session } = body;
 
-	await joinNewSession(username, password, sso, request, response, session);
+	if (session) await quitSession(session);
+	await joinNewSession(username, password, sso, request, response);
 }

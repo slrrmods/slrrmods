@@ -1,6 +1,6 @@
 import { Button, Group, Loader } from "@mantine/core";
 import { useRouter } from "next/router";
-import { useUserContext } from "../../../../contexts/UserContext";
+import { useUserContext } from "../../../../contexts";
 import Link from "../../../Link";
 
 export default function UserPanel() {
@@ -13,7 +13,7 @@ export default function UserPanel() {
 	if (user)
 		return (
 			<Group>
-				<div>{user.username}</div>
+				<span>{user.username}</span>
 				<Button onClick={() => signOff()}>sign off</Button>
 			</Group>
 		);

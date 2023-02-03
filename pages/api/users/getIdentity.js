@@ -1,5 +1,4 @@
 import { handleRequest } from "../../../services/request-handler";
-import { getInfos } from "../../../services/user-service";
 
 const configurarions = {
 	GET: {
@@ -13,9 +12,11 @@ export default async function handler(req, res) {
 }
 
 async function onGet({ user }) {
-	const infos = await getInfos(user);
-
 	return {
-		data: infos,
+		data: {
+			id: user.id,
+			username: user.username,
+			profilePicture: user.profilePicture,
+		},
 	};
 }
