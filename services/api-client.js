@@ -21,18 +21,18 @@ export async function doApiRequest(url, method, headers, data) {
 
 	try {
 		const response = await api(config);
-
-		if (response.data.error) throw new Error(response.data.error);
-
+		if (response.data?.error) throw new Error(response.data.error);
 		return response.data;
 	} catch (error) {
 		if (!(error instanceof AxiosError)) throw error;
 
 		const { response } = error;
-
 		if (!response) throw new Error(error.message);
 
-		if (response.data.error) throw new Error(response.data.error);
+		const { data } = response;
+		if (!data) throw new Error(error.message);
+
+		if (data.error) throw new Error(data.error);
 
 		throw new Error("Unknown error");
 	}

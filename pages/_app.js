@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { UserProvider } from "../contexts/UserContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
-import { THEME_COOKIE_KEY, USER_COOKIE_KEY } from "../utils/constants";
+import { THEME_KEY, USER_KEY } from "../utils/constants";
 import Layout from "../components/Layout";
 
 const queryClient = new QueryClient();
@@ -47,8 +47,8 @@ export default function MyApp({
 MyApp.getInitialProps = async (appContext) => {
 	const initialProps = await App.getInitialProps(appContext);
 
-	const currentTheme = getCookie(THEME_COOKIE_KEY, appContext.ctx);
-	const userCookie = getCookie(USER_COOKIE_KEY, appContext.ctx);
+	const currentTheme = getCookie(THEME_KEY, appContext.ctx);
+	const userCookie = getCookie(USER_KEY, appContext.ctx);
 	const currentUser = userCookie ? JSON.parse(userCookie) : undefined;
 
 	return {

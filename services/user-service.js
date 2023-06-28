@@ -10,7 +10,7 @@ export async function verifyEmailExists(email) {
 	const { data } = await client
 		.from("users")
 		.select("email")
-		.eq("email", email)
+		.ilike("email", email)
 		.maybeSingle();
 
 	return data !== null;
@@ -20,7 +20,7 @@ export async function verifyUsernameExists(username) {
 	const { data } = await client
 		.from("users")
 		.select("username")
-		.eq("username", username)
+		.ilike("username", username)
 		.maybeSingle();
 
 	return data !== null;
@@ -84,7 +84,7 @@ export async function getFromEmail(email) {
 	const { data } = await client
 		.from("users")
 		.select()
-		.eq("email", email)
+		.ilike("email", email)
 		.maybeSingle();
 
 	if (!data) throw new ValidationError("Invalid email/username or password");
@@ -96,7 +96,7 @@ export async function getFromUsername(username) {
 	const { data } = await client
 		.from("users")
 		.select()
-		.eq("username", username)
+		.ilike("username", username)
 		.maybeSingle();
 
 	if (!data) throw new ValidationError("Invalid email/username or password");

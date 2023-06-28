@@ -1,6 +1,9 @@
 import * as yup from "yup";
+import { getById } from "../../../data/countries";
+import { createNew, revokeAll } from "../../../data/refresh-tokens";
 import { handleRequest } from "../../../services/request-handler";
 import { joinNewSession, quitSession } from "../../../services/session-manager";
+import { getFromEmailOrUsername } from "../../../services/user-service";
 
 const configurarions = {
 	POST: {
@@ -21,9 +24,35 @@ export default async function handler(req, res) {
 	return await handleRequest(req, res, configurarions);
 }
 
-async function onPost({ request, response, body }) {
-	const { username, password, sso, session } = body;
-
+async function onPost({ request, response, body, session }) {
 	if (session) await quitSession(session);
-	await joinNewSession(username, password, sso, request, response);
+
+	const newSession = await joinNewSession({
+		...body,
+		request,
+		response,
+	});
+
+	const user = await getFromEmailOrUsername(body.username);
+	const country = await getById(user.country);
+
+	const userInfo = {
+		username: user.username,
+		email: user.email,
+		profilePicture: user.profile_picture,
+		country,
+	};
+
+	const sessionInfo = {
+		expiresAt: newSession.expiresAt,
+	};
+
+	if (sso) sessionInfo.refreshToken = await createNew(newSession);
+
+	return {
+		data: {
+			userInfo,
+			sessionInfo,
+		},
+	};
 }

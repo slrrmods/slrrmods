@@ -13,9 +13,9 @@ import Logo from "../Logo";
 
 export default function Footer() {
 	return (
-		<footer py={8}>
-			<Container size="lg">
-				<Stack>
+		<footer>
+			<Container size="lg" py="xs">
+				<Stack spacing="xs">
 					<Group position="apart">
 						<Logo />
 

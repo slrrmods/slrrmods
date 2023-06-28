@@ -38,7 +38,7 @@ const formInitialValues = {
 	acceptTerms: false,
 };
 
-const formSchema = yup.object().shape({
+const formSchema = {
 	email: emailValidation,
 	username: usernameValidation,
 	password: passwordValidation,
@@ -47,7 +47,7 @@ const formSchema = yup.object().shape({
 		.boolean()
 		.required()
 		.oneOf([true], "You must accept the terms and rules"),
-});
+};
 
 export default function SignUpForm() {
 	const router = useRouter();
@@ -86,9 +86,11 @@ export default function SignUpForm() {
 	});
 
 	const signInMutation = useMutation({
-		mutationFn: async ({ username, password }) => {
-			await users.signIn(username, password, false);
-			userContext.signIn();
+		mutationFn: ({ username, password }) => {
+			return users.signIn(username, password, false);
+		},
+		onSuccess: ({ refreshToken }) => {
+			userContext.signIn(refreshToken);
 		},
 		onSettled: () => close(),
 	});
@@ -107,7 +109,7 @@ export default function SignUpForm() {
 	const isLoading = signUpMutation.isLoading || signInMutation.isLoading;
 	const error = signUpMutation.error;
 
-	const updatedFormSchema = {
+	const updatedFormSchema = yup.object().shape({
 		...formSchema,
 		email: emailValidation.test(
 			"emailAvailable",
@@ -119,7 +121,7 @@ export default function SignUpForm() {
 			"Username not available",
 			() => usernameAvailableQuery.status !== "error"
 		),
-	};
+	});
 
 	const form = useForm({
 		initialValues: formInitialValues,

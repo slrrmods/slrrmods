@@ -1,3 +1,4 @@
+import { revokeAll } from "../../../data/refresh-tokens";
 import { handleRequest } from "../../../services/request-handler";
 import { quitSession } from "../../../services/session-manager";
 
@@ -18,4 +19,5 @@ export default async function handler(req, res) {
 
 async function onPost({ request, response, session }) {
 	await quitSession(session, request, response);
+	await revokeAll(session);
 }

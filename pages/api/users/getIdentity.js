@@ -16,7 +16,7 @@ async function onGet({ user }) {
 		data: {
 			id: user.id,
 			username: user.username,
-			profilePicture: user.profilePicture,
+			profilePicture: user.profile_picture,
 		},
 	};
 }

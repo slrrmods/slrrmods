@@ -1,39 +1,41 @@
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
 import { useInterval, useLocalStorage } from "@mantine/hooks";
 import { deleteCookie, setCookie } from "cookies-next";
-import { USER_COOKIE_KEY } from "../../utils/constants";
-import { getIdentity, signOff as signOffUser } from "../../endpoints/users";
+import { REFRESH_TOKEN_KEY, USER_KEY } from "../../utils/constants";
+import { getIdentity, signIn, signOff } from "../../endpoints/users";
 import { UserContext } from ".";
 
 export default function UserContextProvider({ children, currentUser }) {
 	const router = useRouter();
-	const [user, setUser] = useState(currentUser);
-	const [storageUser, setStorageUser, removeStorageUser] = useLocalStorage({
-		key: USER_COOKIE_KEY,
-		defaultValue: undefined,
-	});
-	const storageLoadedRef = useRef(false);
-	if (storageUser) storageLoadedRef.current = true;
-	const storageUserLoaded = storageLoadedRef.current;
+	const [user, setUser, removeUser] = useUserStorage(currentUser);
+	const [refreshToken, setRefreshToken, removeRefreshToken] =
+		useRefreshTokenStorage();
 
-	const { mutate: signOff, isLoading: isSignOffLoading } = useMutation({
+	const updateInterval = useUpdateInterval(onUpdate);
+
+	const signOffMutation = useMutation({
 		mutationFn: () => {
-			if (user) signOffUser();
+			if (user) signOff();
 		},
 		onSettled: () => {
-			setStorageUser(undefined);
-			removeStorageUser();
+			removeUser();
+			removeRefreshToken();
 		},
 	});
 
-	const { mutate: signIn, isLoading: isSignInLoading } = useMutation({
-		mutationFn: () => getIdentity(),
-		onSuccess: (data) => setStorageUser(data),
+	const signInMutation = useMutation({
+		mutationFn: ({ username, password, sso }) =>
+			signIn(username, password, sso),
+		onSuccess: ({ userInfo, sessionInfo }) => {
+			setUser(userInfo);
+			setRefreshToken(refreshToken);
+		},
 		onError: () => signOff(),
 	});
 
+	//todo: this must be a query
 	const { mutate: update } = useMutation({
 		mutationFn: () => getIdentity(),
 		onSuccess: (data) => setStorageUser(data),
@@ -41,17 +43,58 @@ export default function UserContextProvider({ children, currentUser }) {
 	});
 
 	useEffect(() => {
-		if (currentUser) update();
+		onMounted();
+
+		return onUnmounted;
 	}, []);
 
-	useEffect(() => {
-		if (storageUserLoaded) setUser(storageUser);
-	}, [storageUser, storageUserLoaded]);
+	function onMounted() {
+		updateCurrentUser();
+	}
+
+	function onUnmounted() {}
+
+	function onUpdate() {
+		updateCurrentUser();
+	}
+
+	function updateCurrentUser() {
+		if (currentUser) update();
+	}
+
+	const context = {
+		signIn: signInMutation.mutate,
+		signOff: signOffMutation.mutate,
+		user,
+		loading: signInMutation.isLoading || signOffMutation.isLoading,
+	};
+
+	return (
+		<UserContext.Provider value={context}>{children}</UserContext.Provider>
+	);
+}
+
+function useUserStorage(currentUser) {
+	const [user, setUser] = useState(currentUser);
+	const [storage, setStorage, removeStorage] = useLocalStorage({
+		key: USER_KEY,
+		defaultValue: undefined,
+	});
+
+	const storageLoadedRef = useRef(false);
+	if (storage) storageLoadedRef.current = true;
+	const storageLoaded = storageLoadedRef.current;
 
 	useEffect(() => {
-		deleteCookie(USER_COOKIE_KEY);
+		if (!storageLoaded) return;
 
-		if (!storageUser) return;
+		setUser(storage);
+	}, [storage, storageLoaded]);
+
+	useEffect(() => {
+		deleteCookie(USER_KEY);
+
+		if (!user) return;
 
 		const cookieInfos = {
 			id: storageUser.id,
@@ -63,24 +106,48 @@ export default function UserContextProvider({ children, currentUser }) {
 			maxAge: 60 * 60 * 24 * 30,
 		};
 
-		setCookie(USER_COOKIE_KEY, cookieInfos, cookieOptions);
-	}, [storageUser]);
+		setCookie(USER_KEY, cookieInfos, cookieOptions);
+	}, [user]);
 
-	const updateInterval = useInterval(update, 1000 * 60 * 5);
+	function removeUser() {
+		setStorage(undefined);
+		removeStorage();
+	}
+
+	return [user, setStorage, removeUser];
+}
+
+function useRefreshTokenStorage() {
+	const [refreshToken, setRefreshToken] = useState(undefined);
+	const [storage, setStorage, removeStorage] = useLocalStorage({
+		key: REFRESH_TOKEN_KEY,
+		defaultValue: undefined,
+	});
+
+	const storageLoadedRef = useRef(false);
+	if (storage) storageLoadedRef.current = true;
+	const storageLoaded = storageLoadedRef.current;
+
+	useEffect(() => {
+		if (storageLoaded) setRefreshToken(storage);
+	}, [storage, storageLoaded]);
+
+	function removeRefreshToken() {
+		setStorage(undefined);
+		removeStorage();
+	}
+
+	return [refreshToken, setStorage, removeRefreshToken];
+}
+
+function useUpdateInterval(onUpdate) {
+	const updateInterval = useInterval(onUpdate, 1000 * 60 * 5);
 
 	useEffect(() => {
 		updateInterval.start();
+
 		return updateInterval.stop;
 	}, []);
 
-	const context = {
-		signIn,
-		signOff,
-		user,
-		loading: isSignInLoading || isSignOffLoading,
-	};
-
-	return (
-		<UserContext.Provider value={context}>{children}</UserContext.Provider>
-	);
+	return updateInterval;
 }

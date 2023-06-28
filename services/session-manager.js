@@ -37,7 +37,7 @@ export async function validateSession(session, request, response) {
 
 		if (session.revoked_at) throw new ValidationError("Session revoked", 401);
 
-		if (new Date() > new Date(session.expires_at))
+		if (session.expires_at && new Date() > new Date(session.expires_at))
 			throw new ValidationError("Session expired", 401);
 
 		const token = await getFromCookies(request, response);
@@ -58,16 +58,18 @@ export async function validateSession(session, request, response) {
 	}
 }
 
-export async function joinNewSession(
+export async function joinNewSession({
 	username,
 	password,
 	sso,
 	request,
-	response
-) {
+	response,
+}) {
 	const user = await getFromLogin(username, password);
 	const { session, token } = await createSession(user, sso, request);
 	writeToCookies(session, token, request, response);
+
+	return session;
 }
 
 export async function quitSession(session, request, response) {
@@ -178,8 +180,8 @@ async function createToken(session) {
 
 async function parseToken(encryptedToken) {
 	try {
-		const descryptedToken = decrypt(encryptedToken);
-		const parsedToken = JSON.parse(descryptedToken);
+		const decryptedToken = decrypt(encryptedToken);
+		const parsedToken = JSON.parse(decryptedToken);
 		return await tokenSchema.validate(parsedToken);
 	} catch {
 		throw new ValidationError("Invalid token");

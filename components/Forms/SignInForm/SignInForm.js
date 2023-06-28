@@ -46,11 +46,13 @@ export default function SignInForm() {
 		isLoading,
 		error,
 	} = useMutation({
-		mutationFn: async ({ user, password }) => {
-			await signIn(user, password, remember);
-			userContext.signIn();
+		mutationFn: ({ user, password }) => {
+			return signIn(user, password, remember);
 		},
-		onSuccess: () => close(),
+		onSuccess: ({ refreshToken }) => {
+			userContext.signIn(refreshToken);
+			close();
+		},
 	});
 
 	const form = useForm({
