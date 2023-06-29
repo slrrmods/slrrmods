@@ -14,7 +14,7 @@ import {
 	Stack,
 	TextInput,
 } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle } from "@tabler/icons-react";
 import * as yup from "yup";
 import { signIn } from "../../../endpoints/users";
 import { useUserContext } from "../../../contexts";

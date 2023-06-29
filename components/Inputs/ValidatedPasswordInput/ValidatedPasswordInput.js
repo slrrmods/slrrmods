@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { IconX, IconCheck } from "@tabler/icons";
+import { IconX, IconCheck } from "@tabler/icons-react";
 import { PasswordInput, Progress, Text, Popover, Box } from "@mantine/core";
+import { useMantineTheme } from "@mantine/core";
 
 export default function ValidatedPasswordInput(props) {
 	const [popoverOpened, setPopoverOpened] = useState(false);
@@ -16,9 +17,12 @@ export default function ValidatedPasswordInput(props) {
 	const strength = getStrength(value);
 	const color = strength === 100 ? "teal" : strength > 50 ? "yellow" : "red";
 
+	const theme = useMantineTheme();
+
 	return (
 		<Popover
 			opened={popoverOpened}
+			withinPortal
 			arrowPosition="center"
 			withArrow
 			position="right-start"

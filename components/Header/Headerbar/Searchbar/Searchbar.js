@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useStyles } from "./Searchbar.styles";
 import { getHotkeyHandler } from "@mantine/hooks";
 import { TextInput, ActionIcon, useMantineTheme } from "@mantine/core";
-import { IconSearch, IconX } from "@tabler/icons";
+import { IconSearch, IconX } from "@tabler/icons-react";
 
 export default function Searchbar() {
 	const [searchTerm, setSearchTerm] = useState("");

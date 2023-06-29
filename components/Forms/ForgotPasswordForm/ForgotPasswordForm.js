@@ -11,7 +11,7 @@ import {
 	Text,
 	TextInput,
 } from "@mantine/core";
-import { IconArrowLeft } from "@tabler/icons";
+import { IconArrowLeft } from "@tabler/icons-react";
 import * as yup from "yup";
 import { emailValidation } from "../../../utils/validations";
 import { sendResetPassword } from "../../../endpoints/users";

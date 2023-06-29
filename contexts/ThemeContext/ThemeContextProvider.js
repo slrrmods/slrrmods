@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useHotkeys } from "@mantine/hooks";
 import { setCookie } from "cookies-next";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
-import { NotificationsProvider } from "@mantine/notifications";
+import { Notifications } from "@mantine/notifications";
 import { useThemeStorage } from "../../utils/local-storage";
 import { THEME_KEY } from "../../utils/constants";
 import { ThemeContext } from ".";
@@ -38,7 +38,9 @@ export default function ThemeContextProvider({ children, currentTheme }) {
 					theme={{ colorScheme: theme }}
 					withGlobalStyles
 					withNormalizeCSS>
-					<NotificationsProvider>{children}</NotificationsProvider>
+					<Notifications />
+
+					{children}
 				</MantineProvider>
 			</ColorSchemeProvider>
 		</ThemeContext.Provider>

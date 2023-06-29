@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Center, Stack, Title, Text, Card, Group } from "@mantine/core";
-import { IconCircleCheck, IconInfoCircle, IconMail } from "@tabler/icons";
+import { IconCircleCheck, IconInfoCircle, IconMail } from "@tabler/icons-react";
 import { resendEmailVerification } from "../endpoints/users";
 import { verifyEmail } from "../services/email-verification";
 import Link from "../components/Link";

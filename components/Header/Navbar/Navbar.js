@@ -2,8 +2,7 @@ import { useRouter } from "next/router";
 import { useStyles } from "./Navbar.styles";
 import { useThemeContext } from "../../../contexts/ThemeContext";
 import { Tabs, Group, ActionIcon, Tooltip } from "@mantine/core";
-import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons";
-import Link from "../../Link";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 
 const tabs = [
 	{

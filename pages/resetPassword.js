@@ -12,7 +12,7 @@ import {
 	LoadingOverlay,
 	Group,
 } from "@mantine/core";
-import { IconCircleCheck, IconInfoCircle } from "@tabler/icons";
+import { IconCircleCheck, IconInfoCircle } from "@tabler/icons-react";
 import * as yup from "yup";
 import { validateToken } from "../services/reset-password";
 import { ValidatedPasswordInput } from "../components/Inputs";

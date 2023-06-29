@@ -7,7 +7,7 @@ import {
 	Text,
 	Tooltip,
 } from "@mantine/core";
-import { IconBrandGithub } from "@tabler/icons";
+import { IconBrandGithub } from "@tabler/icons-react";
 import Link from "../Link";
 import Logo from "../Logo";
 

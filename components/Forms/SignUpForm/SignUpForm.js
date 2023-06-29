@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { useFocusTrap, useDebouncedValue } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
-import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { ValidatedPasswordInput } from "../../Inputs";
 import * as yup from "yup";
 import * as users from "../../../endpoints/users";

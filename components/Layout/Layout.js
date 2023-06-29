@@ -7,7 +7,7 @@ import {
 	Tooltip,
 	Transition,
 } from "@mantine/core";
-import { IconArrowUp } from "@tabler/icons";
+import { IconArrowUp } from "@tabler/icons-react";
 import Header from "../Header";
 import Footer from "../Footer";
 import Modals from "../Modals";
