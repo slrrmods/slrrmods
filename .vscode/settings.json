@@ -2,6 +2,10 @@
     "files.exclude": {
         "**/.next": true,
         "**/.vscode": true,
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/.github": true,
+        "**/.env.local.example": true,
+        "**/slrrmods.code-workspace": true,
+        "**/supabase/.*": true
     }
 }
