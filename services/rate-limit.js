@@ -1,7 +1,7 @@
-import LRU from "lru-cache";
+import { LRUCache } from "lru-cache";
 
 export default function rateLimit({ limit, interval, usersPerSecond }) {
-	const cache = new LRU({
+	const cache = new LRUCache({
 		max: usersPerSecond,
 		ttl: interval,
 	});
