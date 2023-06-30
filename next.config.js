@@ -67,10 +67,11 @@ const nextConfig = {
 			},
 		];
 	},
-	webpack: (config, { isServer }) => {
-		if (!isServer) {
-			config.resolve.fallback.fs = false;
-		}
+	webpack: (config) => {
+		config.resolve.alias = {
+			...config.resolve.alias,
+			"~": __dirname,
+		};
 
 		return config;
 	},
