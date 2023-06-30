@@ -68,9 +68,8 @@ const nextConfig = {
 		];
 	},
 	webpack: (config) => {
-		config.resolve.alias = {
-			...config.resolve.alias,
-			"~": __dirname,
+		config.node = {
+			__dirname: true,
 		};
 
 		return config;
