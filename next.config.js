@@ -67,12 +67,6 @@ const nextConfig = {
 			},
 		];
 	},
-	webpack: (config, { webpack }) => {
-		webpack.node = {
-			__dirname: true,
-		};
-		return config;
-	},
 };
 
 module.exports = withAxiom({

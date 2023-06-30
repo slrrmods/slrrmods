@@ -26,7 +26,7 @@
 		"bcrypt": "^5.1.0",
 		"cookies-next": "^2.1.2",
 		"geoip-country": "^4.1.65",
-		"geoip-lite": "^1.4.7",
+		"geoip-lite": "^1.4.6",
 		"handlebars": "^4.7.7",
 		"humps": "^2.0.1",
 		"lru-cache": "^10.0.0",
