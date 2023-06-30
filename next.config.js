@@ -67,11 +67,10 @@ const nextConfig = {
 			},
 		];
 	},
-	webpack: (config) => {
-		config.node = {
+	webpack: (config, { webpack }) => {
+		webpack.node = {
 			__dirname: true,
 		};
-
 		return config;
 	},
 };
