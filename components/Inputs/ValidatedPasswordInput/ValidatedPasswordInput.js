@@ -1,7 +1,13 @@
+import {
+	Box,
+	PasswordInput,
+	Popover,
+	Progress,
+	Text,
+	useMantineTheme
+} from "@mantine/core";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
-import { IconX, IconCheck } from "@tabler/icons-react";
-import { PasswordInput, Progress, Text, Popover, Box } from "@mantine/core";
-import { useMantineTheme } from "@mantine/core";
 
 export default function ValidatedPasswordInput(props) {
 	const [popoverOpened, setPopoverOpened] = useState(false);
@@ -78,7 +84,7 @@ const requirements = [
 	{ re: /[0-9]/, label: "Includes number" },
 	{ re: /[a-z]/, label: "Includes lowercase letter" },
 	{ re: /[A-Z]/, label: "Includes uppercase letter" },
-	{ re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" },
+	{ re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" }
 ];
 
 function getStrength(password) {

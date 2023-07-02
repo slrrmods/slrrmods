@@ -11,7 +11,7 @@ export const useStyles = createStyles((theme) => {
 			paddingTop: theme.spacing.sm,
 			backgroundColor: background,
 			color: theme.white,
-			borderBottom: `2px solid ${background}`,
-		},
+			borderBottom: `2px solid ${background}`
+		}
 	};
 });

@@ -28,6 +28,6 @@ function createForServer() {
 
 function createGenericClient(url, key) {
 	return createSupabaseClient(url, key, {
-		auth: { persistSession: false },
+		auth: { persistSession: false }
 	});
 }

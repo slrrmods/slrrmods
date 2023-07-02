@@ -1,13 +1,13 @@
-import Head from "next/head";
-import App from "next/app";
-import { Analytics } from "@vercel/analytics/react";
-import { getCookie } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { UserProvider } from "../contexts/UserContext";
-import { ThemeProvider } from "../contexts/ThemeContext";
-import { THEME_KEY, USER_KEY } from "../utils/constants";
+import { Analytics } from "@vercel/analytics/react";
+import { getCookie } from "cookies-next";
+import App from "next/app";
+import Head from "next/head";
 import Layout from "../components/Layout";
+import { ThemeProvider } from "../contexts/ThemeContext";
+import { UserProvider } from "../contexts/UserContext";
+import { THEME_KEY, USER_KEY } from "../utils/constants";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +15,7 @@ export default function MyApp({
 	Component,
 	pageProps,
 	currentTheme,
-	currentUser,
+	currentUser
 }) {
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -54,7 +54,7 @@ MyApp.getInitialProps = async (appContext) => {
 	return {
 		...initialProps,
 		currentTheme,
-		currentUser,
+		currentUser
 	};
 };
 

@@ -4,8 +4,8 @@ const transporter = createTransport({
 	service: "gmail",
 	auth: {
 		user: process.env.EMAIL_ADDRESS,
-		pass: process.env.EMAIL_PASSWORD,
-	},
+		pass: process.env.EMAIL_PASSWORD
+	}
 });
 
 export async function sendHtml(to, subject, html) {
@@ -13,7 +13,7 @@ export async function sendHtml(to, subject, html) {
 		from: process.env.EMAIL_ADDRESS,
 		to,
 		subject,
-		html,
+		html
 	};
 
 	return await sendEmail(options);
@@ -24,7 +24,7 @@ export async function sendText(email, subject, text) {
 		from: process.env.EMAIL_ADDRESS,
 		to: email,
 		subject,
-		text,
+		text
 	};
 
 	return await sendEmail(options);

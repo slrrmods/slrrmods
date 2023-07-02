@@ -19,7 +19,7 @@ export const useStyles = createStyles((theme) => {
 
 	return {
 		tabsList: {
-			borderBottom: "0 !important",
+			borderBottom: "0 !important"
 		},
 
 		tab: {
@@ -29,14 +29,14 @@ export const useStyles = createStyles((theme) => {
 
 			"&:hover": {
 				backgroundColor: backgroundLight,
-				boxShadow: theme.shadows.md,
+				boxShadow: theme.shadows.md
 			},
 
 			"&[data-active]": {
 				backgroundColor: activeBackground,
 				color: activeForeground,
-				boxShadow: "none",
-			},
-		},
+				boxShadow: "none"
+			}
+		}
 	};
 });

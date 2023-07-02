@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import {
 	Alert,
 	Anchor,
@@ -13,21 +10,24 @@ import {
 	Stack,
 	TextInput,
 	ThemeIcon,
-	Tooltip,
+	Tooltip
 } from "@mantine/core";
-import { useFocusTrap, useDebouncedValue } from "@mantine/hooks";
 import { useForm, yupResolver } from "@mantine/form";
+import { useDebouncedValue, useFocusTrap } from "@mantine/hooks";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
-import { ValidatedPasswordInput } from "../../Inputs";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import * as yup from "yup";
+import { useUserContext } from "../../../contexts";
 import * as users from "../../../endpoints/users";
 import {
-	emailValidation,
-	usernameValidation,
-	passwordValidation,
 	confirmPasswordValidation,
+	emailValidation,
+	passwordValidation,
+	usernameValidation
 } from "../../../utils/validations";
-import { useUserContext } from "../../../contexts";
+import { ValidatedPasswordInput } from "../../Inputs";
 import Link from "../../Link";
 
 const formInitialValues = {
@@ -35,7 +35,7 @@ const formInitialValues = {
 	username: "",
 	password: "",
 	confirmPassword: "",
-	acceptTerms: false,
+	acceptTerms: false
 };
 
 const formSchema = {
@@ -46,7 +46,7 @@ const formSchema = {
 	acceptTerms: yup
 		.boolean()
 		.required()
-		.oneOf([true], "You must accept the terms and rules"),
+		.oneOf([true], "You must accept the terms and rules")
 };
 
 export default function SignUpForm() {
@@ -71,7 +71,7 @@ export default function SignUpForm() {
 		queryFn: () => users.checkEmailAvailable(debouncedEmail),
 		retry: false,
 		enabled: canVerifyEmail,
-		refetchOnWindowFocus: false,
+		refetchOnWindowFocus: false
 	});
 
 	const canVerifyUsername =
@@ -82,7 +82,7 @@ export default function SignUpForm() {
 		queryFn: () => users.checkUsernameAvailable(debouncedUsername),
 		retry: false,
 		enabled: canVerifyUsername,
-		refetchOnWindowFocus: false,
+		refetchOnWindowFocus: false
 	});
 
 	const signInMutation = useMutation({
@@ -92,7 +92,7 @@ export default function SignUpForm() {
 		onSuccess: ({ refreshToken }) => {
 			userContext.signIn(refreshToken);
 		},
-		onSettled: () => close(),
+		onSettled: () => close()
 	});
 
 	const signUpMutation = useMutation({
@@ -100,10 +100,10 @@ export default function SignUpForm() {
 			await users.signUp(email, username, password);
 			return {
 				username,
-				password,
+				password
 			};
 		},
-		onSuccess: (data) => signInMutation.mutate(data),
+		onSuccess: (data) => signInMutation.mutate(data)
 	});
 
 	const isLoading = signUpMutation.isLoading || signInMutation.isLoading;
@@ -120,12 +120,12 @@ export default function SignUpForm() {
 			"usernameAvailable",
 			"Username not available",
 			() => usernameAvailableQuery.status !== "error"
-		),
+		)
 	});
 
 	const form = useForm({
 		initialValues: formInitialValues,
-		validate: yupResolver(updatedFormSchema),
+		validate: yupResolver(updatedFormSchema)
 	});
 
 	const { email: emailError, username: usernameError } = form.errors;
@@ -158,7 +158,7 @@ export default function SignUpForm() {
 		router.push(
 			{
 				pathname: router.pathname,
-				query: { signIn: true },
+				query: { signIn: true }
 			},
 			"/users/signIn",
 			{ shallow: true }

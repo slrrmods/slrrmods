@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { Card, Center, Title } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { ForgotPasswordForm } from "../../components/Forms";
 import { useUserContext } from "../../contexts";
 

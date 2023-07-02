@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { useStyles } from "./Searchbar.styles";
+import { ActionIcon, TextInput, useMantineTheme } from "@mantine/core";
 import { getHotkeyHandler } from "@mantine/hooks";
-import { TextInput, ActionIcon, useMantineTheme } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useStyles } from "./Searchbar.styles";
 
 export default function Searchbar() {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -20,7 +20,7 @@ export default function Searchbar() {
 
 	const shortcutsHandler = getHotkeyHandler([
 		["Escape", clearSearch],
-		["Enter", search],
+		["Enter", search]
 	]);
 
 	return (

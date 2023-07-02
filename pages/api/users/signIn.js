@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { getById } from "../../../data/countries";
-import { createNew, revokeAll } from "../../../data/refresh-tokens";
+import { createNew } from "../../../data/refresh-tokens";
 import { handleRequest } from "../../../services/request-handler";
 import { joinNewSession, quitSession } from "../../../services/session-manager";
 import { getFromEmailOrUsername } from "../../../services/user-service";
@@ -10,14 +10,14 @@ const configurarions = {
 		body: yup.object().shape({
 			username: yup.string().required(),
 			password: yup.string().required(),
-			sso: yup.boolean().required(),
+			sso: yup.boolean().required()
 		}),
 		handler: onPost,
 		rateLimit: {
 			limit: 5,
-			interval: 60 * 1000,
-		},
-	},
+			interval: 60 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {
@@ -30,7 +30,7 @@ async function onPost({ request, response, body, session }) {
 	const newSession = await joinNewSession({
 		...body,
 		request,
-		response,
+		response
 	});
 
 	const user = await getFromEmailOrUsername(body.username);
@@ -40,11 +40,11 @@ async function onPost({ request, response, body, session }) {
 		username: user.username,
 		email: user.email,
 		profilePicture: user.profile_picture,
-		country,
+		country
 	};
 
 	const sessionInfo = {
-		expiresAt: newSession.expiresAt,
+		expiresAt: newSession.expiresAt
 	};
 
 	if (sso) sessionInfo.refreshToken = await createNew(newSession);
@@ -52,7 +52,7 @@ async function onPost({ request, response, body, session }) {
 	return {
 		data: {
 			userInfo,
-			sessionInfo,
-		},
+			sessionInfo
+		}
 	};
 }

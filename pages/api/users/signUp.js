@@ -1,25 +1,25 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
+import { createNew } from "../../../services/user-service";
 import {
 	emailValidation,
-	usernameValidation,
 	passwordValidation,
+	usernameValidation
 } from "../../../utils/validations";
-import { createNew } from "../../../services/user-service";
 
 const configurarions = {
 	POST: {
 		body: yup.object().shape({
 			email: emailValidation,
 			username: usernameValidation,
-			password: passwordValidation,
+			password: passwordValidation
 		}),
 		handler: onPost,
 		rateLimit: {
 			limit: 5,
-			interval: 60 * 1000,
-		},
-	},
+			interval: 60 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {
@@ -32,6 +32,6 @@ async function onPost({ body }) {
 	await createNew(email, username, password);
 
 	return {
-		status: 201,
+		status: 201
 	};
 }

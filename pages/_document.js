@@ -1,5 +1,5 @@
-import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyles, createStylesServer } from "@mantine/next";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 
 const stylesServer = createStylesServer();
 
@@ -10,7 +10,7 @@ export default class MyDocument extends Document {
 		ctx.renderPage = () =>
 			originalRenderPage({
 				enhanceApp: (App) => App,
-				enhanceComponent: (Component) => Component,
+				enhanceComponent: (Component) => Component
 			});
 
 		const initialProps = await Document.getInitialProps(ctx);
@@ -23,8 +23,8 @@ export default class MyDocument extends Document {
 					html={initialProps.html}
 					server={stylesServer}
 					key="styles"
-				/>,
-			],
+				/>
+			]
 		};
 	}
 

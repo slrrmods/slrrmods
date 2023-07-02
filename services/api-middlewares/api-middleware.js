@@ -1,11 +1,11 @@
-import validateMethod from "./validate-method";
 import applyRateLimit from "./rate-limiting";
-import validateHeaders from "./validate-headers";
-import validateQuery from "./validate-query";
+import validateAuthentication from "./validate-authentication";
 import validateBody from "./validate-body";
+import validateHeaders from "./validate-headers";
+import validateMethod from "./validate-method";
+import validateQuery from "./validate-query";
 import validateSession from "./validate-session";
 import validateUser from "./validate-user";
-import validateAuthentication from "./validate-authentication";
 
 const middlewares = [
 	validateMethod,
@@ -15,7 +15,7 @@ const middlewares = [
 	validateBody,
 	validateSession,
 	validateUser,
-	validateAuthentication,
+	validateAuthentication
 ];
 
 export default async function runMiddlewares(context) {

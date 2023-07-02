@@ -1,16 +1,16 @@
-import { useWindowScroll } from "@mantine/hooks";
-import { useStyles } from "./Layout.styles";
 import {
 	ActionIcon,
 	Affix,
 	Container,
 	Tooltip,
-	Transition,
+	Transition
 } from "@mantine/core";
+import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
-import Header from "../Header";
 import Footer from "../Footer";
+import Header from "../Header";
 import Modals from "../Modals";
+import { useStyles } from "./Layout.styles";
 
 export default function Layout({ children }) {
 	const [scroll, scrollTo] = useWindowScroll();

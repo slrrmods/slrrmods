@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
-import { useMutation } from "@tanstack/react-query";
 import { useInterval, useLocalStorage } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { deleteCookie, setCookie } from "cookies-next";
-import { REFRESH_TOKEN_KEY, USER_KEY } from "../../utils/constants";
-import { getIdentity, signIn, signOff } from "../../endpoints/users";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import { UserContext } from ".";
+import { getIdentity, signIn, signOff } from "../../endpoints/users";
+import { REFRESH_TOKEN_KEY, USER_KEY } from "../../utils/constants";
 
 export default function UserContextProvider({ children, currentUser }) {
 	const router = useRouter();
@@ -22,7 +22,7 @@ export default function UserContextProvider({ children, currentUser }) {
 		onSettled: () => {
 			removeUser();
 			removeRefreshToken();
-		},
+		}
 	});
 
 	const signInMutation = useMutation({
@@ -32,14 +32,14 @@ export default function UserContextProvider({ children, currentUser }) {
 			setUser(userInfo);
 			setRefreshToken(refreshToken);
 		},
-		onError: () => signOff(),
+		onError: () => signOff()
 	});
 
 	//todo: this must be a query
 	const { mutate: update } = useMutation({
 		mutationFn: () => getIdentity(),
 		onSuccess: (data) => setStorageUser(data),
-		onError: () => signOff(),
+		onError: () => signOff()
 	});
 
 	useEffect(() => {
@@ -66,7 +66,7 @@ export default function UserContextProvider({ children, currentUser }) {
 		signIn: signInMutation.mutate,
 		signOff: signOffMutation.mutate,
 		user,
-		loading: signInMutation.isLoading || signOffMutation.isLoading,
+		loading: signInMutation.isLoading || signOffMutation.isLoading
 	};
 
 	return (
@@ -78,7 +78,7 @@ function useUserStorage(currentUser) {
 	const [user, setUser] = useState(currentUser);
 	const [storage, setStorage, removeStorage] = useLocalStorage({
 		key: USER_KEY,
-		defaultValue: undefined,
+		defaultValue: undefined
 	});
 
 	const storageLoadedRef = useRef(false);
@@ -99,11 +99,11 @@ function useUserStorage(currentUser) {
 		const cookieInfos = {
 			id: storageUser.id,
 			username: storageUser.username,
-			profilePicture: storageUser.profilePicture,
+			profilePicture: storageUser.profilePicture
 		};
 
 		const cookieOptions = {
-			maxAge: 60 * 60 * 24 * 30,
+			maxAge: 60 * 60 * 24 * 30
 		};
 
 		setCookie(USER_KEY, cookieInfos, cookieOptions);
@@ -121,7 +121,7 @@ function useRefreshTokenStorage() {
 	const [refreshToken, setRefreshToken] = useState(undefined);
 	const [storage, setStorage, removeStorage] = useLocalStorage({
 		key: REFRESH_TOKEN_KEY,
-		defaultValue: undefined,
+		defaultValue: undefined
 	});
 
 	const storageLoadedRef = useRef(false);

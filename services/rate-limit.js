@@ -3,14 +3,14 @@ import { LRUCache } from "lru-cache";
 export default function rateLimit({ limit, interval, usersPerSecond }) {
 	const cache = new LRUCache({
 		max: usersPerSecond,
-		ttl: interval,
+		ttl: interval
 	});
 
 	const check = (token) => {
 		if (!cache.has(token)) {
 			cache.set(token, {
 				usage: 0,
-				expiresAt: Date.now() + interval,
+				expiresAt: Date.now() + interval
 			});
 		}
 
@@ -30,12 +30,12 @@ export default function rateLimit({ limit, interval, usersPerSecond }) {
 			limit,
 			remaining,
 			resetTime,
-			retryAfter,
+			retryAfter
 		};
 	};
 
 	return {
-		check,
+		check
 	};
 }
 

@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useMutation } from "@tanstack/react-query";
-import { Button, Center, Stack, Title, Text, Card, Group } from "@mantine/core";
+import { Button, Card, Center, Group, Stack, Text, Title } from "@mantine/core";
 import { IconCircleCheck, IconInfoCircle, IconMail } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import Link from "../components/Link";
 import { resendEmailVerification } from "../endpoints/users";
 import { verifyEmail } from "../services/email-verification";
-import Link from "../components/Link";
 
 export default function VerifyEmail({ result, token }) {
 	const router = useRouter();
@@ -56,7 +56,7 @@ function Expired({ token }) {
 		},
 		onSettled: () => {
 			router.push("/");
-		},
+		}
 	});
 
 	return (
@@ -89,8 +89,8 @@ export async function getServerSideProps(context) {
 		return {
 			redirect: {
 				destination: "/",
-				permanent: false,
-			},
+				permanent: false
+			}
 		};
 	}
 
@@ -98,8 +98,8 @@ export async function getServerSideProps(context) {
 		return {
 			props: {
 				result,
-				token,
-			},
+				token
+			}
 		};
 	}
 

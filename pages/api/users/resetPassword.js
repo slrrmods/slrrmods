@@ -1,21 +1,21 @@
 import * as yup from "yup";
 import { handleRequest } from "../../../services/request-handler";
-import { passwordValidation } from "../../../utils/validations";
 import { resetPassword } from "../../../services/reset-password";
+import { passwordValidation } from "../../../utils/validations";
 
 const configurarions = {
 	POST: {
 		authorization: "public",
 		body: yup.object().shape({
 			token: yup.string().required(),
-			password: passwordValidation,
+			password: passwordValidation
 		}),
 		handler: onPost,
 		rateLimit: {
 			limit: 2,
-			interval: 60 * 1000,
-		},
-	},
+			interval: 60 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {

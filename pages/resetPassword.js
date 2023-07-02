@@ -1,38 +1,38 @@
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { useForm, yupResolver } from "@mantine/form";
 import {
 	Button,
-	Center,
-	Stack,
-	Title,
-	Text,
 	Card,
-	PasswordInput,
-	LoadingOverlay,
+	Center,
 	Group,
+	LoadingOverlay,
+	PasswordInput,
+	Stack,
+	Text,
+	Title
 } from "@mantine/core";
+import { useForm, yupResolver } from "@mantine/form";
 import { IconCircleCheck, IconInfoCircle } from "@tabler/icons-react";
-import * as yup from "yup";
-import { validateToken } from "../services/reset-password";
-import { ValidatedPasswordInput } from "../components/Inputs";
-import {
-	passwordValidation,
-	confirmPasswordValidation,
-} from "../utils/validations";
-import { resetPassword } from "../endpoints/users";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import * as yup from "yup";
+import { ValidatedPasswordInput } from "../components/Inputs";
 import Link from "../components/Link";
+import { resetPassword } from "../endpoints/users";
+import { validateToken } from "../services/reset-password";
+import {
+	confirmPasswordValidation,
+	passwordValidation
+} from "../utils/validations";
 
 const formSchema = yup.object().shape({
 	password: passwordValidation,
-	confirmPassword: confirmPasswordValidation,
+	confirmPassword: confirmPasswordValidation
 });
 
 const STATES = {
 	RESETING: 0,
 	SUCCESS: 1,
-	ERROR: 2,
+	ERROR: 2
 };
 
 export default function ResetPassword({ result, token }) {
@@ -53,9 +53,9 @@ function Reset({ token }) {
 	const form = useForm({
 		initialValues: {
 			password: "",
-			confirmPassword: "",
+			confirmPassword: ""
 		},
-		validate: yupResolver(formSchema),
+		validate: yupResolver(formSchema)
 	});
 
 	const resetPasswordMutation = useMutation({
@@ -67,7 +67,7 @@ function Reset({ token }) {
 		},
 		onError: () => {
 			setState(STATES.ERROR);
-		},
+		}
 	});
 
 	const loading = resetPasswordMutation.isLoading;
@@ -84,7 +84,7 @@ function Reset({ token }) {
 				minWidth: "350px",
 				maxWidth: "450px",
 				width: "100%",
-				overflow: "visible",
+				overflow: "visible"
 			}}
 			p={0}>
 			{state === STATES.RESETING && (
@@ -199,8 +199,8 @@ export async function getServerSideProps(context) {
 		return {
 			redirect: {
 				destination: "/",
-				permanent: false,
-			},
+				permanent: false
+			}
 		};
 	}
 
@@ -208,8 +208,8 @@ export async function getServerSideProps(context) {
 		return {
 			props: {
 				result,
-				token,
-			},
+				token
+			}
 		};
 	}
 

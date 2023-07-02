@@ -1,5 +1,5 @@
 import { useLocalStorage } from "@mantine/hooks";
-import { THEME_KEY, DEFAULT_THEME } from "./constants";
+import { DEFAULT_THEME, IS_IN_SERVER_ENV, THEME_KEY } from "./constants";
 
 export const tryGetItem = (key) => {
 	if (IS_IN_SERVER_ENV) return null;
@@ -13,6 +13,6 @@ export function getTheme() {
 export function useThemeStorage(defaultValue) {
 	return useLocalStorage({
 		key: THEME_KEY,
-		defaultValue: defaultValue || DEFAULT_THEME,
+		defaultValue: defaultValue || DEFAULT_THEME
 	});
 }

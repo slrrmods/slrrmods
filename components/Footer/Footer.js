@@ -1,11 +1,11 @@
 import {
-	Container,
-	Group,
 	ActionIcon,
-	Stack,
+	Container,
 	Divider,
+	Group,
+	Stack,
 	Text,
-	Tooltip,
+	Tooltip
 } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import Link from "../Link";

@@ -1,8 +1,8 @@
-import { hash, compare } from "bcrypt";
-import { createClient } from "./supabase-client";
-import { sendEmailVerification } from "./email-verification";
+import { compare, hash } from "bcrypt";
 import { camelizeKeys } from "humps";
 import { ValidationError } from "../classes";
+import { sendEmailVerification } from "./email-verification";
+import { createClient } from "./supabase-client";
 
 const client = createClient();
 
@@ -131,7 +131,7 @@ export async function createNew(email, username, password) {
 		.insert({
 			email,
 			username,
-			password: encryptedPassword,
+			password: encryptedPassword
 		})
 		.select()
 		.maybeSingle();

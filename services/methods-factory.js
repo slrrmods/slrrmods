@@ -1,5 +1,5 @@
-import { doApiRequest } from "./api-client";
 import { buildUrl } from "../utils/url-builder";
+import { doApiRequest } from "./api-client";
 
 export function createMethods() {
 	return {
@@ -7,7 +7,7 @@ export function createMethods() {
 		post: createMethod("POST"),
 		put: createMethod("PUT"),
 		delete: createMethod("DELETE"),
-		patch: createMethod("PATCH"),
+		patch: createMethod("PATCH")
 	};
 }
 

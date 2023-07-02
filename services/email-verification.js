@@ -1,17 +1,17 @@
+import { compare, hash } from "bcrypt";
 import * as yup from "yup";
 import { ValidationError } from "../classes";
-import { hash, compare } from "bcrypt";
+import { ENVIROMENT_URL } from "../utils/constants";
+import { decrypt, encrypt } from "../utils/crypto";
+import { EMAIL_TEMPLATES, createFromTemplate } from "../utils/email-templates";
+import { createRandomToken } from "../utils/tokenizer";
+import { sendHtml } from "./email-sender";
 import { createClient } from "./supabase-client";
 import { getFromId } from "./user-service";
-import { sendHtml } from "./email-sender";
-import { createRandomToken } from "../utils/tokenizer";
-import { encrypt, decrypt } from "../utils/crypto";
-import { createFromTemplate, EMAIL_TEMPLATES } from "../utils/email-templates";
-import { ENVIROMENT_URL } from "../utils/constants";
 
 const tokenSchema = yup.object().shape({
 	user: yup.string().required(),
-	value: yup.string().required(),
+	value: yup.string().required()
 });
 
 const client = createClient();
@@ -45,7 +45,7 @@ export async function sendEmailVerification(user) {
 	const html = createFromTemplate(EMAIL_TEMPLATES.CONFIRM_EMAIL, {
 		username,
 		tokenUrl: `${ENVIROMENT_URL}/verifyEmail?token=${token}`,
-		year: new Date().getFullYear(),
+		year: new Date().getFullYear()
 	});
 
 	await sendHtml(email, "Confirm your email", html);
@@ -60,20 +60,20 @@ export async function verifyEmail(encryptedToken) {
 		.update({
 			email_confirmed_at: new Date(),
 			email_confirmation_token: null,
-			email_confirmation_sent_at: null,
+			email_confirmation_sent_at: null
 		})
 		.eq("id", token.user);
 
 	const date = new Intl.DateTimeFormat("en", {
 		dateStyle: "medium",
-		timeStyle: "medium",
+		timeStyle: "medium"
 	}).format(new Date());
 
 	const html = createFromTemplate(EMAIL_TEMPLATES.CONFIRM_EMAIL_INFO, {
 		username: user.username,
 		date,
 		rulesUrl: `${ENVIROMENT_URL}/rules`,
-		year: new Date().getFullYear(),
+		year: new Date().getFullYear()
 	});
 
 	await sendHtml(user.email, "Email confirmed", html);
@@ -106,7 +106,7 @@ async function validateToken(encryptedToken) {
 async function createToken(user) {
 	const tokenObject = {
 		user: user.id,
-		value: createRandomToken(),
+		value: createRandomToken()
 	};
 
 	const hashedTokenValue = await hash(tokenObject.value, 10);
@@ -114,7 +114,7 @@ async function createToken(user) {
 		.from("users")
 		.update({
 			email_confirmation_token: hashedTokenValue,
-			email_confirmation_sent_at: new Date(),
+			email_confirmation_sent_at: new Date()
 		})
 		.eq("id", user.id);
 

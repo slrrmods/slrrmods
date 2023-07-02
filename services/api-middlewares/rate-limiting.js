@@ -7,7 +7,7 @@ const rateLimiters = {};
 const defaultLimitConfiguration = {
 	limit: 5,
 	interval: 60 * 1000,
-	usersPerSecond: 100,
+	usersPerSecond: 100
 };
 
 export default function applyRateLimit({ request, response, configuration }) {
@@ -15,7 +15,7 @@ export default function applyRateLimit({ request, response, configuration }) {
 
 	const limitConfiguration = {
 		...defaultLimitConfiguration,
-		...configuration.rateLimit,
+		...configuration.rateLimit
 	};
 
 	const url = new URL(request.url, ENVIROMENT_URL);

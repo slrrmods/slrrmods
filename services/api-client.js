@@ -4,7 +4,7 @@ import { newBase64Uuid } from "../utils/uuid";
 
 const api = axios.create({
 	baseURL: `${ENVIROMENT_URL}/api`,
-	withCredentials: true,
+	withCredentials: true
 });
 
 const clientToken = newBase64Uuid();
@@ -16,7 +16,7 @@ export async function doApiRequest(url, method, headers, data) {
 		url,
 		method,
 		headers,
-		data,
+		data
 	};
 
 	try {
@@ -56,54 +56,54 @@ const securityHeaders = [
 	{
 		key: "Content-Security-Policy",
 		value:
-			"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self' 'unsafe-eval';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
+			"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self' 'unsafe-eval';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;"
 	},
 	{
 		key: "Cross-Origin-Embedder-Policy",
-		value: "require-corp",
+		value: "require-corp"
 	},
 	{
 		key: "Cross-Origin-Opener-Policy",
-		value: "same-origin",
+		value: "same-origin"
 	},
 	{
 		key: "Cross-Origin-Resource-Policy",
-		value: "same-origin",
+		value: "same-origin"
 	},
 	{
 		key: "Origin-Agent-Cluster",
-		value: "?1",
+		value: "?1"
 	},
 	{
 		key: "Referrer-Policy",
-		value: "origin",
+		value: "origin"
 	},
 	{
 		key: "Strict-Transport-Security",
-		value: "max-age=15552000; includeSubDomains",
+		value: "max-age=15552000; includeSubDomains"
 	},
 	{
 		key: "X-Content-Type-Options",
-		value: "nosniff",
+		value: "nosniff"
 	},
 	{
 		key: "X-DNS-Prefetch-Control",
-		value: "off",
+		value: "off"
 	},
 	{
 		key: "X-Download-Options",
-		value: "noopen",
+		value: "noopen"
 	},
 	{
 		key: "X-Frame-Options",
-		value: "SAMEORIGIN",
+		value: "SAMEORIGIN"
 	},
 	{
 		key: "X-Permitted-Cross-Domain-Policies",
-		value: "none",
+		value: "none"
 	},
 	{
 		key: "X-XSS-Protection",
-		value: "0",
-	},
+		value: "0"
+	}
 ];

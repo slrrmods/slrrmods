@@ -5,14 +5,14 @@ import { verifyEmailExists } from "../../../services/user-service";
 const configurarions = {
 	GET: {
 		query: yup.object().shape({
-			email: yup.string().required().email(),
+			email: yup.string().required().email()
 		}),
 		handler: onGet,
 		rateLimit: {
 			limit: 10,
-			interval: 30 * 1000,
-		},
-	},
+			interval: 30 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {
@@ -24,11 +24,11 @@ async function onGet({ query }) {
 
 	if (await verifyEmailExists(email)) {
 		return {
-			data: { error: "Email is already in use" },
+			data: { error: "Email is already in use" }
 		};
 	}
 
 	return {
-		data: { message: "Email is available" },
+		data: { message: "Email is available" }
 	};
 }

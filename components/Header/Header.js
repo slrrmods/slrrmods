@@ -1,5 +1,5 @@
-import { useStyles } from "./Header.styles";
 import { Container, Stack } from "@mantine/core";
+import { useStyles } from "./Header.styles";
 import Headerbar from "./Headerbar";
 import Navbar from "./Navbar";
 

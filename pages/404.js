@@ -1,4 +1,4 @@
-import { Title, Text, Button, Container, createStyles } from "@mantine/core";
+import { Button, Container, Text, Title, createStyles } from "@mantine/core";
 import Link from "../components/Link";
 import * as themeHelpers from "../utils/theme-helpers";
 
@@ -8,7 +8,7 @@ const useStyles = createStyles((theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		placeItems: "center",
-		gap: theme.spacing.xl,
+		gap: theme.spacing.xl
 	},
 
 	label: {
@@ -19,18 +19,18 @@ const useStyles = createStyles((theme) => ({
 			theme,
 			theme.colors.dark[4],
 			theme.colors.gray[2]
-		),
+		)
 	},
 
 	title: {
 		fontWeight: 900,
-		fontSize: 38,
+		fontSize: 38
 	},
 
 	description: {
 		maxWidth: 500,
-		textAlign: "center",
-	},
+		textAlign: "center"
+	}
 }));
 
 export default function NotFound() {

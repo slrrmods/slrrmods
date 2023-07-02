@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
 import { Modal, Tabs, Title } from "@mantine/core";
-import { SignInForm, SignUpForm } from "../../Forms";
+import { useRouter } from "next/router";
 import { useUserContext } from "../../../contexts";
+import { SignInForm, SignUpForm } from "../../Forms";
 
 export default function SignModal() {
 	const router = useRouter();
@@ -24,7 +24,7 @@ export default function SignModal() {
 		router.push(
 			{
 				pathname: router.pathname,
-				query: { [value]: true },
+				query: { [value]: true }
 			},
 			`/users/${value}`,
 			{ shallow: true }

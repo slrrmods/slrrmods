@@ -1,34 +1,34 @@
-import { useRouter } from "next/router";
-import { useStyles } from "./Navbar.styles";
-import { useThemeContext } from "../../../contexts/ThemeContext";
-import { Tabs, Group, ActionIcon, Tooltip } from "@mantine/core";
+import { ActionIcon, Group, Tabs, Tooltip } from "@mantine/core";
 import { IconMoonStars, IconSun } from "@tabler/icons-react";
+import { useRouter } from "next/router";
+import { useThemeContext } from "../../../contexts/ThemeContext";
+import { useStyles } from "./Navbar.styles";
 
 const tabs = [
 	{
 		path: "/",
-		title: "Home",
+		title: "Home"
 	},
 	{
 		path: "/news",
-		title: "News",
+		title: "News"
 	},
 	{
 		path: "/downloads",
-		title: "Downloads",
+		title: "Downloads"
 	},
 	{
 		path: "/forum",
-		title: "Forum",
+		title: "Forum"
 	},
 	{
 		path: "/roleplay",
-		title: "Roleplay",
+		title: "Roleplay"
 	},
 	{
 		path: "/about",
-		title: "About",
-	},
+		title: "About"
+	}
 ];
 
 export default function Navbar() {
@@ -50,7 +50,7 @@ export default function Navbar() {
 				onTabChange={onTabChange}
 				classNames={{
 					tabsList: classes.tabsList,
-					tab: classes.tab,
+					tab: classes.tab
 				}}>
 				<Tabs.List>
 					{tabs.map((t) => {

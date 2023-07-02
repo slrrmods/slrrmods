@@ -1,18 +1,18 @@
-import * as yup from "yup";
+import { compare, hash } from "bcrypt";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import geoip from "geoip-lite";
-import { hash, compare } from "bcrypt";
-import { setCookie, getCookie, deleteCookie } from "cookies-next";
-import { createClient } from "./supabase-client";
-import { createRandomToken } from "../utils/tokenizer";
-import { encrypt, decrypt } from "../utils/crypto";
-import { SESSION_COOKIE_KEY, IS_DEVELOPMENT_ENV } from "../utils/constants";
-import { getIp } from "../utils/ip";
-import { getFromLogin } from "./user-service";
+import * as yup from "yup";
 import { ValidationError } from "../classes";
+import { IS_DEVELOPMENT_ENV, SESSION_COOKIE_KEY } from "../utils/constants";
+import { decrypt, encrypt } from "../utils/crypto";
+import { getIp } from "../utils/ip";
+import { createRandomToken } from "../utils/tokenizer";
+import { createClient } from "./supabase-client";
+import { getFromLogin } from "./user-service";
 
 const tokenSchema = yup.object().shape({
 	session: yup.string().required(),
-	value: yup.string().required(),
+	value: yup.string().required()
 });
 
 const client = createClient();
@@ -63,7 +63,7 @@ export async function joinNewSession({
 	password,
 	sso,
 	request,
-	response,
+	response
 }) {
 	const user = await getFromLogin(username, password);
 	const { session, token } = await createSession(user, sso, request);
@@ -88,7 +88,7 @@ export async function revokeSession(session) {
 		.from("sessions")
 		.update({
 			revoked_at: new Date(),
-			token: null,
+			token: null
 		})
 		.eq("id", session.id);
 }
@@ -98,7 +98,7 @@ export async function revokeAllSessions(user) {
 		.from("sessions")
 		.update({
 			revoked_at: new Date(),
-			token: null,
+			token: null
 		})
 		.eq("owner", user.id)
 		.is("revoked_at", null);
@@ -123,7 +123,7 @@ async function createSession(user, sso, request) {
 			expires_at: expiresAt,
 			ip,
 			location,
-			sso,
+			sso
 		})
 		.select()
 		.single();
@@ -147,7 +147,7 @@ function writeToCookies(session, token, request, response) {
 		secure: !IS_DEVELOPMENT_ENV,
 		sameSite: "strict",
 		expires: session.sso ? new Date(session.expires_at) : undefined,
-		path: "/",
+		path: "/"
 	});
 }
 
@@ -157,21 +157,21 @@ function removeFromCookies(request, response) {
 		res: response,
 		httpOnly: true,
 		secure: !IS_DEVELOPMENT_ENV,
-		path: "/",
+		path: "/"
 	});
 }
 
 async function createToken(session) {
 	const tokenObject = {
 		session: session.id,
-		value: createRandomToken(),
+		value: createRandomToken()
 	};
 
 	const hashedTokenValue = await hash(tokenObject.value, 10);
 	await client
 		.from("sessions")
 		.update({
-			token: hashedTokenValue,
+			token: hashedTokenValue
 		})
 		.eq("id", session.id);
 

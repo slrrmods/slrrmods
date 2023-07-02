@@ -7,10 +7,10 @@ const configurarions = {
 		headers: {},
 		body: {},
 		query: yup.object().shape({
-			name: yup.string().required(),
+			name: yup.string().required()
 		}),
-		handler: onGet,
-	},
+		handler: onGet
+	}
 };
 
 export default async function handler(req, res) {
@@ -19,6 +19,6 @@ export default async function handler(req, res) {
 
 function onGet({ query }) {
 	return {
-		data: { message: `Hello ${query.name}` },
+		data: { message: `Hello ${query.name}` }
 	};
 }

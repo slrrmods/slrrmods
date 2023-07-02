@@ -7,7 +7,7 @@ import { createRandomToken } from "../utils/tokenizer";
 
 const tokenSchema = yup.object().shape({
 	refreshToken: yup.string().required(),
-	value: yup.string().required(),
+	value: yup.string().required()
 });
 
 const client = createClient();
@@ -41,7 +41,7 @@ export async function createNew(session) {
 		.from("refresh_tokens")
 		.insert({
 			session: session.id,
-			token: "",
+			token: ""
 		})
 		.select()
 		.single();
@@ -102,14 +102,14 @@ async function getRefreshToken(token) {
 async function createToken(refreshToken) {
 	const tokenObject = {
 		refreshToken: refreshToken.id,
-		value: createRandomToken(),
+		value: createRandomToken()
 	};
 
 	const hashedTokenValue = await hash(tokenObject.value, 10);
 	await client
 		.from("refresh_tokens")
 		.update({
-			token: hashedTokenValue,
+			token: hashedTokenValue
 		})
 		.eq("id", refreshToken.id);
 

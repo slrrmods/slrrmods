@@ -1,12 +1,12 @@
-import runMiddlewares from "./api-middlewares";
-import { logError, reportToEmail } from "./error-handling";
+import { log } from "next-axiom";
 import { ValidationError } from "../classes";
 import { IS_DEVELOPMENT_ENV } from "../utils/constants";
-import { log } from "next-axiom";
+import runMiddlewares from "./api-middlewares";
+import { logError, reportToEmail } from "./error-handling";
 
 const defaultResult = {
 	status: 200,
-	data: { message: "Success" },
+	data: { message: "Success" }
 };
 
 export async function handleRequest(request, response, configurations) {
@@ -14,7 +14,7 @@ export async function handleRequest(request, response, configurations) {
 		request,
 		response,
 		method: request.method,
-		configuration: configurations[request.method],
+		configuration: configurations[request.method]
 	};
 
 	try {
@@ -24,7 +24,7 @@ export async function handleRequest(request, response, configurations) {
 		const handlerResult = await handler(context);
 		const result = {
 			...defaultResult,
-			...handlerResult,
+			...handlerResult
 		};
 
 		return response.status(result.status).json(result.data);
@@ -39,7 +39,7 @@ export async function handleRequest(request, response, configurations) {
 
 		await handleError(error, request, response);
 		return response.status(500).json({
-			error: IS_DEVELOPMENT_ENV ? error.stack : "Internal server error",
+			error: IS_DEVELOPMENT_ENV ? error.stack : "Internal server error"
 		});
 	}
 }
@@ -63,7 +63,7 @@ function createErrorReport(error, request, response) {
 		name: error.name,
 		message: error.message,
 		stack: error.stack,
-		toString: error.toString(),
+		toString: error.toString()
 	};
 
 	const requestInfos = {
@@ -79,7 +79,7 @@ function createErrorReport(error, request, response) {
 		statusMessage: request.statusMessage,
 		query: request.query,
 		body: request.body,
-		ip: request.connection.remoteAddress,
+		ip: request.connection.remoteAddress
 	};
 
 	const responseInfos = {
@@ -94,12 +94,12 @@ function createErrorReport(error, request, response) {
 		statusCode: response.statusCode,
 		statusMessage: response.statusMessage,
 		query: response.query,
-		body: response.body,
+		body: response.body
 	};
 
 	return {
 		error: errorInfos,
 		request: requestInfos,
-		response: responseInfos,
+		response: responseInfos
 	};
 }

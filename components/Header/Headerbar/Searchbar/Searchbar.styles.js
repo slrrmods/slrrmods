@@ -4,7 +4,7 @@ import * as themeHelpers from "../../../../utils/theme-helpers";
 export const useStyles = createStyles((theme) => {
 	return {
 		root: {
-			width: "30%",
+			width: "30%"
 		},
 
 		input: {
@@ -18,22 +18,22 @@ export const useStyles = createStyles((theme) => {
 			borderRadius: theme.radius.sm,
 
 			"::placeholder": {
-				color: themeHelpers.getLightFilledBackground(theme, 0.7),
+				color: themeHelpers.getLightFilledBackground(theme, 0.7)
 			},
 
 			":focus": {
 				borderColor: themeHelpers.getLightFilledBackground(theme, 0.7),
 
 				"::placeholder": {
-					color: "transparent",
-				},
-			},
+					color: "transparent"
+				}
+			}
 		},
 
 		rightSection: {
 			width: "auto",
 			paddingLeft: theme.spacing.xs,
-			paddingRight: theme.spacing.xs,
-		},
+			paddingRight: theme.spacing.xs
+		}
 	};
 });

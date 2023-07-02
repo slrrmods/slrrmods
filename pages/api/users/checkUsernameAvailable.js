@@ -5,14 +5,14 @@ import { verifyUsernameExists } from "../../../services/user-service";
 const configurarions = {
 	GET: {
 		query: yup.object().shape({
-			username: yup.string().required(),
+			username: yup.string().required()
 		}),
 		handler: onGet,
 		rateLimit: {
 			limit: 10,
-			interval: 30 * 1000,
-		},
-	},
+			interval: 30 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {
@@ -24,11 +24,11 @@ async function onGet({ query }) {
 
 	if (await verifyUsernameExists(username)) {
 		return {
-			data: { error: "Username is already in use" },
+			data: { error: "Username is already in use" }
 		};
 	}
 
 	return {
-		data: { message: "Username is available" },
+		data: { message: "Username is available" }
 	};
 }

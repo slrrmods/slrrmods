@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import { newBase64Uuid } from "./uuid";
 import { toBase64 } from "./base64";
+import { newBase64Uuid } from "./uuid";
 
 export function createRandomToken() {
 	const uuid = newBase64Uuid();

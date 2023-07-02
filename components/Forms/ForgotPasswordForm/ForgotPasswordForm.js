@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { useFocusTrap } from "@mantine/hooks";
-import { useForm, yupResolver } from "@mantine/form";
 import {
 	Button,
 	Group,
 	LoadingOverlay,
 	Stack,
 	Text,
-	TextInput,
+	TextInput
 } from "@mantine/core";
+import { useForm, yupResolver } from "@mantine/form";
+import { useFocusTrap } from "@mantine/hooks";
 import { IconArrowLeft } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
-import { emailValidation } from "../../../utils/validations";
-import { sendResetPassword } from "../../../endpoints/users";
 import { useUserContext } from "../../../contexts";
+import { sendResetPassword } from "../../../endpoints/users";
+import { emailValidation } from "../../../utils/validations";
 
 const formSchema = yup.object().shape({
-	email: emailValidation,
+	email: emailValidation
 });
 
 export default function ForgotPasswordForm() {
@@ -39,9 +39,9 @@ export default function ForgotPasswordForm() {
 
 	const form = useForm({
 		initialValues: {
-			email: "",
+			email: ""
 		},
-		validate: yupResolver(formSchema),
+		validate: yupResolver(formSchema)
 	});
 
 	const resetPasswordMutation = useMutation({
@@ -50,7 +50,7 @@ export default function ForgotPasswordForm() {
 		},
 		onSettled: () => {
 			setHasSent(true);
-		},
+		}
 	});
 
 	const isLoading = resetPasswordMutation.isLoading;

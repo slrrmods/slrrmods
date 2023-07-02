@@ -1,13 +1,13 @@
-import { createClient } from "./supabase-client";
-import { sendHtml } from "./email-sender";
 import { ENVIROMENT_URL } from "../utils/constants";
+import { sendHtml } from "./email-sender";
+import { createClient } from "./supabase-client";
 
 const client = createClient();
 
 export async function logError(error, context) {
 	await client.from("api_errors").insert({
 		error,
-		context,
+		context
 	});
 }
 

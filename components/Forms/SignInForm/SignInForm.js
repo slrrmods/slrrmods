@@ -1,7 +1,3 @@
-import { useRouter } from "next/router";
-import { useMutation } from "@tanstack/react-query";
-import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
-import { useForm, yupResolver } from "@mantine/form";
 import {
 	Alert,
 	Anchor,
@@ -12,21 +8,25 @@ import {
 	LoadingOverlay,
 	PasswordInput,
 	Stack,
-	TextInput,
+	TextInput
 } from "@mantine/core";
+import { useForm, yupResolver } from "@mantine/form";
+import { useFocusTrap, useLocalStorage } from "@mantine/hooks";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import * as yup from "yup";
-import { signIn } from "../../../endpoints/users";
 import { useUserContext } from "../../../contexts";
+import { signIn } from "../../../endpoints/users";
 
 const formInitialValues = {
 	user: "",
-	password: "",
+	password: ""
 };
 
 const formSchema = yup.object().shape({
 	user: yup.string().required("Email or username is required"),
-	password: yup.string().required("Password is required"),
+	password: yup.string().required("Password is required")
 });
 
 export default function SignInForm() {
@@ -34,7 +34,7 @@ export default function SignInForm() {
 	const router = useRouter();
 	const [remember, setRemember] = useLocalStorage({
 		key: "remember-user",
-		defaultValue: false,
+		defaultValue: false
 	});
 
 	const isInModal = !!router.query.signIn;
@@ -44,7 +44,7 @@ export default function SignInForm() {
 		mutate: trySignIn,
 		reset,
 		isLoading,
-		error,
+		error
 	} = useMutation({
 		mutationFn: ({ user, password }) => {
 			return signIn(user, password, remember);
@@ -52,12 +52,12 @@ export default function SignInForm() {
 		onSuccess: ({ refreshToken }) => {
 			userContext.signIn(refreshToken);
 			close();
-		},
+		}
 	});
 
 	const form = useForm({
 		initialValues: formInitialValues,
-		validate: yupResolver(formSchema),
+		validate: yupResolver(formSchema)
 	});
 
 	function navigateToForgotPassword() {
@@ -69,7 +69,7 @@ export default function SignInForm() {
 		router.push(
 			{
 				pathname: router.pathname,
-				query: { forgotPassword: true },
+				query: { forgotPassword: true }
 			},
 			"/users/forgotPassword",
 			{ shallow: true }
@@ -85,7 +85,7 @@ export default function SignInForm() {
 		router.push(
 			{
 				pathname: router.pathname,
-				query: { signUp: true },
+				query: { signUp: true }
 			},
 			"/users/signUp",
 			{ shallow: true }

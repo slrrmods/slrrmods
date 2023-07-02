@@ -1,18 +1,18 @@
+import { compare, hash } from "bcrypt";
 import * as yup from "yup";
-import { hash, compare } from "bcrypt";
-import { createClient } from "./supabase-client";
-import { getFromId } from "./user-service";
+import { ValidationError } from "../classes";
+import { ENVIROMENT_URL } from "../utils/constants";
+import { decrypt, encrypt } from "../utils/crypto";
+import { EMAIL_TEMPLATES, createFromTemplate } from "../utils/email-templates";
+import { createRandomToken } from "../utils/tokenizer";
 import { sendHtml } from "./email-sender";
 import { revokeAllSessions } from "./session-manager";
-import { createRandomToken } from "../utils/tokenizer";
-import { encrypt, decrypt } from "../utils/crypto";
-import { createFromTemplate, EMAIL_TEMPLATES } from "../utils/email-templates";
-import { ENVIROMENT_URL } from "../utils/constants";
-import { ValidationError } from "../classes";
+import { createClient } from "./supabase-client";
+import { getFromId } from "./user-service";
 
 const tokenSchema = yup.object().shape({
 	user: yup.string().required(),
-	value: yup.string().required(),
+	value: yup.string().required()
 });
 
 const client = createClient();
@@ -24,7 +24,7 @@ export async function sendResetPassword(user) {
 	const html = createFromTemplate(EMAIL_TEMPLATES.RESET_PASSWORD, {
 		username,
 		tokenUrl: `${ENVIROMENT_URL}/resetPassword?token=${token}`,
-		year: new Date().getFullYear(),
+		year: new Date().getFullYear()
 	});
 
 	await sendHtml(email, "Reset your password", html);
@@ -43,20 +43,20 @@ export async function resetPassword(encryptedToken, newPassword) {
 			password: hashedPassword,
 			password_recovery_token: null,
 			password_recovery_sent_at: null,
-			password_recovered_at: new Date(),
+			password_recovered_at: new Date()
 		})
 		.eq("id", user.id);
 
 	const date = new Intl.DateTimeFormat("en", {
 		dateStyle: "medium",
-		timeStyle: "medium",
+		timeStyle: "medium"
 	}).format(new Date());
 
 	const html = createFromTemplate(EMAIL_TEMPLATES.RESET_PASSWORD_INFO, {
 		username: user.username,
 		date,
 		resetPasswordUrl: `${ENVIROMENT_URL}/users/forgotPassword`,
-		year: new Date().getFullYear(),
+		year: new Date().getFullYear()
 	});
 
 	await sendHtml(user.email, "Password updated", html);
@@ -88,7 +88,7 @@ export async function validateToken(encryptedToken) {
 async function createToken(user) {
 	const tokenObject = {
 		user: user.id,
-		value: createRandomToken(),
+		value: createRandomToken()
 	};
 
 	const hashedTokenValue = await hash(tokenObject.value, 10);
@@ -96,7 +96,7 @@ async function createToken(user) {
 		.from("users")
 		.update({
 			password_recovery_token: hashedTokenValue,
-			password_recovery_sent_at: new Date(),
+			password_recovery_sent_at: new Date()
 		})
 		.eq("id", user.id);
 

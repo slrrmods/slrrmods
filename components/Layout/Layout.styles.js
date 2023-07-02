@@ -5,13 +5,13 @@ export const useStyles = createStyles(() => {
 		root: {
 			minHeight: "100vh",
 			display: "flex",
-			flexDirection: "column",
+			flexDirection: "column"
 		},
 
 		content: {
 			flex: "1 1 auto",
 			display: "grid",
-			width: "100%",
-		},
+			width: "100%"
+		}
 	};
 });

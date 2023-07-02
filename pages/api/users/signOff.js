@@ -8,9 +8,9 @@ const configurarions = {
 		handler: onPost,
 		rateLimit: {
 			limit: 5,
-			interval: 60 * 1000,
-		},
-	},
+			interval: 60 * 1000
+		}
+	}
 };
 
 export default async function handler(req, res) {

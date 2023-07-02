@@ -3,8 +3,8 @@ import { handleRequest } from "../../../services/request-handler";
 const configurarions = {
 	GET: {
 		authentication: true,
-		handler: onGet,
-	},
+		handler: onGet
+	}
 };
 
 export default async function handler(req, res) {
@@ -16,7 +16,7 @@ async function onGet({ user }) {
 		data: {
 			id: user.id,
 			username: user.username,
-			profilePicture: user.profile_picture,
-		},
+			profilePicture: user.profile_picture
+		}
 	};
 }

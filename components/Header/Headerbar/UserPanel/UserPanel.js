@@ -32,8 +32,8 @@ function SignOptions() {
 				href={{
 					pathname: router.pathname,
 					query: {
-						signIn: true,
-					},
+						signIn: true
+					}
 				}}
 				as="/users/signIn"
 				shallow>
@@ -44,8 +44,8 @@ function SignOptions() {
 				href={{
 					pathname: router.pathname,
 					query: {
-						signUp: true,
-					},
+						signUp: true
+					}
 				}}
 				as="/users/signUp"
 				shallow>

@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
 import { Modal, Title } from "@mantine/core";
-import { ForgotPasswordForm } from "../../Forms";
+import { useRouter } from "next/router";
 import { useUserContext } from "../../../contexts";
+import { ForgotPasswordForm } from "../../Forms";
 
 export default function ForgotPasswordModal() {
 	const router = useRouter();
