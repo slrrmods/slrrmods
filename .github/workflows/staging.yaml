@@ -2,8 +2,8 @@ name: Deploy Supabase Migrations to Staging
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - alpha
   workflow_dispatch:
 
 jobs:
