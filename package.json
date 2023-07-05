@@ -1,49 +1,29 @@
 {
-	"name": "slrrmods",
-	"version": "1.0.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint"
-	},
-	"dependencies": {
-		"@emotion/react": "^11.11.1",
-		"@emotion/server": "^11.11.0",
-		"@mantine/core": "^6.0.15",
-		"@mantine/form": "^6.0.15",
-		"@mantine/hooks": "^6.0.15",
-		"@mantine/next": "^6.0.15",
-		"@mantine/notifications": "^6.0.15",
-		"@supabase/supabase-js": "^2.26.0",
-		"@tabler/icons": "^2.23.0",
-		"@tabler/icons-react": "^2.23.0",
-		"@tanstack/react-query": "^4.29.19",
-		"@tanstack/react-query-devtools": "^4.29.19",
-		"@vercel/analytics": "^1.0.1",
-		"axios": "^1.4.0",
-		"bcrypt": "^5.1.0",
-		"cookies-next": "^2.1.2",
-		"geoip-country": "^4.1.65",
-		"geoip-lite": "^1.4.6",
-		"handlebars": "^4.7.7",
-		"humps": "^2.0.1",
-		"lru-cache": "^10.0.0",
-		"next": "^13.4.7",
-		"next-axiom": "^0.18.0",
-		"nodemailer": "^6.9.3",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"stylis-plugin-rtl": "^2.1.1",
-		"uuid": "^9.0.0",
-		"yup": "^1.2.0"
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^5.60.1",
-		"@typescript-eslint/parser": "^5.60.1",
-		"eslint": "^8.43.0",
-		"eslint-config-next": "^13.4.7",
-		"eslint-plugin-react": "^7.32.2"
-	}
+  "name": "slrrmods",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
+    "@mantine/core": "^6.0.16",
+    "@mantine/form": "^6.0.16",
+    "@mantine/hooks": "^6.0.16",
+    "@mantine/next": "^6.0.16",
+    "@mantine/notifications": "^6.0.16",
+    "@types/node": "20.3.3",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "eslint": "8.44.0",
+    "eslint-config-next": "13.4.8",
+    "next": "13.4.8",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.1.6"
+  }
 }

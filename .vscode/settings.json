@@ -9,6 +9,9 @@
         "**/slrrmods.code-workspace": true,
         "**/supabase/.*": true,
         "**/package.json": true,
-        "**/package-lock.json": true
+        "**/package-lock.json": true,
+        "**/tsconfig.json": true,
+        "**/next-env.d.ts": true,
+        "**/.eslintrc.json": true,
     }
 }
