@@ -10,19 +10,20 @@ export const useStyles = createStyles((theme) => {
 
 		input: {
 			backgroundColor: "transparent",
+			color: theme.white,
 			border: "1px",
 			borderStyle: "solid",
-			borderColor: theme.fn.lighten(primaryColor, 0.3),
+			borderColor: theme.fn.lighten(primaryColor, 0.4),
 			paddingLeft: theme.spacing.sm,
 			paddingRight: theme.spacing.sm,
 			borderRadius: theme.radius.md,
 
 			"::placeholder": {
-				color: theme.fn.lighten(primaryColor, 0.3),
+				color: theme.fn.lighten(primaryColor, 0.4),
 			},
 
 			":focus": {
-				borderColor: theme.fn.lighten(primaryColor, 0.6),
+				borderColor: theme.fn.lighten(primaryColor, 0.8),
 			},
 		},
 
