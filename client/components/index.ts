@@ -9,3 +9,4 @@ export * from "./Layout/Layout";
 export * from "./Layout/LayoutContent/LayoutContent";
 export * from "./Link/Link";
 export * from "./Logo/Logo";
+export * from "./ThemeToggle/ThemeToggle";
