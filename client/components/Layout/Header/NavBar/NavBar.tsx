@@ -33,7 +33,6 @@ const tabs = [
 export function NavBar() {
 	const { classes } = useStyles();
 	const router = useRouter();
-	// const { toggleTheme, isDark } = useThemeContext();
 
 	const currentPath = `/${router.pathname.split("/")[1]}`;
 
