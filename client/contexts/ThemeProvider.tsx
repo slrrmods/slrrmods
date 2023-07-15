@@ -11,7 +11,7 @@ export type ThemeProviderProps = {
 	currentTheme: ColorScheme;
 };
 
-type ThemeContextProps = {
+export type ThemeContextProps = {
 	theme: ColorScheme;
 	toggleTheme: () => void;
 	isLight: boolean;
@@ -34,7 +34,7 @@ export function useThemeContext() {
 export function ThemeProvider(props: ThemeProviderProps) {
 	const { children, currentTheme } = props;
 
-	const [theme, setTheme] = useThemeStorage(currentTheme);
+	const { theme, setTheme } = useThemeStorage(currentTheme);
 
 	function toggleTheme() {
 		setTheme(theme === "dark" ? "light" : "dark");

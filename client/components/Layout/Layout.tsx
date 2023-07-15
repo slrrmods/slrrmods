@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import NextTopLoader from "nextjs-toploader";
 import { useStyles } from "./Layout.styles";
 
-type LayoutProps = {
+export type LayoutProps = {
 	children: React.ReactNode;
 };
 
@@ -14,7 +14,8 @@ export function Layout({ children }: LayoutProps) {
 
 	return (
 		<div className={classes.root}>
-			<NextTopLoader color="white" shadow="0 0 10px #000,0 0 5px #000" />
+			<NextTopLoader color="#FFFFFF7F" shadow="0 0 10px #000,0 0 5px #000" />
+
 			<Heads />
 
 			<Header />

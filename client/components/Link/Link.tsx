@@ -1,7 +1,7 @@
 import NextLink from "next/link";
 import React, { forwardRef } from "react";
 
-type LinkProps = {
+export type LinkProps = {
 	newTab?: boolean;
 	children: React.ReactElement;
 } & React.ComponentProps<typeof NextLink>;
