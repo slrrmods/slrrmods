@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/client/components";
+import { ThemeToggle } from "@client/components";
 import { Group, Tabs } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useStyles } from "./NavBar.styles";

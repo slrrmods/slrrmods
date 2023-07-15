@@ -1,4 +1,5 @@
-import { Footer, Header, Heads, LayoutContent } from "@/client/components";
+import { Footer, Header, Heads, LayoutContent } from "@client/components";
+import { Notifications } from "@mantine/notifications";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import NextTopLoader from "nextjs-toploader";
@@ -12,25 +13,21 @@ export function Layout({ children }: LayoutProps) {
 	const { classes } = useStyles();
 
 	return (
-		<>
-			<div className={classes.root}>
-				<Heads />
+		<div className={classes.root}>
+			<NextTopLoader color="white" shadow="0 0 10px #000,0 0 5px #000" />
+			<Heads />
 
-				<Header />
+			<Header />
 
-				<LayoutContent className={classes.content}>{children}</LayoutContent>
+			<LayoutContent className={classes.content}>{children}</LayoutContent>
 
-				<Footer />
+			<Footer />
 
-				<ReactQueryDevtools initialIsOpen={false} />
-			</div>
+			<Notifications />
 
-			<NextTopLoader
-				color="#7AB9F0"
-				shadow="0 0 10px #2299DD,0 0 5px #7AB9F0"
-			/>
+			<ReactQueryDevtools initialIsOpen={false} />
 
 			<Analytics />
-		</>
+		</div>
 	);
 }

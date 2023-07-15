@@ -1,4 +1,4 @@
-import { Link } from "@/client/components";
+import { Link } from "@client/components";
 import { Button } from "@mantine/core";
 import { useRouter } from "next/router";
 

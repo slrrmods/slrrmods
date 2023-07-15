@@ -1,4 +1,4 @@
-import { HeaderBar, NavBar } from "@/client/components";
+import { HeaderBar, NavBar } from "@client/components";
 import { Container } from "@mantine/core";
 import { useStyles } from "./Header.styles";
 

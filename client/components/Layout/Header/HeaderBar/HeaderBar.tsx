@@ -1,4 +1,4 @@
-import { Logo, SearchBar, UserPanel } from "@/client/components";
+import { Logo, SearchBar, UserPanel } from "@client/components";
 import { Flex, Group } from "@mantine/core";
 
 export function HeaderBar() {

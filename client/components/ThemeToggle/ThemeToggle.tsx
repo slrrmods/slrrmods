@@ -1,10 +1,9 @@
+import { useThemeContext } from "@client/contexts";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconMoonStars, IconSun } from "@tabler/icons-react";
 
 export function ThemeToggle() {
-	const isDark = false;
-
-	function toggleTheme() {}
+	const { toggleTheme, isDark } = useThemeContext();
 
 	return (
 		<Tooltip

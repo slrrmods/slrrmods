@@ -1,4 +1,4 @@
-import { Link, Logo } from "@/client/components";
+import { Link, Logo } from "@client/components";
 import {
 	ActionIcon,
 	Container,

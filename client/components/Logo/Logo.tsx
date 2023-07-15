@@ -1,4 +1,4 @@
-import { Link } from "@/client/components";
+import { Link } from "@client/components";
 import { Title } from "@mantine/core";
 
 export function Logo() {
