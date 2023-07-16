@@ -7,6 +7,7 @@ export * from "./Layout/Header/UserPanel/UserPanel";
 export * from "./Layout/Heads/Heads";
 export * from "./Layout/Layout";
 export * from "./Layout/LayoutContent/LayoutContent";
+export * from "./Layout/ScrollToTop/ScrollToTop";
 export * from "./Link/Link";
 export * from "./Logo/Logo";
 export * from "./ThemeToggle/ThemeToggle";

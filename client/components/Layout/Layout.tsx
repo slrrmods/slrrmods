@@ -1,4 +1,10 @@
-import { Footer, Header, Heads, LayoutContent } from "@client/components";
+import {
+	Footer,
+	Header,
+	Heads,
+	LayoutContent,
+	ScrollToTop,
+} from "@client/components";
 import { Notifications } from "@mantine/notifications";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Analytics } from "@vercel/analytics/react";
@@ -14,7 +20,7 @@ export function Layout({ children }: LayoutProps) {
 
 	return (
 		<div className={classes.root}>
-			<NextTopLoader color="#FFFFFF7F" shadow="0 0 10px #000,0 0 5px #000" />
+			<NextTopLoader color="#FFFFFF7F" />
 
 			<Heads />
 
@@ -23,6 +29,8 @@ export function Layout({ children }: LayoutProps) {
 			<LayoutContent className={classes.content}>{children}</LayoutContent>
 
 			<Footer />
+
+			<ScrollToTop />
 
 			<Notifications />
 
