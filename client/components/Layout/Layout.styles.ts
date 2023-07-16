@@ -10,6 +10,7 @@ export const useStyles = createStyles(() => {
 
 		content: {
 			flex: "1 1 auto",
+			display: "grid",
 			width: "100%",
 		},
 	};

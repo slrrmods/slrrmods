@@ -5,5 +5,5 @@ export type LayoutContentProps = {} & React.ComponentPropsWithoutRef<
 >;
 
 export function LayoutContent(props: LayoutContentProps) {
-	return <Container size="xl" p="md" {...props} />;
+	return <Container size="xl" my="md" {...props} />;
 }
