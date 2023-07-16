@@ -16,7 +16,7 @@ export const useStyles = createStyles((theme) => {
 			borderColor: theme.fn.lighten(primaryColor, 0.4),
 			paddingLeft: theme.spacing.sm,
 			paddingRight: theme.spacing.sm,
-			borderRadius: theme.radius.md,
+			borderRadius: theme.radius.sm,
 
 			"::placeholder": {
 				color: theme.fn.lighten(primaryColor, 0.4),

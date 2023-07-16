@@ -1,7 +1,6 @@
-import { ThemeToggle } from "@client/components";
-import { Group, Tabs } from "@mantine/core";
+import { NavButton } from "@client/components";
+import { Group } from "@mantine/core";
 import { useRouter } from "next/router";
-import { useStyles } from "./NavBar.styles";
 
 const tabs = [
 	{
@@ -31,35 +30,20 @@ const tabs = [
 ];
 
 export function NavBar() {
-	const { classes } = useStyles();
 	const router = useRouter();
 
-	const currentPath = `/${router.pathname.split("/")[1]}`;
-
-	function onTabChange(value: string) {
-		if (router.asPath === value) return;
-		router.push(value);
-	}
-
 	return (
-		<Group position="apart">
-			<Tabs
-				classNames={classes}
-				value={currentPath}
-				onTabChange={onTabChange}
-				variant="outline">
-				<Tabs.List>
-					{tabs.map((tab) => {
-						return (
-							<Tabs.Tab key={tab.path} value={tab.path}>
-								{tab.title}
-							</Tabs.Tab>
-						);
-					})}
-				</Tabs.List>
-			</Tabs>
-
-			<ThemeToggle />
+		<Group spacing={0}>
+			{tabs.map((tab) => {
+				return (
+					<NavButton
+						key={tab.path}
+						href={tab.path}
+						selected={router.asPath === tab.path}>
+						{tab.title}
+					</NavButton>
+				);
+			})}
 		</Group>
 	);
 }

@@ -1,4 +1,4 @@
-import { THEME_COOKIE_KEY } from "@/client/utils";
+import { THEME_COOKIE_KEY } from "@client/utils";
 import { getCookie } from "cookies-next";
 import App, { AppContext } from "next/app";
 

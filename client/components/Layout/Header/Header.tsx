@@ -1,5 +1,11 @@
-import { HeaderBar, NavBar } from "@client/components";
-import { Container } from "@mantine/core";
+import {
+	Logo,
+	NavBar,
+	SearchBar,
+	ThemeToggle,
+	UserPanel,
+} from "@client/components";
+import { Container, Flex, Group, Stack } from "@mantine/core";
 import { useStyles } from "./Header.styles";
 
 export function Header() {
@@ -8,9 +14,23 @@ export function Header() {
 	return (
 		<header className={classes.header}>
 			<Container size="xl">
-				<HeaderBar />
+				<Stack spacing="xs" mt="sm">
+					<Group position="apart">
+						<Logo />
 
-				<NavBar />
+						<SearchBar />
+
+						<Flex justify="flex-end">
+							<UserPanel />
+						</Flex>
+					</Group>
+
+					<Group position="apart">
+						<NavBar />
+
+						<ThemeToggle />
+					</Group>
+				</Stack>
 			</Container>
 		</header>
 	);

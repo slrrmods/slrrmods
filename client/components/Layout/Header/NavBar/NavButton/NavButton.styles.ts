@@ -5,24 +5,17 @@ export const useStyles = createStyles((theme) => {
 	const isDark = theme.colorScheme === "dark";
 
 	return {
-		tabsList: {
-			borderBottom: "0 !important",
-		},
-
-		tab: {
-			fontWeight: 500,
-			borderBottom: 0,
-			color: theme.white,
+		root: {
+			borderBottomLeftRadius: 0,
+			borderBottomRightRadius: 0,
 
 			"&:hover": {
-				backgroundColor: theme.fn.darken(background, 0.1),
 				boxShadow: theme.shadows.lg,
 			},
 
-			"&[data-active]": {
+			"&[data-disabled]": {
 				backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
 				color: background,
-				boxShadow: "none",
 			},
 		},
 	};
