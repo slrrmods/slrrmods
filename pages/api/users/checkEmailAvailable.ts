@@ -14,7 +14,7 @@ const configuration: EndpointConfiguration = {
 	GET: {
 		query: querySchema,
 		handler: onGet,
-	}, 
+	},
 };
 
 export default async function handler(
@@ -24,10 +24,8 @@ export default async function handler(
 	return await handleRequest(req, res, configuration);
 }
 
-interface Query extends yup.InferType<typeof querySchema> {}
-
 interface GetContext extends ApiHandlerContext {
-	query: Query;
+	query: yup.InferType<typeof querySchema>;
 }
 
 function onGet({ query }: GetContext) {

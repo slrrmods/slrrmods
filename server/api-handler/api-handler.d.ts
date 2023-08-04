@@ -7,6 +7,11 @@ export type ApiHandlerResponse = {
 	error?: any;
 };
 
+export type ApiHeaders = {
+	requestId: string;
+	clientId: string;
+};
+
 export type ApiHandlerContext = {
 	request: NextApiRequest;
 	response: NextApiResponse;
@@ -15,7 +20,7 @@ export type ApiHandlerContext = {
 	endpointConfiguration: EndpointConfiguration;
 	query: any;
 	body: any;
-	headers: any;
+	headers: ApiHeaders;
 };
 
 export type MethodHandler = (

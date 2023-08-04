@@ -1,3 +1,4 @@
+import { IS_DEV_ENV } from "@/common/utils";
 import {
 	ApiHandlerContext,
 	EndpointConfiguration,
@@ -33,7 +34,10 @@ export async function handleRequest(
 		endpointConfiguration,
 		query: {},
 		body: {},
-		headers: {},
+		headers: {
+			requestId: "",
+			clientId: "",
+		},
 	};
 
 	try {
@@ -72,9 +76,13 @@ function handleMiddlewareError(
 	error: MiddlewareError,
 	response: NextApiResponse
 ) {
-	return response.status(error.status).json({
+	const result: { error: string; details?: string } = {
 		error: error.message,
-	});
+	};
+
+	if (IS_DEV_ENV && error.details) result.details = error.details;
+
+	return response.status(error.status).json(result);
 }
 
 function handleGenericError(error: any, response: NextApiResponse) {
