@@ -7,7 +7,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import * as yup from "yup";
 
 const querySchema = yup.object().shape({
-	email: yup.string().email().required(),
+	email: yup.string().email().required().lowercase(),
 });
 
 const configuration: EndpointConfiguration = {
