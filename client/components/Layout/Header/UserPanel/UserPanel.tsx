@@ -18,7 +18,7 @@ function SignOptions() {
 						signIn: true,
 					},
 				}}
-				as="/users/signIn"
+				as="/signin"
 				shallow>
 				<Button>Sign In</Button>
 			</Link>
@@ -30,7 +30,7 @@ function SignOptions() {
 						signUp: true,
 					},
 				}}
-				as="/users/signUp"
+				as="/signup"
 				shallow>
 				<Button>Sign Up</Button>
 			</Link>

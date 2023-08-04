@@ -28,6 +28,9 @@
       "@server/*": [
         "./server/*"
       ],
+      "@common/*": [
+        "./common/*"
+      ]
     }
   },
   "include": [
