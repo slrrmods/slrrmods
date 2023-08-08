@@ -8,5 +8,5 @@ export const ENV_URL = IS_DEV_ENV
 	? "http://localhost:3000"
 	: `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
-export const REQUEST_HEADER_KEY = "x-request-id";
-export const CLIENT_HEADER_KEY = "x-client-id";
+export const REQUEST_ID_HEADER_KEY = "x-request-id";
+export const CLIENT_ID_HEADER_KEY = "x-client-id";
