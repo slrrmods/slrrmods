@@ -3,6 +3,7 @@ import {
 	Header,
 	Heads,
 	LayoutContent,
+	Modals,
 	ScrollToTop,
 } from "@client/components";
 import { Notifications } from "@mantine/notifications";
@@ -29,6 +30,8 @@ export function Layout({ children }: LayoutProps) {
 			<LayoutContent className={classes.content}>{children}</LayoutContent>
 
 			<Footer />
+
+			<Modals />
 
 			<ScrollToTop />
 
