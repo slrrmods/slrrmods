@@ -7,7 +7,7 @@ export type LayoutContentProps = {} & React.ComponentPropsWithoutRef<
 export function LayoutContent({ children, ...props }: LayoutContentProps) {
 	return (
 		<Container size="xl" my="md" {...props}>
-			<main>{children}</main>
+			<main style={{ display: "grid" }}>{children}</main>
 		</Container>
 	);
 }

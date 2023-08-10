@@ -1,4 +1,4 @@
-import { EmailAvailableResponse } from "@common/types";
+import { UsernameAvailableResponse } from "@common/types";
 import {
 	Endpoint,
 	HandlerContext,
@@ -11,7 +11,7 @@ import * as yup from "yup";
 const configuration: Endpoint = {
 	GET: {
 		query: yup.object().shape({
-			email: yup.string().email().required(),
+			username: yup.string().required(),
 		}),
 		handler: onGet,
 	},
@@ -19,14 +19,14 @@ const configuration: Endpoint = {
 
 interface GetContext extends HandlerContext {
 	query: {
-		email: string;
+		username: string;
 	};
 }
 
-function onGet({ query }: GetContext): Result<EmailAvailableResponse> {
-	const { email } = query;
+function onGet({ query }: GetContext): Result<UsernameAvailableResponse> {
+	const { username } = query;
 
-	if (email === "adnan_silva54@hotmail.com") {
+	if (username === "adnan54") {
 		return {
 			status: 409,
 			data: { available: false },

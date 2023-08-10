@@ -33,17 +33,19 @@ export function NavBar() {
 	const router = useRouter();
 
 	return (
-		<Group spacing={0}>
-			{tabs.map((tab) => {
-				return (
-					<NavButton
-						key={tab.path}
-						href={tab.path}
-						selected={router.asPath === tab.path}>
-						{tab.title}
-					</NavButton>
-				);
-			})}
-		</Group>
+		<nav>
+			<Group spacing={0}>
+				{tabs.map((tab) => {
+					return (
+						<NavButton
+							key={tab.path}
+							href={tab.path}
+							selected={router.asPath === tab.path}>
+							{tab.title}
+						</NavButton>
+					);
+				})}
+			</Group>
+		</nav>
 	);
 }

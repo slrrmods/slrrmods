@@ -1,3 +1,4 @@
+import { SignInForm, SignUpForm } from "@client/components";
 import { Modal, Tabs } from "@mantine/core";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
@@ -45,9 +46,13 @@ export function SignModal() {
 					<Tabs.Tab value="signUp">Sign Up</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value="signIn">{"Sign In"}</Tabs.Panel>
+				<Tabs.Panel value="signIn">
+					<SignInForm />
+				</Tabs.Panel>
 
-				<Tabs.Panel value="signUp">{"Sign Up"}</Tabs.Panel>
+				<Tabs.Panel value="signUp">
+					<SignUpForm />
+				</Tabs.Panel>
 			</Tabs>
 		</Modal>
 	);

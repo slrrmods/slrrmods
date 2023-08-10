@@ -1,6 +1,6 @@
-import { ApiHandlerContext } from "@server/api-handler";
+import { HandlerContext } from "@server/api-handler";
 
-export async function validateQuery(context: ApiHandlerContext) {
+export async function validateQuery(context: HandlerContext) {
 	const { request, methodConfiguration } = context;
 	const queryValues = request.query;
 	const querySchema = methodConfiguration.query;

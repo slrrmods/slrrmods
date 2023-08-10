@@ -1,56 +1,60 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ObjectSchema } from "yup";
 
-export type ApiHandlerResponse = {
-	status: number;
-	data?: any;
-	error?: any;
+export type Endpoint = {
+	GET?: Method;
+	POST?: Method;
+	PUT?: Method;
+	DELETE?: Method;
+	PATCH?: Method;
 };
 
-export type ApiHeaders = {
-	requestId: string;
-	clientId: string;
+export type Method = {
+	query?: ObjectSchema<any>;
+	body?: ObjectSchema<any>;
+	headers?: ObjectSchema<any>;
+	authorization?: Authorization;
+	rateLimiting?: RateLimiting;
+	handler: Handler;
 };
 
-export type ApiHandlerContext = {
-	request: NextApiRequest;
-	response: NextApiResponse;
-	method: string;
-	methodConfiguration: MethodConfiguration;
-	endpointConfiguration: EndpointConfiguration;
-	query: any;
-	body: any;
-	headers: ApiHeaders;
+export type Authorization = {
+	authentication: "public" | "authenticated" | "admin";
+	roles?: string[];
 };
 
-export type MethodHandler = (
-	context: ApiHandlerContext
-) => ApiHandlerResponse | Promise<ApiHandlerResponse>;
-
-export type MethodRateLimiting = {
+export type RateLimiting = {
 	limit?: number;
 	interval?: number;
 	usersPerSecond?: number;
 };
 
-export type MethodAuthorization = {
-	authentication: "public" | "authenticated" | "admin";
-	roles?: string[];
+export type Handler = (
+	context: HandlerContext
+) => Result<T> | Promise<Result<T>>;
+
+export type HandlerContext = {
+	request: NextApiRequest;
+	response: NextApiResponse;
+	method: string;
+	methodConfiguration: Method;
+	endpointConfiguration: Endpoint;
+	query: any;
+	body: any;
+	headers: Headers;
 };
 
-export type MethodConfiguration = {
-	query?: ObjectSchema<any>;
-	body?: ObjectSchema<any>;
-	headers?: ObjectSchema<any>;
-	authorization?: MethodAuthorization;
-	rateLimiting?: MethodRateLimiting;
-	handler: MethodHandler;
+export type Headers = {
+	requestId: string;
+	clientId: string;
 };
 
-export type EndpointConfiguration = {
-	GET?: MethodConfiguration;
-	POST?: MethodConfiguration;
-	PUT?: MethodConfiguration;
-	DELETE?: MethodConfiguration;
-	PATCH?: MethodConfiguration;
+export type Result<T> = {
+	status: number;
+	data?: T;
+	error?: Error;
+};
+
+export type Error = {
+	message: string;
 };

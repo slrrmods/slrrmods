@@ -1,16 +1,12 @@
-import { IS_DEV_ENV } from "@/common/utils";
-import {
-	ApiHandlerContext,
-	EndpointConfiguration,
-	MethodConfiguration,
-} from "@server/api-handler";
+import { IS_DEV_ENV } from "@common/utils";
+import { Endpoint, HandlerContext, Method } from "@server/api-handler";
 import { runMiddlewares } from "@server/api-middleware";
 import { MiddlewareError } from "@server/classes";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ValidationError } from "yup";
 
-const defaultMethodConfiguration: MethodConfiguration = {
-	handler: (_: ApiHandlerContext) => {
+const defaultMethodConfiguration: Method = {
+	handler: (_: HandlerContext) => {
 		throw new Error("Undefined endpoint handler");
 	},
 };
@@ -18,15 +14,15 @@ const defaultMethodConfiguration: MethodConfiguration = {
 export async function handleRequest(
 	request: NextApiRequest,
 	response: NextApiResponse,
-	endpointConfiguration: EndpointConfiguration
+	endpointConfiguration: Endpoint
 ) {
 	const method = request.method || "GET";
 	const methodConfiguration = {
 		...defaultMethodConfiguration,
-		...endpointConfiguration[method as keyof EndpointConfiguration],
+		...endpointConfiguration[method as keyof Endpoint],
 	};
 
-	const context: ApiHandlerContext = {
+	const context: HandlerContext = {
 		request,
 		response,
 		method,
@@ -45,9 +41,9 @@ export async function handleRequest(
 
 		const { handler } = methodConfiguration;
 
-		const result = await handler(context);
+		const { status, data, error } = await handler(context);
 
-		return response.status(result.status).json(result.data ?? result.error);
+		return response.status(status).json(error ?? data);
 	} catch (error) {
 		return handleError(error, response);
 	}

@@ -29,11 +29,11 @@ export function createMethods() {
 }
 
 function createMethod(method: string) {
-	return (endpoint: string, options: RequestOptions = {}) => {
+	return <TResponse>(endpoint: string, options: RequestOptions = {}) => {
 		const { headers, query, body } = options;
 		const url = buildUrl(endpoint, query);
 
-		return doApiRequest(url, method, headers, body);
+		return doApiRequest<TResponse>(url, method, headers, body);
 	};
 }
 
@@ -48,7 +48,12 @@ function buildUrl(endpoint: string, query: any) {
 	return url;
 }
 
-async function doApiRequest(url: URL, method: string, headers: any, body: any) {
+async function doApiRequest<TResponse>(
+	url: URL,
+	method: string,
+	headers: any,
+	body: any
+) {
 	headers = buildHeaders(headers, body);
 
 	const config = {
@@ -59,10 +64,7 @@ async function doApiRequest(url: URL, method: string, headers: any, body: any) {
 	};
 
 	try {
-		const response = await api(config);
-
-		if (response.data.error) throw new Error(response.data.error);
-
+		const response = await api<TResponse>(config);
 		return response.data;
 	} catch (error) {
 		if (error instanceof AxiosError) handleAxiosError(error);

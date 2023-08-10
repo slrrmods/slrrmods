@@ -17,7 +17,7 @@
     "@mantine/next": "^6.0.16",
     "@mantine/notifications": "^6.0.16",
     "@tabler/icons-react": "^2.23.0",
-    "@tanstack/react-query": "^4.29.19",
+    "@tanstack/react-query": "^4.32.6",
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",

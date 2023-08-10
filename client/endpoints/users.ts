@@ -1,8 +1,19 @@
 import { createMethods } from "@client/services";
+import {
+	EmailAvailableResponse,
+	UsernameAvailableResponse,
+} from "@common/types";
 
 const { get } = createMethods();
 
 export function checkEmailAvailable(email: string) {
-	const query = { email };
-	return get("users/checkEmailAvailable", { query });
+	return get<EmailAvailableResponse>("users/checkEmailAvailable", {
+		query: { email },
+	});
+}
+
+export function checkUsernameAvailable(username: string) {
+	return get<UsernameAvailableResponse>("users/checkUsernameAvailable", {
+		query: { username },
+	});
 }

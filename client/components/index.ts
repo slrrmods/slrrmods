@@ -1,3 +1,6 @@
+export * from "./Forms/SignForms/SignInForm";
+export * from "./Forms/SignForms/SignUpForm";
+export * from "./Inputs/ValidatedPasswordInput/ValidatedPasswordInput";
 export * from "./Layout/Footer/Footer";
 export * from "./Layout/Header/Header";
 export * from "./Layout/Header/NavBar/NavBar";

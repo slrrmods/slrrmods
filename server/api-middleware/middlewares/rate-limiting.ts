@@ -1,5 +1,5 @@
 import { ENV_URL, IS_DEV_ENV } from "@common/utils";
-import { ApiHandlerContext, MethodRateLimiting } from "@server/api-handler";
+import { HandlerContext, RateLimiting } from "@server/api-handler";
 import { MiddlewareError } from "@server/classes";
 import {
 	LimiterResult,
@@ -20,7 +20,7 @@ export async function applyRateLimiting({
 	request,
 	response,
 	methodConfiguration,
-}: ApiHandlerContext) {
+}: HandlerContext) {
 	if (IS_DEV_ENV) return;
 
 	const endPoint = getEndpoint(request.url!);
@@ -36,7 +36,7 @@ function getEndpoint(url: string) {
 	return new URL(url, ENV_URL).pathname;
 }
 
-function createLimiter(endPoint: string, configuration?: MethodRateLimiting) {
+function createLimiter(endPoint: string, configuration?: RateLimiting) {
 	const { interval, limit, usersPerSecond } = {
 		...defaultConfiguration,
 		...configuration,

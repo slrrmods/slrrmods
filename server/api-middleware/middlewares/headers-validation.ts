@@ -1,5 +1,5 @@
 import { CLIENT_HEADER_KEY, REQUEST_HEADER_KEY } from "@common/utils";
-import { ApiHandlerContext } from "@server/api-handler";
+import { HandlerContext } from "@server/api-handler";
 import { MiddlewareError } from "@server/classes";
 import * as yup from "yup";
 
@@ -8,7 +8,7 @@ const schema = yup.object().shape({
 	[CLIENT_HEADER_KEY]: yup.string().required().uuid(),
 });
 
-export async function validateHeaders(context: ApiHandlerContext) {
+export async function validateHeaders(context: HandlerContext) {
 	const { request, methodConfiguration } = context;
 
 	try {

@@ -1,4 +1,4 @@
-import { ApiHandlerContext } from "@server/api-handler";
+import { HandlerContext } from "@server/api-handler";
 import {
 	applyRateLimiting,
 	validateBody,
@@ -15,7 +15,7 @@ const middlewares = [
 	validateBody,
 ];
 
-export async function runMiddlewares(context: ApiHandlerContext) {
+export async function runMiddlewares(context: HandlerContext) {
 	for (const middleware of middlewares) {
 		await middleware(context);
 	}
